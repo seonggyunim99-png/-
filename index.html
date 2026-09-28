@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+  <title>히라가나 마스터 PRO - 스마트 따라쓰기 & 필기 인식</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;900&family=Noto+Sans+KR:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f1422;
+      --card-bg: rgba(26, 34, 53, 0.85);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --primary: #ff477e;
+      --primary-glow: rgba(255, 71, 126, 0.4);
+      --secondary: #4dabf7;
+      --accent-gold: #ffd43b;
+      --success: #38d9a9;
+      --danger: #ff6b6b;
+      --text: #f8f9fa;
+      --text-muted: #8b9bb4;
+      --grid-line: rgba(255, 255, 255, 0.07);
+      --canvas-bg: #141b2d;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    body {
+      background-color: var(--bg);
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(255, 71, 126, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(77, 171, 247, 0.12) 0%, transparent 40%);
+      color: var(--text);
+      font-family: 'Noto Sans KR', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px;
+      overflow-x: hidden;
+    }
+
+    /* Container */
+    .app-container {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      backdrop-filter: blur(12px);
+      padding: 12px 18px;
+      border-radius: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, var(--primary), #e60067);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'M PLUS Rounded 1c', sans-serif;
+      font-weight: 900;
+      font-size: 20px;
+      color: white;
+      box-shadow: 0 4px 12px var(--primary-glow);
+    }
+
+    .brand-text h1 {
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .badge-pro {
+      background: linear-gradient(90deg, #ff922b, var(--primary));
+      font-size: 10px;
+      font-weight: 900;
+      padding: 2px 7px;
+      border-radius: 6px;
+      letter-spacing: 0.5px;
+    }
+
+    .stats-pill {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .streak-badge {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: var(--accent-gold);
+      background: rgba(255, 212, 59, 0.1);
+      padding: 4px 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 212, 59, 0.2);
+    }
+
+    /* Target Character Card */
+    .char-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      backdrop-filter: blur(12px);
+    }
+
+    .char-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .char-category {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--secondary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .char-romaji {
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: -0.5px;
+      color: #fff;
+    }
+
+    .char-word {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .char-word strong {
+      color: var(--accent-gold);
+    }
+
+    .tts-btn {
+      background: rgba(77, 171, 247, 0.15);
+      border: 1px solid rgba(77, 171, 247, 0.3);
+      color: var(--secondary);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .tts-btn:active {
+      transform: scale(0.9);
+      background: rgba(77, 171, 247, 0.3);
+    }
+
+    /* Writing Section */
+    .canvas-section {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 28px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+      position: relative;
+    }
+
+    .canvas-header {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 4px;
+    }
+
+    .stroke-indicator {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .stroke-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--secondary);
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.15); }
+    }
+
+    .mode-switch {
+      display: flex;
+      background: rgba(0, 0, 0, 0.25);
+      padding: 3px;
+      border-radius: 12px;
+      border: 1px solid var(--card-border);
+    }
+
+    .mode-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 9px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .mode-btn.active {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 2px 8px var(--primary-glow);
+    }
+
+    /* Writing Canvas Box with Japanese Grid (田) */
+    .canvas-wrapper {
+      position: relative;
+      width: 290px;
+      height: 290px;
+      background: var(--canvas-bg);
+      border-radius: 24px;
+      overflow: hidden;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.6);
+      touch-action: none;
+    }
+
+    /* Grid lines (원고지 / 십자 가이드) */
+    .grid-lines {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .grid-lines::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 10%;
+      right: 10%;
+      height: 1px;
+      border-top: 1px dashed var(--grid-line);
+    }
+
+    .grid-lines::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 10%;
+      bottom: 10%;
+      width: 1px;
+      border-left: 1px dashed var(--grid-line);
+    }
+
+    /* Guide Watermark Glyph */
+    .guide-glyph {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'M PLUS Rounded 1c', sans-serif;
+      font-size: 200px;
+      font-weight: 700;
+      color: rgba(255, 255, 255, 0.12);
+      pointer-events: none;
+      z-index: 2;
+      transition: opacity 0.3s;
+      line-height: 1;
+    }
+
+    .guide-glyph.hidden {
+      opacity: 0;
+    }
+
+    /* Drawing Canvas */
+    canvas#drawCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 3;
+      cursor: crosshair;
+    }
+
+    /* Recognition Result Overlay */
+    .feedback-banner {
+      width: 100%;
+      min-height: 48px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-weight: 800;
+      font-size: 15px;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      padding: 8px 16px;
+      opacity: 0;
+      transform: translateY(6px);
+    }
+
+    .feedback-banner.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .feedback-banner.perfect {
+      background: rgba(56, 217, 169, 0.15);
+      border: 1px solid var(--success);
+      color: var(--success);
+    }
+
+    .feedback-banner.retry {
+      background: rgba(255, 107, 107, 0.15);
+      border: 1px solid var(--danger);
+      color: var(--danger);
+    }
+
+    /* Control Buttons */
+    .action-grid {
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 2fr 1fr;
+      gap: 10px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 16px;
+      font-family: inherit;
+      font-weight: 800;
+      font-size: 15px;
+      padding: 14px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .btn:active {
+      transform: scale(0.96);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--text);
+      border: 1px solid var(--card-border);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), #e60067);
+      color: white;
+      box-shadow: 0 6px 18px var(--primary-glow);
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.1);
+    }
+
+    /* Selector Row */
+    .selector-drawer {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .selector-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .kana-pills {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+    }
+
+    .kana-pills::-webkit-scrollbar {
+      display: none;
+    }
+
+    .pill {
+      flex-shrink: 0;
+      padding: 8px 14px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      font-family: 'M PLUS Rounded 1c', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .pill.active {
+      background: var(--secondary);
+      border-color: var(--secondary);
+      color: white;
+      box-shadow: 0 4px 12px rgba(77, 171, 247, 0.35);
+    }
+
+    /* Canvas Confetti FX */
+    canvas#fxCanvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 999;
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="fxCanvas"></canvas>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header>
+      <div class="brand">
+        <div class="brand-icon">あ</div>
+        <div class="brand-text">
+          <h1>히라가나 PRO <span class="badge-pro">MAX</span></h1>
+        </div>
+      </div>
+      <div class="stats-pill">
+        <div class="streak-badge">
+          <span>🔥</span> <span id="streakCount">0</span> 콤보
+        </div>
+      </div>
+    </header>
+
+    <!-- Target Character Card -->
+    <div class="char-card">
+      <div class="char-info">
+        <span class="char-category" id="charRowName">아행 (あ行)</span>
+        <div class="char-romaji" id="charRomaji">a</div>
+        <div class="char-word" id="charWord">대표단어: <strong>아침 (朝 - あさ)</strong></div>
+      </div>
+      <button class="tts-btn" id="ttsBtn" title="원어민 발음 듣기">🔊</button>
+    </div>
+
+    <!-- Writing Canvas Section -->
+    <section class="canvas-section">
+      <div class="canvas-header">
+        <div class="stroke-indicator">
+          <div class="stroke-dot"></div>
+          <span id="strokeCountText">0 / 3 획</span>
+        </div>
+        <div class="mode-switch">
+          <button class="mode-btn active" id="modeTraceBtn">가이드 모드</button>
+          <button class="mode-btn" id="modeTestBtn">실전 블라인드</button>
+        </div>
+      </div>
+
+      <!-- Canvas Area with Japanese Grid -->
+      <div class="canvas-wrapper">
+        <div class="grid-lines"></div>
+        <div class="guide-glyph" id="guideGlyph">あ</div>
+        <canvas id="drawCanvas"></canvas>
+      </div>
+
+      <!-- Feedback Status -->
+      <div class="feedback-banner" id="feedbackBanner">
+        <span id="feedbackText">따라 쓰고 [채점하기]를 누르세요</span>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="action-grid">
+        <button class="btn btn-secondary" id="clearBtn">
+          <span>지우기</span>
+        </button>
+        <button class="btn btn-primary" id="verifyBtn">
+          <span>✨ 채점하기</span>
+        </button>
+        <button class="btn btn-secondary" id="nextBtn">
+          <span>다음 ➔</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Character Selector Tray -->
+    <div class="selector-drawer">
+      <div class="selector-title">
+        <span>50음도 빠른 선택</span>
+        <span id="charIndexText">1 / 46</span>
+      </div>
+      <div class="kana-pills" id="kanaPillContainer"></div>
+    </div>
+  </div>
+
+  <script>
+    // 1. HIRAGANA DATABASE (50음도 + 획수 + 추천 단어)
+    const KANA_DECK = [
+      { char: 'あ', romaji: 'a', strokes: 3, row: '아행 (あ行)', word: '아침 (あさ)' },
+      { char: 'い', romaji: 'i', strokes: 2, row: '아행 (あ行)', word: '개 (いぬ)' },
+      { char: 'う', romaji: 'u', strokes: 2, row: '아행 (あ行)', word: '바다 (うみ)' },
+      { char: 'え', romaji: 'e', strokes: 2, row: '아행 (あ行)', word: '역 (えき)' },
+      { char: 'お', romaji: 'o', strokes: 3, row: '아행 (あ行)', word: '돈 (おかね)' },
+
+      { char: 'か', romaji: 'ka', strokes: 3, row: '카행 (か行)', word: '우산 (かさ)' },
+      { char: 'き', romaji: 'ki', strokes: 4, row: '카행 (か行)', word: '나무 (き)' },
+      { char: 'く', romaji: 'ku', strokes: 1, row: '카행 (か行)', word: '구름 (くも)' },
+      { char: 'け', romaji: 'ke', strokes: 3, row: '카행 (か行)', word: '털 (け)' },
+      { char: 'こ', romaji: 'ko', strokes: 2, row: '카행 (か行)', word: '아이 (こ)' },
+
+      { char: 'さ', romaji: 'sa', strokes: 3, row: '사행 (さ行)', word: '물고기 (さかな)' },
+      { char: 'し', romaji: 'shi', strokes: 1, row: '사행 (さ行)', word: '사슴 (しか)' },
+      { char: 'す', romaji: 'su', strokes: 2, row: '사행 (さ行)', word: '초밥 (すし)' },
+      { char: 'せ', romaji: 'se', strokes: 3, row: '사행 (さ行)', word: '세계 (せかい)' },
+      { char: 'そ', romaji: 'so', strokes: 1, row: '사행 (さ行)', word: '하늘 (そら)' },
+
+      { char: 'た', romaji: 'ta', strokes: 4, row: '타행 (た行)', word: '달걀 (たまご)' },
+      { char: 'ち', romaji: 'chi', strokes: 2, row: '타행 (た行)', word: '지도 (ちず)' },
+      { char: 'つ', romaji: 'tsu', strokes: 1, row: '타행 (た行)', word: '책상 (つくえ)' },
+      { char: 'て', romaji: 'te', strokes: 1, row: '타행 (た行)', word: '손 (て)' },
+      { char: 'と', romaji: 'to', strokes: 2, row: '타행 (た行)', word: '새 (とり)' },
+
+      { char: 'な', romaji: 'na', strokes: 4, row: '나행 (な行)', word: '여름 (なつ)' },
+      { char: 'に', romaji: 'ni', strokes: 3, row: '나행 (な行)', word: '고기 (にく)' },
+      { char: 'ぬ', romaji: 'nu', strokes: 2, row: '나행 (な行)', word: '인형 (ぬいぐるみ)' },
+      { char: 'ね', romaji: 'ne', strokes: 2, row: '나행 (な行)', word: '고양이 (ねこ)' },
+      { char: 'の', romaji: 'no', strokes: 1, row: '나행 (な行)', word: '노트 (ノート)' },
+
+      { char: 'は', romaji: 'ha', strokes: 3, row: '하행 (は行)', word: '꽃 (はな)' },
+      { char: 'ひ', romaji: 'hi', strokes: 1, row: '하행 (は行)', word: '사람 (ひと)' },
+      { char: 'ふ', romaji: 'fu', strokes: 4, row: '하행 (は行)', word: '배 (ふね)' },
+      { char: 'へ', romaji: 'he', strokes: 1, row: '하행 (は行)', word: '방 (へや)' },
+      { char: 'ほ', romaji: 'ho', strokes: 4, row: '하행 (は行)', word: '책 (ほん)' },
+
+      { char: 'ま', romaji: 'ma', strokes: 3, row: '마행 (ま行)', word: '마을 (まち)' },
+      { char: 'み', romaji: 'mi', strokes: 2, row: '마행 (ま行)', word: '물 (みず)' },
+      { char: 'む', romaji: 'mu', strokes: 3, row: '마행 (ま行)', word: '벌레 (むし)' },
+      { char: 'め', romaji: 'me', strokes: 2, row: '마행 (ま行)', word: '눈 (め)' },
+      { char: 'も', romaji: 'mo', strokes: 3, row: '마행 (ま行)', word: '복숭아 (もも)' },
+
+      { char: 'や', romaji: 'ya', strokes: 3, row: '야행 (や行)', word: '산 (やま)' },
+      { char: 'ゆ', romaji: 'yu', strokes: 2, row: '야행 (や行)', word: '눈 (ゆき)' },
+      { char: 'よ', romaji: 'yo', strokes: 2, row: '야행 (や行)', word: '밤 (よる)' },
+
+      { char: 'ら', romaji: 'ra', strokes: 2, row: '라행 (ら行)', word: '라면 (ラーメン)' },
+      { char: 'り', romaji: 'ri', strokes: 2, row: '라행 (ら行)', word: '사과 (りんご)' },
+      { char: 'る', romaji: 'ru', strokes: 1, row: '라행 (ら行)', word: '원숭이 (さる)' },
+      { char: 'れ', romaji: 're', strokes: 2, row: '라행 (ら行)', word: '역사 (れきし)' },
+      { char: 'ろ', romaji: 'ro', strokes: 1, row: '라행 (ら行)', word: '복도 (ろうか)' },
+
+      { char: 'わ', romaji: 'wa', strokes: 2, row: '와행 (わ行)', word: '악어 (わに)' },
+      { char: 'を', romaji: 'wo', strokes: 3, row: '와행 (わ行)', word: '~을/를 (조사)' },
+      { char: 'ん', romaji: 'n', strokes: 1, row: '응 (ん)', word: '책 (ほん)' }
+    ];
+
+    let currentIndex = 0;
+    let streak = 0;
+    let strokeCount = 0;
+    let isDrawing = false;
+    let strokePaths = []; // Array of strokes: [ [ {x,y}, ... ], ... ]
+    let currentStroke = [];
+    let isGuideVisible = true;
+
+    // Canvas References
+    const drawCanvas = document.getElementById('drawCanvas');
+    const ctx = drawCanvas.getContext('2d');
+    const fxCanvas = document.getElementById('fxCanvas');
+    const fxCtx = fxCanvas.getContext('2d');
+
+    // UI References
+    const guideGlyph = document.getElementById('guideGlyph');
+    const strokeCountText = document.getElementById('strokeCountText');
+    const feedbackBanner = document.getElementById('feedbackBanner');
+    const feedbackText = document.getElementById('feedbackText');
+    const charRowName = document.getElementById('charRowName');
+    const charRomaji = document.getElementById('charRomaji');
+    const charWord = document.getElementById('charWord');
+    const charIndexText = document.getElementById('charIndexText');
+    const streakCount = document.getElementById('streakCount');
+    const kanaPillContainer = document.getElementById('kanaPillContainer');
+
+    // 2. AUDIO SYNTHESIS & SOUND GENERATOR (Web Audio API)
+    const AudioEngine = {
+      ctx: null,
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          this.ctx = new AudioContext();
+        }
+        if (this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      },
+      playSuccess(combo = 1) {
+        this.init();
+        const baseFreq = 523.25; // C5
+        const notes = [baseFreq, baseFreq * 1.25, baseFreq * 1.5, baseFreq * 2]; // Arpeggio
+        notes.forEach((freq, idx) => {
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(freq * Math.min(1 + combo * 0.05, 1.6), this.ctx.currentTime + idx * 0.08);
+          gain.gain.setValueAtTime(0.2, this.ctx.currentTime + idx * 0.08);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + idx * 0.08 + 0.35);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start(this.ctx.currentTime + idx * 0.08);
+          osc.stop(this.ctx.currentTime + idx * 0.08 + 0.4);
+        });
+      },
+      playError() {
+        this.init();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(160, this.ctx.currentTime);
+        osc.frequency.linearRampToValueAtTime(110, this.ctx.currentTime + 0.25);
+        gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 0.25);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.26);
+      },
+      playStroke() {
+        this.init();
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(400 + Math.random() * 80, this.ctx.currentTime);
+        gain.gain.setValueAtTime(0.03, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.05);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.06);
+      }
+    };
+
+    // 3. JAPANESE TTS (Web Speech)
+    function speakKana(text) {
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = 'ja-JP';
+      utter.rate = 0.85;
+      utter.pitch = 1.05;
+      window.speechSynthesis.speak(utter);
+    }
+
+    // 4. CANVAS SETUP & RESOLUTION HANDLING
+    function resizeCanvases() {
+      const rect = drawCanvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      drawCanvas.width = rect.width * dpr;
+      drawCanvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+      redrawAllStrokes();
+
+      fxCanvas.width = window.innerWidth * dpr;
+      fxCanvas.height = window.innerHeight * dpr;
+      fxCtx.scale(dpr, dpr);
+    }
+    window.addEventListener('resize', resizeCanvases);
+
+    // 5. TOUCH & MOUSE DRAWING ENGINE
+    function getCanvasCoords(e) {
+      const rect = drawCanvas.getBoundingClientRect();
+      let clientX, clientY;
+      if (e.touches && e.touches.length > 0) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+      } else {
+        clientX = e.clientX;
+        clientY = e.clientY;
+      }
+      return {
+        x: clientX - rect.left,
+        y: clientY - rect.top
+      };
+    }
+
+    function startDrawing(e) {
+      e.preventDefault();
+      isDrawing = true;
+      const pt = getCanvasCoords(e);
+      currentStroke = [pt];
+      strokePaths.push(currentStroke);
+      strokeCount++;
+      updateStrokeIndicator();
+      AudioEngine.playStroke();
+      renderStroke(currentStroke);
+    }
+
+    function moveDrawing(e) {
+      if (!isDrawing) return;
+      e.preventDefault();
+      const pt = getCanvasCoords(e);
+      currentStroke.push(pt);
+      renderStroke(currentStroke);
+    }
+
+    function endDrawing(e) {
+      if (!isDrawing) return;
+      isDrawing = false;
+    }
+
+    function renderStroke(pts) {
+      if (pts.length < 2) return;
+      ctx.strokeStyle = '#ff477e';
+      ctx.lineWidth = 14;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      ctx.beginPath();
+      ctx.moveTo(pts[0].x, pts[0].y);
+      for (let i = 1; i < pts.length; i++) {
+        const xc = (pts[i].x + pts[i - 1].x) / 2;
+        const yc = (pts[i].y + pts[i - 1].y) / 2;
+        ctx.quadraticCurveTo(pts[i - 1].x, pts[i - 1].y, xc, yc);
+      }
+      ctx.stroke();
+    }
+
+    function redrawAllStrokes() {
+      const rect = drawCanvas.getBoundingClientRect();
+      ctx.clearRect(0, 0, rect.width, rect.height);
+      strokePaths.forEach(pts => renderStroke(pts));
+    }
+
+    drawCanvas.addEventListener('mousedown', startDrawing);
+    window.addEventListener('mousemove', moveDrawing);
+    window.addEventListener('mouseup', endDrawing);
+
+    drawCanvas.addEventListener('touchstart', startDrawing, { passive: false });
+    window.addEventListener('touchmove', moveDrawing, { passive: false });
+    window.addEventListener('touchend', endDrawing);
+
+    // 6. CLEAR CANVAS
+    function clearCanvas() {
+      strokePaths = [];
+      currentStroke = [];
+      strokeCount = 0;
+      updateStrokeIndicator();
+      const rect = drawCanvas.getBoundingClientRect();
+      ctx.clearRect(0, 0, rect.width, rect.height);
+      hideFeedback();
+    }
+
+    function updateStrokeIndicator() {
+      const target = KANA_DECK[currentIndex].strokes;
+      strokeCountText.innerText = `${strokeCount} / ${target} 획`;
+    }
+
+    // 7. ADVANCED IN-BROWSER STROKE RECOGNITION ENGINE
+    function evaluateHandwriting() {
+      if (strokePaths.length === 0) {
+        showFeedback(false, '글씨를 먼저 작성해 주세요! ✏️');
+        return;
+      }
+
+      const target = KANA_DECK[currentIndex];
+      const w = 150;
+      const h = 150;
+
+      // 1. Offscreen Reference Canvas for Target Glyph
+      const refCanvas = document.createElement('canvas');
+      refCanvas.width = w;
+      refCanvas.height = h;
+      const refCtx = refCanvas.getContext('2d');
+      refCtx.font = 'bold 105px "M PLUS Rounded 1c", "Noto Sans JP", sans-serif';
+      refCtx.textAlign = 'center';
+      refCtx.textBaseline = 'middle';
+      refCtx.fillStyle = '#000000';
+      refCtx.fillText(target.char, w / 2, h / 2 + 6);
+
+      const refData = refCtx.getImageData(0, 0, w, h).data;
+
+      // 2. Offscreen User Drawing Canvas Scaled to (150x150)
+      const userCanvas = document.createElement('canvas');
+      userCanvas.width = w;
+      userCanvas.height = h;
+      const userCtx = userCanvas.getContext('2d');
+      userCtx.drawImage(drawCanvas, 0, 0, w, h);
+      const userData = userCtx.getImageData(0, 0, w, h).data;
+
+      // 3. Pixel Matrix Comparisons (Dilation, Overlap, Overflow)
+      let targetPixels = 0;
+      let matchedPixels = 0;
+      let userPixels = 0;
+      let outsidePixels = 0;
+
+      const tolerance = 6; // Dilation radius in pixels
+
+      for (let y = 0; y < h; y++) {
+        for (let x = 0; x < w; x++) {
+          const idx = (y * w + x) * 4;
+          const isTarget = refData[idx + 3] > 60;
+          const isUser = userData[idx + 3] > 60;
+
+          if (isTarget) targetPixels++;
+          if (isUser) userPixels++;
+
+          if (isTarget) {
+            // Check if user drew near this target pixel
+            let foundNearby = false;
+            for (let dy = -tolerance; dy <= tolerance && !foundNearby; dy++) {
+              for (let dx = -tolerance; dx <= tolerance && !foundNearby; dx++) {
+                const nx = x + dx;
+                const ny = y + dy;
+                if (nx >= 0 && nx < w && ny >= 0 && ny < h) {
+                  const nidx = (ny * w + nx) * 4;
+                  if (userData[nidx + 3] > 60) {
+                    foundNearby = true;
+                  }
+                }
+              }
+            }
+            if (foundNearby) matchedPixels++;
+          }
+
+          if (isUser) {
+            // Check if user stroke is way outside the target character
+            let nearTarget = false;
+            for (let dy = -tolerance * 2; dy <= tolerance * 2 && !nearTarget; dy++) {
+              for (let dx = -tolerance * 2; dx <= tolerance * 2 && !nearTarget; dx++) {
+                const nx = x + dx;
+                const ny = y + dy;
+                if (nx >= 0 && nx < w && ny >= 0 && ny < h) {
+                  const nidx = (ny * w + nx) * 4;
+                  if (refData[nidx + 3] > 60) {
+                    nearTarget = true;
+                  }
+                }
+              }
+            }
+            if (!nearTarget) outsidePixels++;
+          }
+        }
+      }
+
+      if (targetPixels === 0 || userPixels === 0) {
+        showFeedback(false, '문자가 감지되지 않았습니다. 다시 써주세요!');
+        return;
+      }
+
+      const coverageRatio = matchedPixels / targetPixels;
+      const precisionRatio = Math.max(0, 1 - (outsidePixels / (userPixels + 1)));
+
+      // Stroke Count Bonus
+      const strokeDiff = Math.abs(strokeCount - target.strokes);
+      let strokeBonus = 1.0;
+      if (strokeDiff === 1) strokeBonus = 0.85;
+      else if (strokeDiff >= 2) strokeBonus = 0.6;
+
+      // Final Score Calculation (0 ~ 100%)
+      const score = Math.min(100, Math.round(
+        (coverageRatio * 0.60 + precisionRatio * 0.25 + strokeBonus * 0.15) * 100
+      ));
+
+      console.log(`[Verification] Score: ${score}% | Coverage: ${(coverageRatio*100).toFixed(1)}% | Precision: ${(precisionRatio*100).toFixed(1)}% | Strokes: ${strokeCount}/${target.strokes}`);
+
+      if (score >= 60) {
+        streak++;
+        streakCount.innerText = streak;
+        AudioEngine.playSuccess(streak);
+        speakKana(target.char);
+        spawnConfetti();
+        showFeedback(true, `완벽해요! (${score}점) 획순과 형태 일치 🎉`);
+        setTimeout(() => {
+          nextKana();
+        }, 1600);
+      } else {
+        streak = 0;
+        streakCount.innerText = streak;
+        AudioEngine.playError();
+        let hint = '형태가 조금 벗어났어요. 가이드를 보고 천천히 써보세요!';
+        if (strokeDiff > 1) {
+          hint = `획수가 맞지 않아요. (목표: ${target.strokes}획 / 입력: ${strokeCount}획)`;
+        } else if (coverageRatio < 0.45) {
+          hint = '글자의 획을 빠뜨린 곳이 없는지 확인해 보세요!';
+        }
+        showFeedback(false, `${hint} (${score}점)`);
+      }
+    }
+
+    function showFeedback(isSuccess, message) {
+      feedbackBanner.className = `feedback-banner show ${isSuccess ? 'perfect' : 'retry'}`;
+      feedbackText.innerText = message;
+    }
+
+    function hideFeedback() {
+      feedbackBanner.className = 'feedback-banner';
+    }
+
+    // 8. NAVIGATION & KANA RENDERING
+    function renderCurrentKana() {
+      const data = KANA_DECK[currentIndex];
+      guideGlyph.innerText = data.char;
+      charRowName.innerText = data.row;
+      charRomaji.innerText = `${data.romaji}`;
+      charWord.innerHTML = `대표 단어: <strong>${data.word}</strong>`;
+      charIndexText.innerText = `${currentIndex + 1} / ${KANA_DECK.length}`;
+      updateStrokeIndicator();
+      clearCanvas();
+
+      // Update pills
+      document.querySelectorAll('.pill').forEach((pill, idx) => {
+        if (idx === currentIndex) {
+          pill.classList.add('active');
+          pill.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        } else {
+          pill.classList.remove('active');
+        }
+      });
+    }
+
+    function nextKana() {
+      currentIndex = (currentIndex + 1) % KANA_DECK.length;
+      renderCurrentKana();
+    }
+
+    // 9. CONFETTI PARTICLE SYSTEM
+    const particles = [];
+    function spawnConfetti() {
+      const colors = ['#ff477e', '#4dabf7', '#ffd43b', '#38d9a9', '#ff922b'];
+      for (let i = 0; i < 60; i++) {
+        particles.push({
+          x: window.innerWidth / 2,
+          y: window.innerHeight / 2 - 50,
+          vx: (Math.random() - 0.5) * 14,
+          vy: (Math.random() - 0.8) * 16,
+          size: Math.random() * 8 + 4,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          vr: (Math.random() - 0.5) * 15,
+          alpha: 1
+        });
+      }
+    }
+
+    function animateParticles() {
+      fxCtx.clearRect(0, 0, fxCanvas.width, fxCanvas.height);
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.35; // Gravity
+        p.rotation += p.vr;
+        p.alpha -= 0.015;
+
+        if (p.alpha <= 0) {
+          particles.splice(i, 1);
+          continue;
+        }
+
+        fxCtx.save();
+        fxCtx.globalAlpha = p.alpha;
+        fxCtx.translate(p.x, p.y);
+        fxCtx.rotate((p.rotation * Math.PI) / 180);
+        fxCtx.fillStyle = p.color;
+        fxCtx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+        fxCtx.restore();
+      }
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    // 10. SETUP PILLS & CONTROLS
+    function initApp() {
+      KANA_DECK.forEach((k, idx) => {
+        const pill = document.createElement('button');
+        pill.className = `pill ${idx === 0 ? 'active' : ''}`;
+        pill.innerText = `${k.char} (${k.romaji})`;
+        pill.addEventListener('click', () => {
+          currentIndex = idx;
+          renderCurrentKana();
+        });
+        kanaPillContainer.appendChild(pill);
+      });
+
+      // Events
+      document.getElementById('clearBtn').addEventListener('click', clearCanvas);
+      document.getElementById('verifyBtn').addEventListener('click', evaluateHandwriting);
+      document.getElementById('nextBtn').addEventListener('click', nextKana);
+      document.getElementById('ttsBtn').addEventListener('click', () => {
+        speakKana(KANA_DECK[currentIndex].char);
+      });
+
+      // Guide mode toggle
+      const modeTraceBtn = document.getElementById('modeTraceBtn');
+      const modeTestBtn = document.getElementById('modeTestBtn');
+
+      modeTraceBtn.addEventListener('click', () => {
+        isGuideVisible = true;
+        modeTraceBtn.classList.add('active');
+        modeTestBtn.classList.remove('active');
+        guideGlyph.classList.remove('hidden');
+      });
+
+      modeTestBtn.addEventListener('click', () => {
+        isGuideVisible = false;
+        modeTestBtn.classList.add('active');
+        modeTraceBtn.classList.remove('active');
+        guideGlyph.classList.add('hidden');
+      });
+
+      resizeCanvases();
+      renderCurrentKana();
+    }
+
+    document.addEventListener('DOMContentLoaded', initApp);
+  </script>
+</body>
+</html>
