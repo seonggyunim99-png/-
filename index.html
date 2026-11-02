@@ -198,7 +198,7 @@
     .list { display: flex; flex-direction: column; gap: 6px; }
     .row {
       background: var(--card); border: 1px solid var(--border); border-radius: var(--r-md);
-      padding: 11px 12px; display: grid; grid-template-columns: 30px 1fr auto; gap: 10px; align-items: center;
+      padding: 11px 12px; display: grid; grid-template-columns: 34px 1fr auto; gap: 10px; align-items: center;
     }
     .row .num { font-size: 11px; color: var(--muted); text-align: center; font-weight: 700; }
     .row .w { font-family: var(--jp); font-size: 19px; font-weight: 800; cursor: pointer; }
@@ -214,16 +214,52 @@
     .empty { text-align: center; color: var(--muted); padding: 30px; font-size: 14px; }
 
     /* Grammar */
-    .gram h3 { font-size: 16px; margin-bottom: 8px; display: flex; gap: 8px; align-items: center; }
-    .gram p { font-size: 14px; color: var(--muted); line-height: 1.65; word-break: keep-all; }
-    .gram .ex { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
-    .gram .ex div { background: var(--inner); border-radius: var(--r-sm); padding: 10px 12px; cursor: pointer; }
-    .gram .ex .j { font-family: var(--jp); font-size: 17px; font-weight: 700; }
-    .gram .ex .k { font-size: 12px; color: var(--muted); margin-top: 2px; }
-    .gram table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 13px; }
-    .gram td, .gram th { border: 1px solid var(--border); padding: 7px; text-align: center; }
-    .gram th { background: var(--inner); color: var(--muted); font-weight: 700; }
-    .gram td.jp { font-size: 16px; }
+    .concept details { background: var(--card); border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; }
+    .concept summary { list-style: none; padding: 15px 16px; font-weight: 800; font-size: 15px; display: flex; align-items: center; gap: 8px; cursor: pointer; }
+    .concept summary::-webkit-details-marker { display: none; }
+    .concept summary::after { content: '▾'; margin-left: auto; color: var(--muted); transition: transform .2s; }
+    .concept details[open] summary::after { transform: rotate(180deg); }
+    .concept summary small { color: var(--muted); font-weight: 600; font-size: 12px; }
+    .concept .body { padding: 0 16px 16px; display: flex; flex-direction: column; gap: 10px; font-size: 14px; color: var(--muted); line-height: 1.65; word-break: keep-all; }
+    .concept .body b { color: var(--text); }
+    .key { background: linear-gradient(160deg, rgba(255,77,128,.14), rgba(56,189,248,.08)); border: 1px solid var(--primary); border-radius: var(--r-lg); padding: 16px; }
+    .key h3 { font-size: 16px; margin-bottom: 10px; }
+    .key ol { padding-left: 20px; display: flex; flex-direction: column; gap: 8px; font-size: 14px; line-height: 1.6; word-break: keep-all; }
+    .key b { color: var(--accent); }
+    .rule { background: var(--inner); border-radius: var(--r-sm); padding: 10px 12px; color: var(--text); font-weight: 700; }
+    .tbl-wrap { overflow-x: auto; }
+    .ctbl { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .ctbl th, .ctbl td { border: 1px solid var(--border); padding: 7px 8px; text-align: left; vertical-align: middle; }
+    .ctbl th { background: var(--inner); color: var(--muted); font-weight: 700; white-space: nowrap; }
+    .ctbl td small { color: var(--muted); font-size: 11px; }
+    .ctbl td.j { font-family: var(--jp); font-size: 15px; color: var(--text); font-weight: 700; white-space: nowrap; }
+    .ctbl small.kr { font-family: 'Noto Sans KR', sans-serif; font-weight: 600; white-space: normal; }
+    .ctbl small.f { color: var(--secondary); font-size: 12px; font-weight: 700; white-space: nowrap; }
+    .ctbl tr[data-say] { cursor: pointer; }
+    .concept em { font-style: normal; color: var(--primary); }
+    .say { cursor: pointer; color: var(--text); font-weight: 700; }
+    .ox { display: grid; gap: 6px; }
+    .ox div { background: var(--inner); border-radius: var(--r-sm); padding: 9px 12px; font-family: var(--jp); font-size: 15px; color: var(--text); }
+    .x { text-decoration: line-through; text-decoration-color: var(--danger); color: var(--muted) !important; }
+    .adj-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .adj-chips button { background: var(--inner); border: 1px solid var(--border); color: var(--text); border-radius: 99px; padding: 6px 11px; font-size: 15px; font-family: var(--jp); font-weight: 700; }
+    .adj-chips button small { font-family: 'Noto Sans KR', sans-serif; color: var(--muted); font-size: 11px; margin-left: 5px; font-weight: 600; }
+    .ex-list { display: flex; flex-direction: column; gap: 8px; }
+    .ex-item { background: var(--inner); border-radius: var(--r-md); padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+    .ex-item .kq { color: var(--text); font-weight: 700; }
+    .ex-item .jp { font-size: 16px; color: var(--text); font-weight: 700; }
+    .ex-item .reveal { align-self: flex-start; }
+    .pick { display: flex; gap: 8px; flex-wrap: wrap; }
+    .pick button { flex: 1; min-width: 130px; background: var(--card); border: 2px solid var(--border); color: var(--text); border-radius: var(--r-sm); padding: 10px; font-family: var(--jp); font-size: 15px; font-weight: 700; }
+    .pick button.correct { border-color: var(--success); background: rgba(52,211,153,.15); }
+    .pick button.wrong { border-color: var(--danger); background: rgba(248,113,113,.15); }
+    .why { font-size: 13px; color: var(--muted); }
+    .concept .ex { display: flex; flex-direction: column; gap: 6px; }
+    .concept .ex > div { background: var(--inner); border-radius: var(--r-sm); padding: 10px 12px; cursor: pointer; }
+    .concept .ex .j { font-family: var(--jp); font-size: 17px; font-weight: 700; color: var(--text); }
+    .concept .ex .k { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .opt.jp-opt.long { font-size: 16px; }
+    .seg { flex-wrap: wrap; }
 
     .toast {
       position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%) translateY(80px);
@@ -259,7 +295,7 @@
     <button class="nav-item" data-tab="spell"><i>🔤</i>철자</button>
     <button class="nav-item" data-tab="match"><i>🧩</i>짝맞추기</button>
     <button class="nav-item" data-tab="list"><i>📖</i>단어장</button>
-    <button class="nav-item" data-tab="grammar"><i>💡</i>문법</button>
+    <button class="nav-item" data-tab="grammar"><i>💡</i>개념</button>
   </nav>
 
   <!-- 카드 -->
@@ -284,6 +320,7 @@
         <button data-v="jp2kr">일 → 뜻</button>
         <button data-v="kr2jp">뜻 → 일</button>
         <button data-v="kanji">한자 → 읽기</button>
+        <button data-v="conj">형용사 활용</button>
       </div>
     </div>
     <div id="quizArea"></div>
@@ -310,45 +347,190 @@
     <div class="list" id="wordList"></div>
   </section>
 
-  <!-- 문법 -->
-  <section class="view" id="view-grammar">
-    <div class="panel gram">
-      <h3>① い형용사 vs な형용사</h3>
-      <p><b class="jp">きれいだ</b>·<b class="jp">ゆうめいだ</b>는 い로 끝나는 것처럼 보이지만 <b>な형용사</b>예요. 정중형은 だ를 です로 바꿔서 <span class="jp">きれいです</span>, <span class="jp">ゆうめいです</span>.
-      반면 <span class="jp">かわいい・おいしい・うれしい</span>는 <b>い형용사</b>로, 그대로 <span class="jp">かわいいです</span>.</p>
-      <table>
-        <tr><th>い형용사</th><th>な형용사</th></tr>
-        <tr><td class="jp" id="adjI"></td><td class="jp" id="adjNa"></td></tr>
-      </table>
+  <!-- 개념 -->
+  <section class="view concept" id="view-grammar">
+    <div class="key">
+      <h3>⭐ 시험 전에 꼭 알아야 할 핵심 6가지</h3>
+      <ol>
+        <li>형용사는 두 종류예요. 기본형 끝이 <span class="jp">い</span>면 <b>い형용사</b>, <span class="jp">だ</span>면 <b>な형용사</b>.</li>
+        <li><b>い형용사</b>는 정중형에 <span class="jp">です</span>만 붙여요. 부정·과거는 끝의 <span class="jp">い</span>를 자르고 <span class="jp">くないです / かったです</span>.</li>
+        <li><b>な형용사</b>는 <span class="jp">だ</span>를 지우고 <span class="jp">です / じゃないです / でした</span>. 명사를 꾸밀 때만 <span class="jp">だ → な</span>.</li>
+        <li><b>함정 단어</b>: <span class="jp">きれいだ・ゆうめいだ・きらいだ</span>는 い로 끝나 보여도 な형용사예요. <span class="jp">きれくない</span> ✕ → <span class="jp">きれいじゃない</span> ○</li>
+        <li><b>예외</b>: <span class="jp">いい</span>(좋다)는 활용할 때 <span class="jp">よ</span>로 바뀌어요. <span class="jp">よくないです・よかったです</span> (<span class="jp">いくない</span> ✕)</li>
+        <li><b>인사말은 짝꿍으로</b>: <span class="jp">いってきます ↔ いってらっしゃい</span>, <span class="jp">ただいま ↔ おかえり</span>, <span class="jp">おじゃまします ↔ いらっしゃい</span></li>
+      </ol>
     </div>
-    <div class="panel gram">
-      <h3>② 코소아도 — 대명사 vs 연체사</h3>
-      <p><b class="jp">これ</b>(이것)·<b class="jp">それ</b>(그것)은 혼자 쓰는 <b>대명사</b>. <b class="jp">この</b>(이~)·<b class="jp">その</b>(그~)·<b class="jp">どんな</b>(어떤~)는 반드시 뒤에 명사가 오는 <b>연체사</b>예요.</p>
-      <div class="ex">
-        <div data-say="これは ねこです。"><div class="j">これは ねこです。</div><div class="k">이것은 고양이입니다.</div></div>
-        <div data-say="この ねこは かわいいです。"><div class="j">この ねこは かわいいです。</div><div class="k">이 고양이는 귀엽습니다.</div></div>
-        <div data-say="その しゃしんは すてきですね。"><div class="j">その しゃしんは すてきですね。</div><div class="k">그 사진은 멋지네요.</div></div>
+
+    <details>
+      <summary>① 형용사 두 종류 구별하기</summary>
+      <div class="body">
+        <p>끝 글자만 보면 돼요. 끝 글자가 무엇이냐에 따라 활용(변신) 규칙이 완전히 달라져요.</p>
+        <div class="tbl-wrap"><table class="ctbl">
+          <tr><th>い형용사</th><th>な형용사</th></tr>
+          <tr><td>기본형이 <b class="jp">~い</b>로 끝남</td><td>기본형이 <b class="jp">~だ</b>로 끝남</td></tr>
+        </table></div>
+        <p>이 앱에 들어 있는 형용사 전부예요. 누르면 아래 <b>⑦ 활용표</b>가 바로 나와요.</p>
+        <div><b>い형용사</b></div><div class="adj-chips" id="adjIChips"></div>
+        <div><b>な형용사</b></div><div class="adj-chips" id="adjNaChips"></div>
       </div>
-    </div>
-    <div class="panel gram">
-      <h3>③ 비교 표현</h3>
-      <p><b class="jp">どちら</b>(어느 쪽) + <b class="jp">～より</b>(~보다) + <b class="jp">ほう</b>(~쪽) + <b class="jp">いい</b>(좋다)를 조합하면 비교 문장이 돼요.<br>
-      <b class="jp">A より B の ほうが いいです</b> = A보다 B 쪽이 좋습니다.</p>
-      <div class="ex">
-        <div data-say="ラーメンと うどんと どちらが いいですか。"><div class="j">ラーメンと うどんと どちらが いいですか。</div><div class="k">라면과 우동 중 어느 쪽이 좋습니까?</div></div>
-        <div data-say="ラーメンより うどんの ほうが いいです。"><div class="j">ラーメンより うどんの ほうが いいです。</div><div class="k">라면보다 우동 쪽이 좋습니다.</div></div>
+    </details>
+
+    <details>
+      <summary>② い형용사 활용 <small>예: かわいい</small></summary>
+      <div class="body">
+        <div class="rule">정중형·수식형은 그대로 붙이고, 부정형·과거형은 끝의 <span class="jp">い</span>를 잘라요!</div>
+        <div id="iTable"></div>
+        <p>빨간 글자가 바뀌는 부분이에요. 줄을 누르면 발음을 들을 수 있어요.</p>
       </div>
-    </div>
-    <div class="panel gram">
-      <h3>④ 물건 사기 & 숫자</h3>
-      <p>개수는 <span class="jp">ひとつ・ふたつ・みっつ・よっつ・いつつ</span>, 값은 <span class="jp">いくら</span>로 물어요. 만 단위에는 반드시 <span class="jp">いち</span>를 붙여 <b class="jp">いちまん</b>.</p>
-      <div class="ex">
-        <div data-say="すみません、この ペンは いくらですか。"><div class="j">すみません、この ペンは いくらですか。</div><div class="k">저기요, 이 펜은 얼마예요?</div></div>
-        <div data-say="りんごを みっつ ください。"><div class="j">りんごを みっつ ください。</div><div class="k">사과를 세 개 주세요.</div></div>
-        <div data-say="おたんじょうび おめでとう！"><div class="j">おたんじょうび おめでとう！</div><div class="k">생일 축하해!</div></div>
+    </details>
+
+    <details>
+      <summary>③ な형용사 활용 <small>예: きれいだ</small></summary>
+      <div class="body">
+        <div class="rule">활용할 때는 끝의 <span class="jp">だ</span>를 지워요! 명사를 꾸밀 때는 <span class="jp">だ</span>가 <span class="jp">な</span>로 바뀌어요.</div>
+        <div id="naTable"></div>
+        <p><span class="jp">じゃないです</span>는 <span class="jp">ではありません</span>과 같은 뜻이에요. (더 딱딱한 말)</p>
       </div>
-      <p style="margin-top:10px">예문을 누르면 발음을 들을 수 있어요.</p>
-    </div>
+    </details>
+
+    <details>
+      <summary>④ 명사는 な형용사와 쌍둥이</summary>
+      <div class="body">
+        <p>명사 뒤에 <span class="jp">だ</span>를 붙이면 "~이다"가 돼요. (서술격 조사) 활용 방법은 な형용사와 똑같아요.</p>
+        <div class="tbl-wrap"><table class="ctbl">
+          <tr><th>형태</th><th>명사 (がくせい 학생)</th><th>な형용사 (ひまだ)</th></tr>
+          <tr data-say="がくせいだ"><td>기본형</td><td class="j">がくせいだ</td><td class="j">ひまだ</td></tr>
+          <tr data-say="がくせいです"><td>정중형</td><td class="j">がくせい<em>です</em></td><td class="j">ひま<em>です</em></td></tr>
+          <tr data-say="がくせいじゃないです"><td>부정형</td><td class="j">がくせい<em>じゃないです</em></td><td class="j">ひま<em>じゃないです</em></td></tr>
+          <tr data-say="がくせいでした"><td>과거형</td><td class="j">がくせい<em>でした</em></td><td class="j">ひま<em>でした</em></td></tr>
+        </table></div>
+        <p>다른 건 <b>수식형 하나뿐</b>이에요. な형용사는 <span class="jp">な</span>를 붙여요. (<span class="jp">ひまな ひと</span> 한가한 사람)</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>⑤ 함정 주의! い처럼 보이는 な형용사</summary>
+      <div class="body">
+        <p>겉보기엔 い가 들어 있지만 기본형이 <b class="jp">だ</b>로 끝나요. 그래서 な형용사예요.</p>
+        <div class="tbl-wrap"><table class="ctbl">
+          <tr data-say="きれいだ"><td class="j">きれいだ</td><td>예쁘다, 깨끗하다</td></tr>
+          <tr data-say="ゆうめいだ"><td class="j">ゆうめいだ</td><td>유명하다</td></tr>
+          <tr data-say="きらいだ"><td class="j">きらいだ</td><td>싫어하다</td></tr>
+        </table></div>
+        <p><b>시험 단골 문제</b></p>
+        <div class="ox">
+          <div class="x">✕ きれい へや</div><div>○ きれいな へや</div>
+          <div class="x">✕ きれくないです</div><div>○ きれいじゃないです</div>
+          <div class="x">✕ きれかったです</div><div>○ きれいでした</div>
+        </div>
+        <p><b>반대 실수도 조심</b>: い형용사에 な형용사 규칙을 쓰면 틀려요.</p>
+        <div class="ox">
+          <div class="x">✕ さむいでした</div><div>○ さむかったです (추웠습니다)</div>
+          <div class="x">✕ ちいさいじゃないです</div><div>○ ちいさくないです (작지 않습니다)</div>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>⑥ 심화: いい 예외 · 과거 부정형 · 반말</summary>
+      <div class="body">
+        <p><b>いい(좋다)는 활용할 때 よい로 바뀌어요.</b></p>
+        <div class="tbl-wrap"><table class="ctbl">
+          <tr data-say="いいです"><td class="j">いいです</td><td>좋습니다</td></tr>
+          <tr data-say="よくないです"><td class="j"><em>よ</em>くないです</td><td>좋지 않습니다</td></tr>
+          <tr data-say="よかったです"><td class="j"><em>よ</em>かったです</td><td>좋았습니다</td></tr>
+        </table></div>
+        <div class="ox"><div class="x">✕ いくないです</div><div class="x">✕ いかったです</div></div>
+        <p><b>과거 부정형</b> (~지 않았습니다)</p>
+        <div class="tbl-wrap"><table class="ctbl">
+          <tr><th></th><th>공식</th><th>예</th></tr>
+          <tr data-say="おもしろくなかったです"><td>い형용사</td><td class="j">い → くなかったです</td><td class="j">おもしろくなかったです</td></tr>
+          <tr data-say="ひまじゃなかったです"><td>な형용사</td><td class="j">だ → じゃなかったです</td><td class="j">ひまじゃなかったです</td></tr>
+        </table></div>
+        <p>왜 이렇게 될까요? <span class="jp">くない</span>, <span class="jp">じゃない</span>가 <b>い로 끝나니까</b> い형용사처럼 い를 자르고 <span class="jp">かった</span>를 붙인 거예요.</p>
+        <p><b>반말(보통형)</b>은 <span class="jp">です</span>를 빼면 돼요. 단, な형용사 과거 반말은 <span class="jp">だった</span>.</p>
+        <div class="tbl-wrap"><table class="ctbl">
+          <tr data-say="すきじゃない"><td class="j">すきじゃない</td><td>안 좋아해</td></tr>
+          <tr data-say="すきだった"><td class="j">すきだった</td><td>좋아했어</td></tr>
+          <tr data-say="かわいくない"><td class="j">かわいくない</td><td>안 귀여워</td></tr>
+          <tr data-say="かわいかった"><td class="j">かわいかった</td><td>귀여웠어</td></tr>
+        </table></div>
+      </div>
+    </details>
+
+    <details id="conjDetails">
+      <summary>⑦ 활용표 만들기 <small>형용사를 고르면 자동 완성</small></summary>
+      <div class="body">
+        <select class="search" id="conjSelect" aria-label="형용사 선택"></select>
+        <div id="conjOut"></div>
+      </div>
+    </details>
+
+    <details>
+      <summary>⑧ 활동지 확인 문제</summary>
+      <div class="body">
+        <p><b>⑨ 알맞은 것을 고르세요.</b></p>
+        <div class="ex-list" id="ex9"></div>
+        <p><b>STEP 5 틀린 곳을 찾아 고쳐 봅시다.</b> 먼저 머릿속으로 고쳐 본 다음 정답을 확인하세요.</p>
+        <div class="ex-list" id="ex5"></div>
+        <button class="btn" id="exReset">🔄 다시 풀기</button>
+      </div>
+    </details>
+
+    <details>
+      <summary>⑨ 인사말 짝꿍 & 어원</summary>
+      <div class="body">
+        <div class="tbl-wrap"><table class="ctbl">
+          <tr><th>상황</th><th>하는 사람</th><th>받는 사람</th></tr>
+          <tr><td>집을 나갈 때</td><td><span class="jp say" data-say="いってきます">いってきます</span><br>다녀오겠습니다</td><td><span class="jp say" data-say="いってらっしゃい">いってらっしゃい</span><br>다녀오세요</td></tr>
+          <tr><td>집에 돌아왔을 때</td><td><span class="jp say" data-say="ただいま">ただいま</span><br>다녀왔습니다</td><td><span class="jp say" data-say="おかえり">おかえり(なさい)</span><br>어서 와</td></tr>
+          <tr><td>남의 집에 갈 때</td><td><span class="jp say" data-say="おじゃまします">おじゃまします</span><br>실례합니다</td><td><span class="jp say" data-say="いらっしゃい">いらっしゃい</span><br>어서 와</td></tr>
+        </table></div>
+        <p><b>어원을 알면 안 헷갈려요</b></p>
+        <div class="ox">
+          <div><span class="jp">いって</span>(<span class="jp">いく</span> 가다) + <span class="jp">きます</span>(<span class="jp">くる</span> 오다) = 갔다 오겠습니다</div>
+          <div><span class="jp">いって</span>(<span class="jp">いく</span> 가다) + <span class="jp">らっしゃい</span>(오세요) = 갔다 오세요</div>
+          <div><span class="jp">お</span> + <span class="jp">かえり</span>(<span class="jp">かえる</span> 돌아오다) = 돌아왔구나, 어서 와</div>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>⑩ 코소아도: 대명사 vs 연체사</summary>
+      <div class="body">
+        <p><b class="jp">これ</b>(이것)·<b class="jp">それ</b>(그것)은 혼자 쓰는 <b>대명사</b>예요. <b class="jp">この</b>(이~)·<b class="jp">その</b>(그~)·<b class="jp">どんな</b>(어떤~)는 반드시 뒤에 명사가 오는 <b>연체사</b>예요.</p>
+        <div class="ex">
+          <div data-say="これは ねこです。"><div class="j">これは ねこです。</div><div class="k">이것은 고양이입니다.</div></div>
+          <div data-say="この ねこは かわいいです。"><div class="j">この ねこは かわいいです。</div><div class="k">이 고양이는 귀엽습니다.</div></div>
+          <div data-say="その しゃしんは すてきですね。"><div class="j">その しゃしんは すてきですね。</div><div class="k">그 사진은 멋지네요.</div></div>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>⑪ 비교 표현</summary>
+      <div class="body">
+        <p><b class="jp">どちら</b>(어느 쪽) + <b class="jp">～より</b>(~보다) + <b class="jp">ほう</b>(~쪽) + <b class="jp">いい</b>(좋다)를 조합하면 비교 문장이 돼요.<br>
+        <b class="jp">A より B の ほうが いいです</b> = A보다 B 쪽이 좋습니다.</p>
+        <div class="ex">
+          <div data-say="ラーメンと うどんと どちらが いいですか。"><div class="j">ラーメンと うどんと どちらが いいですか。</div><div class="k">라면과 우동 중 어느 쪽이 좋습니까?</div></div>
+          <div data-say="ラーメンより うどんの ほうが いいです。"><div class="j">ラーメンより うどんの ほうが いいです。</div><div class="k">라면보다 우동 쪽이 좋습니다.</div></div>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>⑫ 물건 사기 & 숫자</summary>
+      <div class="body">
+        <p>개수는 <span class="jp">ひとつ・ふたつ・みっつ・よっつ・いつつ</span>, 값은 <span class="jp">いくら</span>로 물어요. 만 단위에는 반드시 <span class="jp">いち</span>를 붙여 <b class="jp">いちまん</b>.</p>
+        <div class="ex">
+          <div data-say="すみません、この ペンは いくらですか。"><div class="j">すみません、この ペンは いくらですか。</div><div class="k">저기요, 이 펜은 얼마예요?</div></div>
+          <div data-say="りんごを みっつ ください。"><div class="j">りんごを みっつ ください。</div><div class="k">사과를 세 개 주세요.</div></div>
+          <div data-say="おたんじょうび おめでとう！"><div class="j">おたんじょうび おめでとう！</div><div class="k">생일 축하해!</div></div>
+        </div>
+      </div>
+    </details>
+    <p class="small-note">예문과 표의 줄을 누르면 발음을 들을 수 있어요.</p>
   </section>
 </div>
 <div class="toast" id="toast"></div>
@@ -466,10 +648,39 @@ const RAW = [
   [4,'まち','町 / 街','마치','명사','마을, 동네, 거리',''],
   [4,'ケーキ','','케-키','명사','케이크',''],
   [4,'てんいん','店員','텐인','명사','점원',''],
+
+  // 3과 활동지 (형용사 활동지 + 필기 노트)
+  ['A','あつい','暑い','아츠이','い형용사','덥다',''],
+  ['A','ひまだ','暇だ','히마다','な형용사','한가하다',''],
+  ['A','ちいさい','小さい','치-사이','い형용사','작다','부정형은 ちいさくないです (ちいさいじゃない ✕)'],
+  ['A','かんたんだ','簡単だ','칸탄다','な형용사','간단하다','과거형은 かんたんでした (かんたんかった ✕)'],
+  ['A','ひろい','広い','히로이','い형용사','넓다',''],
+  ['A','しんせつだ','親切だ','신세츠다','な형용사','친절하다','しんせつな ひと = 친절한 사람'],
+  ['A','たのしい','楽しい','타노시-','い형용사','즐겁다',''],
+  ['A','べんりだ','便利だ','벤리다','な형용사','편리하다','べんりな かばん = 편리한 가방'],
+  ['A','さむい','寒い','사무이','い형용사','춥다','과거형은 さむかったです (さむいでした ✕)'],
+  ['A','まじめだ','真面目だ','마지메다','な형용사','성실하다, 진지하다',''],
+  ['A','あたたかい','暖かい','아타타카이','い형용사','따뜻하다',''],
+  ['A','たいせつだ','大切だ','타이세츠다','な형용사','소중하다',''],
+  ['A','おおきい','大きい','오-키-','い형용사','크다',''],
+  ['A','せまい','狭い','세마이','い형용사','좁다',''],
+  ['A','きらいだ','嫌いだ','키라이다','な형용사','싫어하다','い로 끝나 보이지만 な형용사! → きらいです・きらいじゃないです'],
+  ['A','いぬ','犬','이누','명사','개',''],
+  ['A','かしゅ','歌手','카슈','명사','가수','ゆうめいな かしゅ = 유명한 가수'],
+  ['A','ひと','人','히토','명사','사람',''],
+  ['A','かばん','鞄','카방','명사','가방',''],
+  ['A','がくせい','学生','가쿠세-','명사','학생','명사는 な형용사와 쌍둥이: がくせいです・がくせいじゃないです・がくせいでした'],
+  ['A','トマト','','토마토','명사','토마토','외래어 → 가타카나'],
+  ['A','きのう','昨日','키노-','명사','어제',''],
+  ['A','えいが','映画','에-가','명사','영화',''],
+  ['A','テスト','','테스토','명사','시험, 테스트','외래어 → 가타카나'],
+  ['A','いく','行く','이쿠','동사','가다','いってきます・いってらっしゃい의 いって가 여기서 나와요'],
+  ['A','くる','来る','쿠루','동사','오다','いってきます의 きます가 여기서 나와요 (갔다 오겠습니다)'],
+  ['A','かえる','帰る','카에루','동사','돌아오다, 돌아가다','おかえり의 かえり가 여기서 나와요'],
 ];
 
 const WORDS = [];
-{ const cnt = {3: 0, 4: 0};
+{ const cnt = {3: 0, 4: 0, A: 0};
   RAW.forEach(([l, w, k, p, pos, m, n, tts]) => {
     cnt[l]++;
     WORDS.push({ id: `${l}-${cnt[l]}`, l, no: cnt[l], w, k, p, pos, m, n,
@@ -477,6 +688,7 @@ const WORDS = [];
   });
 }
 const byId = Object.fromEntries(WORDS.map(x => [x.id, x]));
+const lessonName = w => w.l === 'A' ? '3과 활동지' : w.l + '과';
 
 /* ============================================================
    2. 저장 상태 (localStorage)
@@ -525,6 +737,7 @@ const SCOPES = [
   ['all', '전체', () => true],
   ['3', '3과', w => w.l === 3],
   ['4', '4과', w => w.l === 4],
+  ['A', '3과 활동지', w => w.l === 'A'],
   ['star', '★ 즐겨찾기', w => S.star[w.id]],
   ['wrong', '✗ 오답노트', w => S.wrong[w.id]],
 ];
@@ -582,7 +795,7 @@ function renderCard() {
   const front = S.cardFront === 'jp' ? jpFace : krFace;
   const back = S.cardFront === 'jp' ? `${krFace}${info}` : `${jpFace}<span class="pos ${posClass(w.pos)}">${w.pos}</span>${info}`;
   area.innerHTML = `
-    <div class="q-head"><span>${w.l}과 · ${w.no}번</span><span>${cur + 1} / ${deck.length}</span></div>
+    <div class="q-head"><span>${lessonName(w)} · ${w.no}번</span><span>${cur + 1} / ${deck.length}</span></div>
     <div class="flash-wrap"><div class="flash ${flipped ? 'flipped' : ''}" id="flash">
       <div class="face"><span class="tag">${S.star[w.id] ? '★ ' : ''}${S.cardFront === 'jp' ? '뜻은?' : '일본어로?'}</span><span class="boxdots">${dots(w.id)}</span>${front}<span class="hint">탭해서 뒤집기</span></div>
       <div class="face back">${back}</div>
@@ -610,7 +823,62 @@ function answerCard(ok) {
 }
 
 /* ============================================================
-   5. 4지선다 퀴즈
+   4-1. 형용사 활용 엔진
+============================================================ */
+const adjType = w => w.pos === 'い형용사' ? 'i' : w.pos === 'な형용사' ? 'na' : null;
+const NOUNS = [['へや', '방'], ['ひと', '사람'], ['いぬ', '개'], ['かお', '얼굴'], ['とり', '새'], ['かばん', '가방'], ['ねこ', '고양이']];
+const FORMS = [
+  ['plain', '기본형', '~다'],
+  ['polite', '정중형', '~습니다'],
+  ['mod', '수식형', '~한 + 명사'],
+  ['neg', '부정형', '~지 않습니다'],
+  ['past', '과거형', '~했습니다'],
+  ['pastneg', '과거 부정형', '~지 않았습니다'],
+  ['cneg', '반말 부정', '~지 않아'],
+  ['cpast', '반말 과거', '~했어'],
+];
+const QUIZ_FORMS = ['polite', 'mod', 'neg', 'past', 'pastneg'];
+
+function conj(w, f, noun = 'へや') {
+  const b = w.bare;
+  if (adjType(w) === 'i') {
+    const s = b === 'いい' ? 'よ' : b.slice(0, -1);
+    return { plain: b, polite: b + 'です', mod: b + ' ' + noun, neg: s + 'くないです', past: s + 'かったです',
+      pastneg: s + 'くなかったです', cneg: s + 'くない', cpast: s + 'かった' }[f];
+  }
+  const s = b.slice(0, -1);
+  return { plain: b, polite: s + 'です', mod: s + 'な ' + noun, neg: s + 'じゃないです', past: s + 'でした',
+    pastneg: s + 'じゃなかったです', cneg: s + 'じゃない', cpast: s + 'だった' }[f];
+}
+
+function formula(w, f) {
+  if (adjType(w) === 'i') {
+    if (w.bare === 'いい' && /neg|past/.test(f))
+      return { neg: 'いい → よくないです', past: 'いい → よかったです', pastneg: 'いい → よくなかったです', cneg: 'いい → よくない', cpast: 'いい → よかった' }[f];
+    return { plain: '~い', polite: '기본형 + です', mod: '기본형 + 명사', neg: 'い → くないです', past: 'い → かったです',
+      pastneg: 'い → くなかったです', cneg: 'い → くない', cpast: 'い → かった' }[f];
+  }
+  return { plain: '~だ', polite: 'だ → です', mod: 'だ → な + 명사', neg: 'だ → じゃないです', past: 'だ → でした',
+    pastneg: 'だ → じゃなかったです', cneg: 'だ → じゃない', cpast: 'だ → だった' }[f];
+}
+
+// 학생들이 자주 하는 실수로 오답 보기 만들기
+function conjWrong(w, f, noun) {
+  const b = w.bare;
+  if (adjType(w) === 'i') {
+    const r = b.slice(0, -1);
+    const out = { polite: [r + 'です', b + 'だです'], mod: [b + 'な ' + noun], neg: [b + 'じゃないです', b + 'くないです'],
+      past: [b + 'でした', b + 'かったです'], pastneg: [b + 'じゃなかったです', b + 'くないでした'] }[f];
+    if (b === 'いい') out.push({ neg: 'いくないです', past: 'いかったです', pastneg: 'いくなかったです' }[f] || r + 'です');
+    return out;
+  }
+  const s = b.slice(0, -1), cut = s.endsWith('い') ? s.slice(0, -1) : s;
+  return { polite: [b + 'です'], mod: [s + ' ' + noun, b + ' ' + noun], neg: [cut + 'くないです', s + 'くないです'],
+    past: [cut + 'かったです', b + 'でした'], pastneg: [cut + 'くなかったです', s + 'じゃないでした'] }[f];
+}
+
+/* ============================================================
+   5. 퀴즈 (4지선다 + 형용사 활용)
 ============================================================ */
 const QN = 10;
 let quiz = null;
@@ -618,6 +886,7 @@ let quiz = null;
 function quizPool() {
   let ws = scopeWords();
   if (S.quizMode === 'kanji') ws = ws.filter(w => w.k && !/^-/.test(w.k));
+  if (S.quizMode === 'conj') { ws = ws.filter(adjType); if (!ws.length) ws = WORDS.filter(adjType); }
   return ws;
 }
 
@@ -627,7 +896,7 @@ function startQuiz() {
   if (pool.length < 1) { area.innerHTML = `<div class="panel empty">${S.quizMode === 'kanji' ? '이 범위에 한자 단어가 없어요.' : emptyMsg()}</div>`; return; }
   // 덜 외운 단어 우선 출제
   const qs = shuffle(pool).sort((a, b) => box(a.id) - box(b.id)).slice(0, QN);
-  quiz = { qs: shuffle(qs), i: 0, score: 0, wrong: [] };
+  quiz = { qs: shuffle(qs).map(makeQ), i: 0, score: 0, wrong: [] };
   renderQuestion();
 }
 
@@ -639,38 +908,76 @@ function distractors(w, key) {
   return out;
 }
 
-function renderQuestion() {
-  const area = $('#quizArea');
-  if (quiz.i >= quiz.qs.length) return renderQuizEnd();
-  const w = quiz.qs[quiz.i], mode = S.quizMode;
+function makeQ(w) {
+  const mode = S.quizMode;
+  if (mode === 'conj') return makeConjQ(w);
   const key = mode === 'jp2kr' ? 'm' : 'w';
-  const opts = shuffle([w, ...distractors(w, key)]);
   const prompt = mode === 'jp2kr'
     ? `<div class="label">이 단어의 뜻은?</div><div class="big-word jp">${esc(w.w)}</div>${w.k ? `<div class="kanji-sub jp">${esc(w.k)}</div>` : ''}`
     : mode === 'kr2jp'
     ? `<div class="label">일본어로 하면?</div><div class="meaning">${esc(w.m)}</div><span class="pos ${posClass(w.pos)}">${w.pos}</span>`
     : `<div class="label">이 한자의 읽기는?</div><div class="big-word jp">${esc(w.k)}</div><div class="small-note">${esc(w.m)}</div>`;
+  return {
+    w, prompt,
+    opts: shuffle([w, ...distractors(w, key)]).map(o => ({ text: o[key], ok: o.id === w.id, jp: key === 'w' })),
+    explain: `<b class="jp">${esc(w.w)}</b>${w.k ? ` (${esc(w.k)})` : ''} [${esc(w.p)}] = ${esc(w.m)}${w.n ? `<br>${esc(w.n)}` : ''}`,
+    sayFirst: mode === 'jp2kr' ? w.tts : null, say: mode === 'jp2kr' ? null : w.tts,
+    review: [w.w + (w.k ? ' · ' + w.k : ''), w.m],
+  };
+}
+
+function makeConjQ(w) {
+  const t = adjType(w);
+  if (Math.random() < 0.25) {
+    const trap = t === 'na' && w.bare.slice(0, -1).endsWith('い');
+    return {
+      w, prompt: `<div class="label">い형용사일까, な형용사일까?</div><div class="big-word jp">${esc(w.w)}</div><div class="small-note">${esc(w.m)}</div>`,
+      opts: [{ text: 'い형용사', ok: t === 'i' }, { text: 'な형용사', ok: t === 'na' }],
+      explain: t === 'i' ? '기본형이 い로 끝나는 <b>い형용사</b>' : `기본형이 だ로 끝나는 <b>な형용사</b>${trap ? ' (い처럼 보이는 함정 단어!)' : ''}`,
+      say: w.tts, review: [w.w, t === 'i' ? 'い형용사' : 'な형용사'],
+    };
+  }
+  const f = QUIZ_FORMS[Math.random() * QUIZ_FORMS.length | 0];
+  const [noun, nounKr] = NOUNS[Math.random() * NOUNS.length | 0];
+  const ans = conj(w, f, noun);
+  const [, label, hint] = FORMS.find(x => x[0] === f);
+  const others = shuffle(QUIZ_FORMS.filter(x => x !== f).map(x => conj(w, x, noun)));
+  const wrongs = [...new Set([...shuffle(conjWrong(w, f, noun)), ...others])].filter(x => x !== ans).slice(0, 3);
+  return {
+    w,
+    prompt: `<div class="label">형용사 활용</div><div class="big-word jp">${esc(w.w)}</div><div class="small-note">${esc(w.m)}</div>
+      <span class="pos">→ ${label} (${f === 'mod' ? '~한 ' + nounKr : hint})</span>${f === 'mod' ? `<div class="small-note">+ <span class="jp">${noun}</span> (${nounKr})</div>` : ''}`,
+    opts: shuffle([{ text: ans, ok: true, jp: true }, ...wrongs.map(x => ({ text: x, jp: true }))]),
+    explain: `공식: <b class="jp">${esc(formula(w, f))}</b> → <b class="jp">${esc(ans)}</b>`,
+    say: ans, review: [ans, `${w.w} ${label}`],
+  };
+}
+
+function renderQuestion() {
+  const area = $('#quizArea');
+  if (quiz.i >= quiz.qs.length) return renderQuizEnd();
+  const q = quiz.qs[quiz.i];
   area.innerHTML = `
     <div class="q-head"><span>${quiz.i + 1} / ${quiz.qs.length}</span><span>점수 ${quiz.score}</span></div>
     <div class="bar"><div style="width:${quiz.i / quiz.qs.length * 100}%"></div></div>
-    <div class="panel q-prompt">${prompt}</div>
-    <div class="options">${opts.map(o => `<button class="opt ${key === 'w' ? 'jp-opt' : ''}" data-id="${o.id}">${esc(o[key])}</button>`).join('')}</div>
+    <div class="panel q-prompt">${q.prompt}</div>
+    <div class="options">${q.opts.map((o, i) => `<button class="opt ${o.jp ? 'jp-opt' : ''} ${o.jp && o.text.length > 7 ? 'long' : ''}" data-i="${i}">${esc(o.text)}</button>`).join('')}</div>
     <div class="feedback" id="qFeedback"></div>`;
-  if (mode === 'jp2kr') speak(w.tts);
-  area.querySelectorAll('.opt').forEach(b => b.onclick = () => pickAnswer(b, w));
+  if (q.sayFirst) speak(q.sayFirst);
+  area.querySelectorAll('.opt').forEach(b => b.onclick = () => pickAnswer(+b.dataset.i));
 }
 
-function pickAnswer(btn, w) {
-  const ok = btn.dataset.id === w.id;
-  $('#quizArea').querySelectorAll('.opt').forEach(b => {
-    b.disabled = true;
-    if (b.dataset.id === w.id) b.classList.add('correct');
-  });
-  if (!ok) { btn.classList.add('wrong'); quiz.wrong.push(w); } else quiz.score++;
-  mark(w.id, ok);
-  if (S.quizMode !== 'jp2kr') speak(w.tts);
-  $('#qFeedback').innerHTML = `${ok ? '⭕ 정답!' : '❌ 오답'} &nbsp;<b class="jp">${esc(w.w)}</b>${w.k ? ` (${esc(w.k)})` : ''} [${esc(w.p)}] = ${esc(w.m)}${w.n ? `<br>${esc(w.n)}` : ''}`;
-  setTimeout(() => { quiz.i++; renderQuestion(); }, ok ? 900 : 2200);
+function pickAnswer(i) {
+  const q = quiz.qs[quiz.i], ok = !!q.opts[i].ok;
+  const btns = $('#quizArea').querySelectorAll('.opt');
+  btns.forEach((b, j) => { b.disabled = true; if (q.opts[j].ok) b.classList.add('correct'); });
+  if (!ok) { btns[i].classList.add('wrong'); quiz.wrong.push(q); } else quiz.score++;
+  mark(q.w.id, ok);
+  if (q.say) speak(q.say);
+  const next = () => { quiz.i++; renderQuestion(); };
+  $('#qFeedback').innerHTML = `${ok ? '⭕ 정답!' : '❌ 오답'} &nbsp;${q.explain}` +
+    (ok ? '' : `<button class="btn primary" id="qNext" style="width:100%;margin-top:10px">다음 문제 ▶</button>`);
+  if (ok) setTimeout(next, 1000); else $('#qNext').onclick = next;
 }
 
 function renderQuizEnd() {
@@ -678,8 +985,8 @@ function renderQuizEnd() {
   $('#quizArea').innerHTML = `<div class="panel done-box">
     <div class="emoji">${s === n ? '🏆' : s >= n * .7 ? '👏' : '💪'}</div>
     <h3>${n}문제 중 ${s}개 정답</h3>
-    ${quiz.wrong.length ? `<div class="small-note">틀린 단어 (오답노트에 저장됨)</div>
-      <div class="wrong-list">${quiz.wrong.map(w => `<div><b class="jp">${esc(w.w)}${w.k ? ` · ${esc(w.k)}` : ''}</b><span>${esc(w.m)}</span></div>`).join('')}</div>` : '<div class="small-note">완벽해요!</div>'}
+    ${quiz.wrong.length ? `<div class="small-note">틀린 문제 (오답노트에 저장됨)</div>
+      <div class="wrong-list">${quiz.wrong.map(q => `<div><b class="jp">${esc(q.review[0])}</b><span>${esc(q.review[1])}</span></div>`).join('')}</div>` : '<div class="small-note">완벽해요!</div>'}
     <button class="btn primary" id="quizAgain" style="width:100%">다시 풀기</button></div>`;
   $('#quizAgain').onclick = startQuiz;
 }
@@ -708,7 +1015,7 @@ function renderSpell() {
   const { w, chars, tiles, picked } = spell;
   $('#spellArea').innerHTML = `
     <div class="panel q-prompt">
-      <div class="label">${w.l}과 · <span class="pos ${posClass(w.pos)}">${w.pos}</span></div>
+      <div class="label">${lessonName(w)} · <span class="pos ${posClass(w.pos)}">${w.pos}</span></div>
       <div class="meaning">${esc(w.m)}</div>
       <div class="pron">${spell.hinted || spell.done ? `[${esc(w.p)}]` : ''}</div>
     </div>
@@ -816,7 +1123,7 @@ function renderList() {
   $('#listCount').textContent = `${ws.length}개`;
   $('#wordList').innerHTML = ws.length ? ws.map(w => `
     <div class="row" data-id="${w.id}">
-      <div class="num">${w.l}-${w.no}</div>
+      <div class="num">${w.l === 'A' ? '활' : w.l}-${w.no}</div>
       <div>
         <div class="w" data-say="${esc(w.tts)}">${esc(w.w)}${w.k ? `<small>${esc(w.k)}</small>` : ''}</div>
         <div class="m"><b>${esc(w.m)}</b> · ${esc(w.p)}</div>
@@ -840,10 +1147,105 @@ $('#wordList').addEventListener('click', e => {
 });
 
 /* ============================================================
-   9. 문법 탭
+   9. 개념 탭
 ============================================================ */
-$('#adjI').innerHTML = WORDS.filter(w => w.pos === 'い형용사').map(w => esc(w.w)).join('<br>');
-$('#adjNa').innerHTML = WORDS.filter(w => w.pos === 'な형용사').map(w => esc(w.w)).join('<br>');
+// 바뀌는 부분을 빨갛게 표시
+function hl(base, s) {
+  let i = 0; while (i < base.length && i < s.length && base[i] === s[i]) i++;
+  return esc(s.slice(0, i)) + (i < s.length ? `<em>${esc(s.slice(i))}</em>` : '');
+}
+
+function conjTable(w, noun, krList) {
+  const base = adjType(w) === 'i' ? w.bare : w.bare.slice(0, -1);
+  const rows = FORMS.map(([f, label, hint], i) => {
+    const s = conj(w, f, noun);
+    return `<tr data-say="${esc(s)}"><td>${label}<br><small class="jp f">${esc(formula(w, f))}</small></td>
+      <td class="j">${f === 'plain' ? esc(s) : hl(base, s)}<br><small class="kr">${krList ? krList[i] : (f === 'mod' ? '~한 + 명사' : hint)}</small></td></tr>`;
+  }).join('');
+  return `<div class="tbl-wrap"><table class="ctbl"><tr><th>형태 · 공식</th><th>일본어 · 뜻</th></tr>${rows}</table></div>`;
+}
+
+const ADJS = WORDS.filter(adjType);
+const findW = bare => WORDS.find(w => w.bare === bare);
+$('#iTable').innerHTML = conjTable(findW('かわいい'), 'いぬ',
+  ['귀엽다', '귀엽습니다', '귀여운 개', '귀엽지 않습니다', '귀여웠습니다', '귀엽지 않았습니다', '안 귀여워', '귀여웠어']);
+$('#naTable').innerHTML = conjTable(findW('きれいだ'), 'へや',
+  ['예쁘다', '예쁩니다', '깨끗한 방', '예쁘지 않습니다', '예뻤습니다', '예쁘지 않았습니다', '안 예뻐', '예뻤어']);
+
+const chip = w => `<button data-adj="${w.id}">${esc(w.w)}<small>${esc(w.m)}</small></button>`;
+$('#adjIChips').innerHTML = ADJS.filter(w => adjType(w) === 'i').map(chip).join('');
+$('#adjNaChips').innerHTML = ADJS.filter(w => adjType(w) === 'na').map(chip).join('');
+
+$('#conjSelect').innerHTML = ['i', 'na'].map(t =>
+  `<optgroup label="${t === 'i' ? 'い형용사' : 'な형용사'}">${ADJS.filter(w => adjType(w) === t)
+    .map(w => `<option value="${w.id}">${esc(w.w)} (${esc(w.m)})</option>`).join('')}</optgroup>`).join('');
+function renderConj() {
+  const w = byId[$('#conjSelect').value];
+  $('#conjOut').innerHTML = `<p><b class="jp">${esc(w.w)}</b> = ${esc(w.m)} · <span class="pos ${posClass(w.pos)}">${w.pos}</span>
+    ${w.bare === 'いい' ? '<br>いい는 활용할 때 よ로 바뀌는 예외!' : ''}${w.n ? `<br>${esc(w.n)}` : ''}</p>` + conjTable(w, 'へや');
+}
+$('#conjSelect').value = findW('おおきい').id;
+$('#conjSelect').onchange = renderConj;
+renderConj();
+
+document.querySelectorAll('.adj-chips').forEach(el => el.onclick = e => {
+  const b = e.target.closest('[data-adj]'); if (!b) return;
+  $('#conjSelect').value = b.dataset.adj; renderConj();
+  speak(byId[b.dataset.adj].tts, true);
+  $('#conjDetails').open = true;
+  $('#conjDetails').scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+
+// 활동지 문제
+const EX9 = [
+  ['파란 새', 'あおい とり', 'あおな とり', 'あおい는 い형용사 → 기본형 그대로 명사를 꾸며요.'],
+  ['깨끗한 방', 'きれいな へや', 'きれい へや', 'きれいだ는 な형용사 → だ를 な로 바꿔 명사를 꾸며요.'],
+  ['유명한 가수', 'ゆうめいな かしゅ', 'ゆうめい かしゅ', 'ゆうめいだ도 な형용사 → な + 명사.'],
+  ['토마토를 좋아하지 않습니다.', 'トマトは すきじゃないです', 'トマトは すきくないです', 'すきだ는 な형용사 → だ를 지우고 じゃないです.'],
+  ['어제는 추웠습니다.', 'きのうは さむかったです', 'きのうは さむいでした', 'い형용사 과거는 い를 자르고 かったです. い형용사에 でした ✕'],
+  ['영화는 재미있었습니다.', 'えいがは おもしろかったです', 'えいがは おもしろいでした', 'い형용사 과거 → おもしろ + かったです.'],
+];
+const EX5 = [
+  ['어제 본 영화는 매우 재미있었습니다.', 'きのうの えいがは とても おもしろいです。', 'きのうの えいがは とても おもしろ[かったです]。', '"재미있었습니다"는 과거 → い를 자르고 かったです.'],
+  ['나는 토마토를 좋아하지 않습니다.', 'トマトは すきくないです。', 'トマトは すき[じゃないです]。', 'すきだ는 な형용사 → くない ✕, じゃないです ○'],
+  ['깨끗한 방이네요.', 'きれい へやですね。', 'きれい[な] へやですね。', 'な형용사가 명사를 꾸밀 땐 な가 필요해요.'],
+  ['이 가방은 작지 않습니다.', 'この かばんは ちいさいじゃないです。', 'この かばんは ちいさ[くないです]。', 'ちいさい는 い형용사 → い를 자르고 くないです.'],
+  ['시험은 간단했습니다.', 'テストは かんたんかったです。', 'テストは かんたん[でした]。', 'かんたんだ는 な형용사 → だ를 지우고 でした.'],
+];
+const plain = s => s.replace(/[\[\]]/g, '');
+const mark5 = s => esc(s).replace(/\[(.+?)\]/g, '<em>$1</em>');
+
+function renderExercises() {
+  $('#ex9').innerHTML = EX9.map(([q, ok, ng, why], i) => `
+    <div class="ex-item"><div class="kq">${i + 1}. ${q}</div>
+      <div class="pick">${shuffle([[ok, 1], [ng, 0]]).map(([t, c]) => `<button data-c="${c}">${t}</button>`).join('')}</div>
+      <div class="why" hidden>${why}</div></div>`).join('');
+  $('#ex5').innerHTML = EX5.map(([q, ng, ok, why], i) => `
+    <div class="ex-item"><div class="kq">${i + 1}. ${q}</div>
+      <div class="jp wrong-sent">${esc(ng)}</div>
+      <button class="speak reveal">정답 보기</button>
+      <div class="answer" hidden><div class="jp" data-say="${esc(plain(ok))}">→ ${mark5(ok)}</div><div class="why">${why}</div></div></div>`).join('');
+}
+$('#ex9').onclick = e => {
+  const b = e.target.closest('.pick button'); if (!b) return;
+  const item = b.closest('.ex-item'); if (item.dataset.done) return;
+  item.dataset.done = 1;
+  item.querySelectorAll('.pick button').forEach(x => { x.disabled = true; if (x.dataset.c === '1') { x.classList.add('correct'); speak(x.textContent); } });
+  if (b.dataset.c !== '1') b.classList.add('wrong');
+  const why = item.querySelector('.why'); why.hidden = false;
+  why.textContent = (b.dataset.c === '1' ? '⭕ 정답! ' : '❌ ') + why.textContent;
+};
+$('#ex5').onclick = e => {
+  const b = e.target.closest('.reveal'); if (!b) return;
+  const item = b.closest('.ex-item'); b.hidden = true;
+  item.querySelector('.answer').hidden = false;
+  item.querySelector('.wrong-sent').classList.add('x');
+  speak(item.querySelector('.answer [data-say]').dataset.say);
+};
+$('#exReset').onclick = renderExercises;
+renderExercises();
+
+document.querySelectorAll('.concept tr[data-say]').forEach(tr => tr.style.cursor = 'pointer');
 
 /* ============================================================
    10. 공통: 탭, 세그먼트, 사운드
