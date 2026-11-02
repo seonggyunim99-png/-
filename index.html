@@ -235,7 +235,10 @@
     .ctbl td.j { font-family: var(--jp); font-size: 15px; color: var(--text); font-weight: 700; white-space: nowrap; }
     .ctbl small.kr { font-family: 'Noto Sans KR', sans-serif; font-weight: 600; white-space: normal; }
     .ctbl small.f { color: var(--secondary); font-size: 12px; font-weight: 700; white-space: nowrap; }
-    .ctbl tr[data-say] { cursor: pointer; }
+    .ctbl tr[data-say], .ctbl td[data-say] { cursor: pointer; }
+    .ctbl.num td { font-size: 12px; color: var(--muted); }
+    .ctbl.num td .jp { font-size: 16px; font-weight: 700; color: var(--text); }
+    .ctbl.num td.hot, .ctbl.num td.hot .jp { color: var(--primary); }
     .concept em { font-style: normal; color: var(--primary); }
     .say { cursor: pointer; color: var(--text); font-weight: 700; }
     .ox { display: grid; gap: 6px; }
@@ -265,9 +268,9 @@
       position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%) translateY(80px);
       background: var(--inner); border: 1px solid var(--border); color: var(--text);
       padding: 10px 18px; border-radius: 99px; font-size: 13px; font-weight: 700; transition: transform .3s; z-index: 10;
-      max-width: calc(100% - 32px); text-align: center;
+      max-width: calc(100% - 32px); text-align: center; opacity: 0;
     }
-    .toast.show { transform: translateX(-50%) translateY(0); }
+    .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
     @media (max-width: 400px) {
       body { padding: 12px; }
@@ -321,6 +324,7 @@
         <button data-v="kr2jp">뜻 → 일</button>
         <button data-v="kanji">한자 → 읽기</button>
         <button data-v="conj">형용사 활용</button>
+        <button data-v="price">가격 읽기</button>
       </div>
     </div>
     <div id="quizArea"></div>
@@ -350,7 +354,7 @@
   <!-- 개념 -->
   <section class="view concept" id="view-grammar">
     <div class="key">
-      <h3>⭐ 시험 전에 꼭 알아야 할 핵심 6가지</h3>
+      <h3>⭐ 시험 전에 꼭 알아야 할 핵심 8가지</h3>
       <ol>
         <li>형용사는 두 종류예요. 기본형 끝이 <span class="jp">い</span>면 <b>い형용사</b>, <span class="jp">だ</span>면 <b>な형용사</b>.</li>
         <li><b>い형용사</b>는 정중형에 <span class="jp">です</span>만 붙여요. 부정·과거는 끝의 <span class="jp">い</span>를 자르고 <span class="jp">くないです / かったです</span>.</li>
@@ -358,6 +362,8 @@
         <li><b>함정 단어</b>: <span class="jp">きれいだ・ゆうめいだ・きらいだ</span>는 い로 끝나 보여도 な형용사예요. <span class="jp">きれくない</span> ✕ → <span class="jp">きれいじゃない</span> ○</li>
         <li><b>예외</b>: <span class="jp">いい</span>(좋다)는 활용할 때 <span class="jp">よ</span>로 바뀌어요. <span class="jp">よくないです・よかったです</span> (<span class="jp">いくない</span> ✕)</li>
         <li><b>인사말은 짝꿍으로</b>: <span class="jp">いってきます ↔ いってらっしゃい</span>, <span class="jp">ただいま ↔ おかえり</span>, <span class="jp">おじゃまします ↔ いらっしゃい</span></li>
+        <li><b>가족 호칭</b>: 남에게 <b>내 가족</b>은 낮춰서 <span class="jp">ちち・はは</span>, <b>남의 가족</b>은 높여서 <span class="jp">おとうさん・おかあさん</span>.</li>
+        <li><b>숫자 발음 변화</b>: <span class="jp">300 さんびゃく・600 ろっぴゃく・800 はっぴゃく・3000 さんぜん・8000 はっせん</span>, 10000은 반드시 <span class="jp">いちまん</span>.</li>
       </ol>
     </div>
 
@@ -492,11 +498,59 @@
           <div><span class="jp">いって</span>(<span class="jp">いく</span> 가다) + <span class="jp">らっしゃい</span>(오세요) = 갔다 오세요</div>
           <div><span class="jp">お</span> + <span class="jp">かえり</span>(<span class="jp">かえる</span> 돌아오다) = 돌아왔구나, 어서 와</div>
         </div>
+        <p><b>ございます를 붙이면 정중해져요</b> (교과서 75쪽)</p>
+        <div class="tbl-wrap"><table class="ctbl">
+          <tr><th>친구에게</th><th>윗사람에게</th></tr>
+          <tr><td class="j" data-say="おはよう">おはよう</td><td class="j" data-say="おはようございます">おはよう<em>ございます</em></td></tr>
+          <tr><td class="j" data-say="ありがとう">ありがとう</td><td class="j" data-say="ありがとうございます">ありがとう<em>ございます</em></td></tr>
+          <tr><td class="j" data-say="おめでとう">おめでとう</td><td class="j" data-say="おめでとうございます">おめでとう<em>ございます</em></td></tr>
+        </table></div>
       </div>
     </details>
 
     <details>
-      <summary>⑩ 코소아도: 대명사 vs 연체사</summary>
+      <summary>⑩ 가족 호칭 & 이름 호칭</summary>
+      <div class="body">
+        <p>일본어는 <b>누구의 가족이냐</b>에 따라 부르는 말이 달라요. 남에게 <b>내 가족</b>을 말할 때는 낮춰서, <b>남의 가족</b>은 높여서 불러요. (집 안에서 가족끼리 부를 때도 <span class="jp">おとうさん</span>처럼 높여 불러요.)</p>
+        <div class="tbl-wrap"><table class="ctbl">
+          <tr><th></th><th>나의 가족</th><th>남의 가족</th></tr>
+          <tr><td>아버지</td><td class="j" data-say="ちち">ちち</td><td class="j" data-say="おとうさん">おとうさん</td></tr>
+          <tr><td>어머니</td><td class="j" data-say="はは">はは</td><td class="j" data-say="おかあさん">おかあさん</td></tr>
+          <tr><td>형·오빠</td><td class="j" data-say="あに">あに</td><td class="j" data-say="おにいさん">おにいさん</td></tr>
+          <tr><td>누나·언니</td><td class="j" data-say="あね">あね</td><td class="j" data-say="おねえさん">おねえさん</td></tr>
+          <tr><td>남동생</td><td class="j" data-say="おとうと">おとうと</td><td class="j" data-say="おとうとさん">おとうとさん</td></tr>
+          <tr><td>여동생</td><td class="j" data-say="いもうと">いもうと</td><td class="j" data-say="いもうとさん">いもうとさん</td></tr>
+        </table></div>
+        <p>남의 가족은 대부분 <span class="jp">お～さん</span> 모양이에요. 할아버지 <span class="jp">おじいさん</span>, 할머니 <span class="jp">おばあさん</span>.</p>
+        <div class="ex">
+          <div data-say="わたしの かぞくは ちちと ははと あにと わたしです。"><div class="j">わたしの かぞくは ちちと ははと あにと わたしです。</div><div class="k">우리 가족은 아버지와 어머니와 형과 저입니다. (교과서 58쪽)</div></div>
+        </div>
+        <p><b>이름 뒤에 붙이는 호칭</b> (교과서 59쪽)</p>
+        <div class="tbl-wrap"><table class="ctbl">
+          <tr><td class="j" data-say="さん">～さん</td><td>~씨, ~님. 누구에게나 쓰는 기본 호칭 (자기 이름에는 ✕)</td></tr>
+          <tr><td class="j" data-say="ちゃん">～ちゃん</td><td>어린아이, 친한 친구 (주로 여자)</td></tr>
+          <tr><td class="j" data-say="くん">～くん</td><td>남자아이, 친구, 아랫사람</td></tr>
+          <tr><td class="j" data-say="せんぱい">せんぱい</td><td>선배 (이름 뒤에 붙여 부르기도 해요)</td></tr>
+        </table></div>
+      </div>
+    </details>
+
+    <details>
+      <summary>⑪ 숫자 & 가격 읽기</summary>
+      <div class="body">
+        <div class="rule">빨간 숫자는 발음이 바뀌어요! 3·6·8을 특히 조심하세요.</div>
+        <div id="numTable"></div>
+        <p>가격은 숫자 + <span class="jp">えん</span>(円). 퀴즈 탭의 <b>가격 읽기</b>로 연습할 수 있어요.</p>
+        <div class="ex">
+          <div data-say="コーヒーは よんひゃくえんです。"><div class="j">コーヒーは よんひゃくえんです。</div><div class="k">커피는 400엔입니다.</div></div>
+          <div data-say="すいかは にせんえんです。"><div class="j">すいかは にせんえんです。</div><div class="k">수박은 2,000엔입니다.</div></div>
+          <div data-say="りんごを ふたつ ください。"><div class="j">りんごを ふたつ ください。</div><div class="k">사과를 두 개 주세요.</div></div>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>⑫ 코소아도: 대명사 vs 연체사</summary>
       <div class="body">
         <p><b class="jp">これ</b>(이것)·<b class="jp">それ</b>(그것)은 혼자 쓰는 <b>대명사</b>예요. <b class="jp">この</b>(이~)·<b class="jp">その</b>(그~)·<b class="jp">どんな</b>(어떤~)는 반드시 뒤에 명사가 오는 <b>연체사</b>예요.</p>
         <div class="ex">
@@ -508,7 +562,7 @@
     </details>
 
     <details>
-      <summary>⑪ 비교 표현</summary>
+      <summary>⑬ 비교 표현</summary>
       <div class="body">
         <p><b class="jp">どちら</b>(어느 쪽) + <b class="jp">～より</b>(~보다) + <b class="jp">ほう</b>(~쪽) + <b class="jp">いい</b>(좋다)를 조합하면 비교 문장이 돼요.<br>
         <b class="jp">A より B の ほうが いいです</b> = A보다 B 쪽이 좋습니다.</p>
@@ -520,7 +574,7 @@
     </details>
 
     <details>
-      <summary>⑫ 물건 사기 & 숫자</summary>
+      <summary>⑭ 물건 사기 & 축하 인사</summary>
       <div class="body">
         <p>개수는 <span class="jp">ひとつ・ふたつ・みっつ・よっつ・いつつ</span>, 값은 <span class="jp">いくら</span>로 물어요. 만 단위에는 반드시 <span class="jp">いち</span>를 붙여 <b class="jp">いちまん</b>.</p>
         <div class="ex">
@@ -528,6 +582,25 @@
           <div data-say="りんごを みっつ ください。"><div class="j">りんごを みっつ ください。</div><div class="k">사과를 세 개 주세요.</div></div>
           <div data-say="おたんじょうび おめでとう！"><div class="j">おたんじょうび おめでとう！</div><div class="k">생일 축하해!</div></div>
         </div>
+      </div>
+    </details>
+    <details>
+      <summary>⑮ 일본 문화 이모저모</summary>
+      <div class="body">
+        <p><b>주거 문화</b> (교과서 60~61쪽)</p>
+        <div class="tbl-wrap"><table class="ctbl">
+          <tr><td>맨션 (マンション)</td><td>우리나라 아파트 같은 고층 공동주택</td></tr>
+          <tr><td>아파트 (アパート)</td><td>2~3층 정도의 작은 공동주택</td></tr>
+          <tr><td class="j" data-say="わしつ">わしつ</td><td>다다미를 깐 일본식 방</td></tr>
+          <tr><td class="j" data-say="とこのま">とこのま</td><td>와시츠에서 족자나 꽃을 장식하는 공간</td></tr>
+          <tr><td class="j" data-say="おしいれ">おしいれ</td><td>이불 등을 넣어 두는 붙박이장</td></tr>
+          <tr><td class="j" data-say="こたつ">こたつ</td><td>탁자 아래 난방기가 있고 이불을 덮은 겨울 난방 기구</td></tr>
+        </table></div>
+        <p>집 안에서는 화장실과 욕실이 따로 나뉜 경우가 많아요. 일본은 환태평양 조산대에 있어 지진이 잦기 때문에 물, 비상식량, 손전등, 라디오 같은 <b>비상 대비용품</b>을 준비해 둬요.</p>
+        <p><b>선물 문화</b> (교과서 76쪽): 여행을 다녀오면 그 지역 특산 과자 같은 <span class="jp">おみやげ</span>를 나눠 줘요. 일본의 대표 기념품으로 <span class="jp">まねきねこ・おまもり・だるま・てまり・こけし</span>가 있어요.</p>
+        <p><b>화폐</b>: 지폐 1,000·2,000·5,000·10,000엔, 동전 1·5·10·50·100·500엔. 5엔과 50엔 동전에는 구멍이 있어요.</p>
+        <p><b>소비세</b>: 물건값에 소비세 10% (식품 등은 8%)가 붙어요. <span class="jp">200円(税込216円)</span>은 "세금 포함 216엔"이라는 뜻이에요.</p>
+        <p><b>결제 방법</b>: 현금도 많이 쓰고, Suica·PASMO 같은 교통카드로 지하철·버스·편의점에서 결제할 수 있어요.</p>
       </div>
     </details>
     <p class="small-note">예문과 표의 줄을 누르면 발음을 들을 수 있어요.</p>
@@ -677,10 +750,66 @@ const RAW = [
   ['A','いく','行く','이쿠','동사','가다','いってきます・いってらっしゃい의 いって가 여기서 나와요'],
   ['A','くる','来る','쿠루','동사','오다','いってきます의 きます가 여기서 나와요 (갔다 오겠습니다)'],
   ['A','かえる','帰る','카에루','동사','돌아오다, 돌아가다','おかえり의 かえり가 여기서 나와요'],
+
+  // 교과서 52~81쪽에서 추가 (가족 호칭, 문화, 4과 듣고 말하기)
+  ['B','おとうさん','お父さん','오토-상','명사','(남의) 아버지, 아버님','남의 가족은 높여서 불러요. 나의 아버지는 ちち (교과서 52쪽)'],
+  ['B','おかあさん','お母さん','오카-상','명사','(남의) 어머니, 어머님','나의 어머니는 はは'],
+  ['B','おにいさん','お兄さん','오니-상','명사','(남의) 형, 오빠','나의 형·오빠는 あに'],
+  ['B','おねえさん','お姉さん','오네-상','명사','(남의) 누나, 언니','나의 누나·언니는 あね'],
+  ['B','おとうとさん','弟さん','오토-토상','명사','(남의) 남동생','나의 남동생은 おとうと'],
+  ['B','いもうとさん','妹さん','이모-토상','명사','(남의) 여동생','나의 여동생은 いもうと'],
+  ['B','おじいさん','','오지-상','명사','(남의) 할아버지',''],
+  ['B','おばあさん','','오바-상','명사','(남의) 할머니',''],
+  ['B','わたし','私','와타시','대명사','나, 저','わたしの かぞく = 나의 가족'],
+  ['B','-さん','','-상','접미사','~씨, ~님','가장 기본적인 호칭. 자기 이름에는 붙이지 않아요','さん'],
+  ['B','～の','','~노','조사','~의','わたしの かぞく (나의 가족)','の'],
+  ['B','せんぱい','先輩','셈파이','명사','선배',''],
+  ['B','りょうり','料理','료-리','명사','요리','おいしい りょうり = 맛있는 요리'],
+  ['B','にほん','日本','니혼','명사','일본','これは にほんの ゆうめいな おかしです'],
+  ['B','おはよう','','오하요-','인사말','안녕 (아침 인사)','정중형은 おはようございます'],
+  ['B','すいか','西瓜','스이카','명사','수박',''],
+  ['B','おみやげ','お土産','오미야게','명사','여행 기념 선물','여행 다녀와서 나눠 주는 지역 특산품 (과자 등)'],
+  ['B','まねきねこ','招き猫','마네키네코','명사','마네키네코 (복을 부르는 고양이 인형)','가게 앞에 두면 손님과 돈을 불러온다고 해요'],
+  ['B','おまもり','お守り','오마모리','명사','부적','신사나 절에서 파는 행운의 부적'],
+  ['B','だるま','達磨','다루마','명사','다루마 (오뚝이 인형)','소원을 빌며 한쪽 눈을 그리고, 이루어지면 나머지 눈을 그려요'],
+  ['B','てまり','手まり','테마리','명사','테마리 (실로 감은 전통 공)',''],
+  ['B','こけし','','코케시','명사','고케시 (나무 인형)',''],
+  ['B','わしつ','和室','와시츠','명사','일본식 방 (다다미방)','바닥에 다다미를 깐 전통 방'],
+  ['B','とこのま','床の間','토코노마','명사','도코노마 (장식 공간)','와시츠에서 족자나 꽃을 장식하는 곳'],
+  ['B','おしいれ','押し入れ','오시이레','명사','붙박이장 (이불장)','이불 등을 넣어 두는 벽장'],
+  ['B','こたつ','炬燵','코타츠','명사','고타쓰 (이불 덮인 난방 탁자)','탁자 아래 난방기가 있는 겨울 필수품'],
+
+  // 숫자 (교과서 69·80쪽)
+  ['N','いち','一','이치','수사','일 (1)',''],
+  ['N','に','二','니','수사','이 (2)',''],
+  ['N','さん','三','상','수사','삼 (3)',''],
+  ['N','よん','四','욘','수사','사 (4)','し라고도 읽어요'],
+  ['N','ご','五','고','수사','오 (5)',''],
+  ['N','ろく','六','로쿠','수사','육 (6)',''],
+  ['N','なな','七','나나','수사','칠 (7)','しち라고도 읽어요'],
+  ['N','はち','八','하치','수사','팔 (8)',''],
+  ['N','きゅう','九','큐-','수사','구 (9)','く라고도 읽어요'],
+  ['N','じゅう','十','쥬-','수사','십 (10)',''],
+  ['N','にひゃく','二百','니햐쿠','수사','이백 (200)',''],
+  ['N','さんびゃく','三百','삼뱌쿠','수사','삼백 (300)','발음 변화! ひゃく → びゃく'],
+  ['N','よんひゃく','四百','욘햐쿠','수사','사백 (400)',''],
+  ['N','ごひゃく','五百','고햐쿠','수사','오백 (500)',''],
+  ['N','ろっぴゃく','六百','롭퍄쿠','수사','육백 (600)','발음 변화! ろく + ひゃく → ろっぴゃく'],
+  ['N','ななひゃく','七百','나나햐쿠','수사','칠백 (700)',''],
+  ['N','はっぴゃく','八百','합퍄쿠','수사','팔백 (800)','발음 변화! はち + ひゃく → はっぴゃく'],
+  ['N','きゅうひゃく','九百','큐-햐쿠','수사','구백 (900)',''],
+  ['N','にせん','二千','니센','수사','이천 (2,000)',''],
+  ['N','さんぜん','三千','산젠','수사','삼천 (3,000)','발음 변화! せん → ぜん'],
+  ['N','よんせん','四千','욘센','수사','사천 (4,000)',''],
+  ['N','ごせん','五千','고센','수사','오천 (5,000)',''],
+  ['N','ろくせん','六千','로쿠센','수사','육천 (6,000)','600(ろっぴゃく)과 달리 6000은 그대로 ろくせん'],
+  ['N','ななせん','七千','나나센','수사','칠천 (7,000)',''],
+  ['N','はっせん','八千','핫센','수사','팔천 (8,000)','발음 변화! はち + せん → はっせん'],
+  ['N','きゅうせん','九千','큐-센','수사','구천 (9,000)',''],
 ];
 
 const WORDS = [];
-{ const cnt = {3: 0, 4: 0, A: 0};
+{ const cnt = {3: 0, 4: 0, A: 0, B: 0, N: 0};
   RAW.forEach(([l, w, k, p, pos, m, n, tts]) => {
     cnt[l]++;
     WORDS.push({ id: `${l}-${cnt[l]}`, l, no: cnt[l], w, k, p, pos, m, n,
@@ -688,7 +817,8 @@ const WORDS = [];
   });
 }
 const byId = Object.fromEntries(WORDS.map(x => [x.id, x]));
-const lessonName = w => w.l === 'A' ? '3과 활동지' : w.l + '과';
+const GROUP = { A: ['3과 활동지', '활'], B: ['교과서 추가', '교'], N: ['숫자', '수'] };
+const lessonName = w => GROUP[w.l] ? GROUP[w.l][0] : w.l + '과';
 
 /* ============================================================
    2. 저장 상태 (localStorage)
@@ -738,6 +868,8 @@ const SCOPES = [
   ['3', '3과', w => w.l === 3],
   ['4', '4과', w => w.l === 4],
   ['A', '3과 활동지', w => w.l === 'A'],
+  ['B', '교과서 추가', w => w.l === 'B'],
+  ['N', '숫자', w => w.l === 'N'],
   ['star', '★ 즐겨찾기', w => S.star[w.id]],
   ['wrong', '✗ 오답노트', w => S.wrong[w.id]],
 ];
@@ -890,7 +1022,43 @@ function quizPool() {
   return ws;
 }
 
+// 숫자 읽기 (발음 변화 포함)
+const DIG = ['', 'いち', 'に', 'さん', 'よん', 'ご', 'ろく', 'なな', 'はち', 'きゅう'];
+function readNum(n, naive) {
+  const man = Math.floor(n / 10000), sen = Math.floor(n / 1000) % 10, hyaku = Math.floor(n / 100) % 10, ju = Math.floor(n / 10) % 10, one = n % 10;
+  let s = '';
+  if (man) s += (naive && man === 1 ? '' : DIG[man]) + 'まん';
+  if (sen) s += naive ? DIG[sen] + 'せん' : ({ 1: 'せん', 3: 'さんぜん', 8: 'はっせん' }[sen] || DIG[sen] + 'せん');
+  if (hyaku) s += naive ? DIG[hyaku] + 'ひゃく' : ({ 1: 'ひゃく', 3: 'さんびゃく', 6: 'ろっぴゃく', 8: 'はっぴゃく' }[hyaku] || DIG[hyaku] + 'ひゃく');
+  if (ju) s += (ju === 1 ? '' : DIG[ju]) + 'じゅう';
+  if (one) s += DIG[one];
+  return s;
+}
+const ITEMS = [['ペン', '펜'], ['りんご', '사과'], ['コーヒー', '커피'], ['ケーキ', '케이크'], ['ぼうし', '모자'], ['すいか', '수박'], ['はし', '젓가락'], ['おかし', '과자'], ['ほん', '책'], ['ラーメン', '라면']];
+function makePriceQ() {
+  const pick = a => a[Math.random() * a.length | 0];
+  // 발음 변화가 있는 3·6·8이 자주 나오게
+  const d = () => pick([1, 2, 3, 3, 4, 5, 6, 6, 7, 8, 8, 9]);
+  const n = pick([() => d() * 100, () => d() * 1000, () => d() * 1000 + d() * 100, () => d() * 100 + d() * 10, () => 10000])();
+  const ans = readNum(n) + 'えん';
+  const near = [n + 100, n - 100, n + 1000, n * 10].filter(x => x > 0 && x <= 90000 && x !== n).map(x => readNum(x) + 'えん');
+  const wrongs = [...new Set([readNum(n, true) + 'えん', ...shuffle(near)])].filter(x => x !== ans).slice(0, 3);
+  const [item, itemKr] = pick(ITEMS);
+  const sentence = `${item}は ${readNum(n)}えんです。`;
+  return {
+    w: null,
+    prompt: `<div class="label">가격을 일본어로 읽으면?</div><div class="big-word">¥${n.toLocaleString()}</div><div class="small-note">${itemKr}${(itemKr.charCodeAt(itemKr.length - 1) - 0xAC00) % 28 ? '은' : '는'} ${n.toLocaleString()}엔입니다.</div>`,
+    opts: shuffle([{ text: ans, ok: true, jp: true }, ...wrongs.map(x => ({ text: x, jp: true }))]),
+    explain: `<b class="jp">${esc(sentence)}</b>${/[368]/.test(String(n)) ? '<br>3·6·8은 발음 변화를 조심하세요!' : ''}`,
+    say: sentence, review: [ans, '¥' + n.toLocaleString()],
+  };
+}
+
 function startQuiz() {
+  if (S.quizMode === 'price') {
+    quiz = { qs: Array.from({ length: QN }, makePriceQ), i: 0, score: 0, wrong: [] };
+    return renderQuestion();
+  }
   const pool = quizPool();
   const area = $('#quizArea');
   if (pool.length < 1) { area.innerHTML = `<div class="panel empty">${S.quizMode === 'kanji' ? '이 범위에 한자 단어가 없어요.' : emptyMsg()}</div>`; return; }
@@ -972,7 +1140,7 @@ function pickAnswer(i) {
   const btns = $('#quizArea').querySelectorAll('.opt');
   btns.forEach((b, j) => { b.disabled = true; if (q.opts[j].ok) b.classList.add('correct'); });
   if (!ok) { btns[i].classList.add('wrong'); quiz.wrong.push(q); } else quiz.score++;
-  mark(q.w.id, ok);
+  if (q.w) mark(q.w.id, ok);
   if (q.say) speak(q.say);
   const next = () => { quiz.i++; renderQuestion(); };
   $('#qFeedback').innerHTML = `${ok ? '⭕ 정답!' : '❌ 오답'} &nbsp;${q.explain}` +
@@ -1123,7 +1291,7 @@ function renderList() {
   $('#listCount').textContent = `${ws.length}개`;
   $('#wordList').innerHTML = ws.length ? ws.map(w => `
     <div class="row" data-id="${w.id}">
-      <div class="num">${w.l === 'A' ? '활' : w.l}-${w.no}</div>
+      <div class="num">${GROUP[w.l] ? GROUP[w.l][1] : w.l}-${w.no}</div>
       <div>
         <div class="w" data-say="${esc(w.tts)}">${esc(w.w)}${w.k ? `<small>${esc(w.k)}</small>` : ''}</div>
         <div class="m"><b>${esc(w.m)}</b> · ${esc(w.p)}</div>
@@ -1243,6 +1411,16 @@ $('#ex5').onclick = e => {
   speak(item.querySelector('.answer [data-say]').dataset.say);
 };
 $('#exReset').onclick = renderExercises;
+
+// 숫자표
+{
+  const hot = new Set([300, 600, 800, 3000, 8000, 10000]);
+  const cell = n => `<td data-say="${readNum(n)}" class="${hot.has(n) ? 'hot' : ''}">${n.toLocaleString()}<br><span class="jp">${readNum(n)}</span></td>`;
+  let rows = '';
+  for (let k = 1; k <= 9; k++) rows += `<tr>${cell(k * 100)}${cell(k * 1000)}</tr>`;
+  rows += `<tr><td></td>${cell(10000)}</tr>`;
+  $('#numTable').innerHTML = `<div class="tbl-wrap"><table class="ctbl num"><tr><th>백 단위</th><th>천 단위</th></tr>${rows}</table></div>`;
+}
 renderExercises();
 
 document.querySelectorAll('.concept tr[data-say]').forEach(tr => tr.style.cursor = 'pointer');
