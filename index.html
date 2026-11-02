@@ -2,1691 +2,898 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
-  <title>히라가나 PRO - 스마트 암기 & 자동 필기 인식</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>일본어 단어 PRO - 3·4과 단어 암기</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800;900&family=Pretendard:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800&family=Noto+Sans+KR:wght@400;600;700;900&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #0b0f19;
-      --card-bg: #141c2e;
-      --card-card-inner: #1a253c;
-      --card-border: #23314e;
+      --card: #141c2e;
+      --inner: #1a253c;
+      --border: #23314e;
       --primary: #ff4d80;
       --primary-glow: rgba(255, 77, 128, 0.35);
       --secondary: #38bdf8;
-      --secondary-glow: rgba(56, 189, 248, 0.35);
       --accent: #fbbf24;
       --success: #34d399;
       --danger: #f87171;
       --text: #f8fafc;
-      --text-muted: #94a3b8;
-      --canvas-bg: #0d1424;
-      --grid-line: rgba(255, 255, 255, 0.08);
-      --radius-lg: 20px;
-      --radius-md: 14px;
-      --radius-sm: 8px;
+      --muted: #94a3b8;
+      --r-lg: 20px;
+      --r-md: 14px;
+      --r-sm: 9px;
+      --jp: 'M PLUS Rounded 1c', 'Noto Sans KR', sans-serif;
     }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
-      user-select: none;
-    }
-
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     body {
-      background-color: var(--bg);
-      background-image: 
-        radial-gradient(circle at 15% 15%, rgba(255, 77, 128, 0.08) 0%, transparent 45%),
-        radial-gradient(circle at 85% 85%, rgba(56, 189, 248, 0.08) 0%, transparent 45%);
+      background: var(--bg);
+      background-image:
+        radial-gradient(circle at 15% 10%, rgba(255, 77, 128, 0.08) 0%, transparent 45%),
+        radial-gradient(circle at 85% 90%, rgba(56, 189, 248, 0.08) 0%, transparent 45%);
+      background-attachment: fixed;
       color: var(--text);
-      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
+      font-family: 'Noto Sans KR', -apple-system, system-ui, sans-serif;
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      display: flex; justify-content: center;
       padding: 16px;
       overflow-x: hidden;
     }
+    button { font-family: inherit; cursor: pointer; }
+    .app { width: 100%; max-width: 540px; display: flex; flex-direction: column; gap: 14px; padding-bottom: 60px; }
+    .jp { font-family: var(--jp); }
 
-    .app-wrapper {
-      width: 100%;
-      max-width: 520px;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      padding-bottom: 70px;
+    /* Header */
+    header {
+      display: flex; justify-content: space-between; align-items: center;
+      background: var(--card); border: 1px solid var(--border);
+      padding: 12px 18px; border-radius: var(--r-lg);
     }
-
-    /* 1. Header (Original Brand Style) */
-    header.main-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      padding: 12px 20px;
-      border-radius: var(--radius-lg);
-      backdrop-filter: blur(10px);
+    .logo { font-size: 19px; font-weight: 900; display: flex; align-items: center; gap: 7px; }
+    .badge { background: linear-gradient(135deg, #ff4d80, #f43f5e); color: #fff; font-size: 11px; padding: 2px 7px; border-radius: 6px; }
+    .icon-btn {
+      background: var(--inner); border: 1px solid var(--border); color: var(--muted);
+      width: 38px; height: 38px; border-radius: 50%; font-size: 17px;
     }
+    .icon-btn.on { color: var(--accent); border-color: var(--accent); }
 
-    .brand-logo {
-      font-size: 20px;
-      font-weight: 900;
-      letter-spacing: -0.5px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
+    /* Scope & progress */
+    .panel { background: var(--card); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 14px; }
+    .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+    .chip {
+      background: var(--inner); border: 1px solid var(--border); color: var(--muted);
+      padding: 7px 12px; border-radius: 999px; font-size: 13px; font-weight: 700;
     }
+    .chip.active { background: var(--primary); border-color: var(--primary); color: #fff; box-shadow: 0 3px 10px var(--primary-glow); }
+    .chip small { opacity: .75; font-weight: 600; margin-left: 2px; }
+    .progress-row { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin: 12px 0 6px; font-weight: 600; }
+    .bar { height: 8px; background: var(--inner); border-radius: 99px; overflow: hidden; }
+    .bar > div { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); transition: width .4s; }
 
-    .badge-pro {
-      background: linear-gradient(135deg, #ff4d80, #f43f5e);
-      color: white;
-      font-size: 11px;
-      font-weight: 900;
-      padding: 2px 7px;
-      border-radius: 6px;
-      letter-spacing: 0.5px;
-      box-shadow: 0 2px 8px var(--primary-glow);
+    /* Nav */
+    nav {
+      display: flex; gap: 4px; background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--r-lg); padding: 5px; overflow-x: auto; scrollbar-width: none;
     }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .sound-toggle-btn {
-      background: var(--card-card-inner);
-      border: 1px solid var(--card-border);
-      color: var(--text-muted);
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      font-size: 16px;
-      transition: all 0.2s;
-    }
-
-    .sound-toggle-btn.active {
-      color: var(--secondary);
-      border-color: var(--secondary);
-    }
-
-    /* 2. Banner Section */
-    .hero-banner {
-      background: linear-gradient(135deg, #1b253b 0%, #151d2f 100%);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-lg);
-      padding: 20px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero-banner::after {
-      content: 'あ';
-      position: absolute;
-      right: 12px;
-      bottom: -15px;
-      font-family: 'M PLUS Rounded 1c', sans-serif;
-      font-size: 100px;
-      font-weight: 900;
-      color: rgba(255, 255, 255, 0.03);
-      pointer-events: none;
-    }
-
-    .hero-title {
-      font-size: 20px;
-      font-weight: 800;
-      margin-bottom: 6px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .hero-desc {
-      font-size: 13px;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
-
-    /* 3. Stat Dashboard Grid */
-    .stat-dashboard {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-    }
-
-    .stat-box {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-md);
-      padding: 12px 6px;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .stat-val {
-      font-size: 18px;
-      font-weight: 900;
-      color: var(--text);
-    }
-
-    .stat-val.streak { color: var(--accent); }
-    .stat-val.rate { color: var(--secondary); }
-    .stat-val.today { color: var(--success); }
-    .stat-val.wrong { color: var(--danger); }
-
-    .stat-lbl {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text-muted);
-    }
-
-    /* 4. Tab Navigation Menu */
-    .mode-navbar {
-      display: flex;
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-lg);
-      padding: 5px;
-      gap: 4px;
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
-
-    .mode-navbar::-webkit-scrollbar { display: none; }
-
+    nav::-webkit-scrollbar { display: none; }
     .nav-item {
-      flex: 1;
-      min-width: 68px;
-      padding: 9px 4px;
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      font-family: inherit;
-      font-size: 12px;
-      font-weight: 700;
-      border-radius: var(--radius-md);
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 3px;
-      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-      white-space: nowrap;
+      flex: 1; min-width: 50px; padding: 8px 2px; background: transparent; border: none;
+      color: var(--muted); font-size: 12px; font-weight: 700; border-radius: var(--r-md);
+      display: flex; flex-direction: column; align-items: center; gap: 2px; white-space: nowrap;
     }
-
     .nav-item i { font-style: normal; font-size: 16px; }
+    .nav-item.active { background: var(--primary); color: #fff; box-shadow: 0 4px 12px var(--primary-glow); }
 
-    .nav-item.active {
-      background: var(--primary);
-      color: white;
-      box-shadow: 0 4px 12px var(--primary-glow);
-    }
+    .view { display: none; flex-direction: column; gap: 14px; animation: fade .25s; }
+    .view.active { display: flex; }
+    @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
-    /* Content Screens */
-    .tab-view {
-      display: none;
-      flex-direction: column;
-      gap: 16px;
-      animation: fadeIn 0.25s ease-out;
-    }
-
-    .tab-view.active { display: flex; }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* ========================================================
-       SCREEN 1: SMART HANDWRITING & AUTO RECOGNITION
-    ======================================================== */
-    .writing-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-lg);
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-    }
-
-    .char-header {
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .char-info-col h3 {
-      font-size: 18px;
-      font-weight: 900;
-      display: flex;
-      align-items: baseline;
-      gap: 8px;
-    }
-
-    .char-info-col h3 span.romaji {
-      font-size: 24px;
-      color: var(--secondary);
-    }
-
-    .char-info-col p {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
-
-    .tts-sound-btn {
-      background: rgba(56, 189, 248, 0.15);
-      border: 1px solid rgba(56, 189, 248, 0.3);
-      color: var(--secondary);
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      font-size: 18px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: transform 0.15s;
-    }
-
-    .tts-sound-btn:active { transform: scale(0.9); }
-
-    /* Canvas Box with Japanese Tianzige (田) Grid */
-    .canvas-container {
-      position: relative;
-      width: 280px;
-      height: 280px;
-      background: var(--canvas-bg);
-      border: 2px solid var(--card-border);
-      border-radius: 22px;
-      overflow: hidden;
-      box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.5);
-      touch-action: none;
-    }
-
-    .tianzige-grid {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    .tianzige-grid::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 8%;
-      right: 8%;
-      height: 1px;
-      border-top: 1px dashed var(--grid-line);
-    }
-
-    .tianzige-grid::after {
-      content: '';
-      position: absolute;
-      left: 50%;
-      top: 8%;
-      bottom: 8%;
-      width: 1px;
-      border-left: 1px dashed var(--grid-line);
-    }
-
-    .watermark-guide {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'M PLUS Rounded 1c', sans-serif;
-      font-size: 185px;
-      font-weight: 700;
-      color: rgba(255, 255, 255, 0.12);
-      pointer-events: none;
-      z-index: 2;
-      transition: opacity 0.3s;
-    }
-
-    .watermark-guide.hidden { opacity: 0; }
-
-    canvas#writeCanvas {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 3;
-      cursor: crosshair;
-    }
-
-    /* Auto Recognition Timer Gauge */
-    .auto-check-status {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .auto-check-info {
-      display: flex;
-      justify-content: space-between;
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--text-muted);
-    }
-
-    .timer-track {
-      width: 100%;
-      height: 5px;
-      background: var(--card-card-inner);
-      border-radius: 99px;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .timer-bar {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, var(--secondary), var(--primary));
-      border-radius: 99px;
-    }
-
-    /* Feedback Banner */
-    .eval-banner {
-      width: 100%;
-      min-height: 44px;
-      border-radius: var(--radius-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      font-size: 13px;
-      font-weight: 800;
-      padding: 8px 14px;
-      text-align: center;
-      opacity: 0;
-      transform: translateY(4px);
-      transition: all 0.25s ease-out;
-    }
-
-    .eval-banner.show { opacity: 1; transform: translateY(0); }
-    .eval-banner.pass { background: rgba(52, 211, 153, 0.15); border: 1px solid var(--success); color: var(--success); }
-    .eval-banner.retry { background: rgba(248, 113, 113, 0.15); border: 1px solid var(--danger); color: var(--danger); }
-
-    /* Controls */
-    .writing-actions {
-      width: 100%;
-      display: grid;
-      grid-template-columns: 1fr 1.6fr 1fr;
-      gap: 8px;
-    }
+    .toolbar { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; justify-content: space-between; }
+    .seg { display: flex; background: var(--inner); border: 1px solid var(--border); border-radius: var(--r-md); padding: 3px; gap: 2px; }
+    .seg button { background: none; border: none; color: var(--muted); font-size: 12px; font-weight: 700; padding: 6px 10px; border-radius: 10px; }
+    .seg button.active { background: var(--secondary); color: #04121c; }
+    .small-note { font-size: 12px; color: var(--muted); }
 
     .btn {
-      border: none;
-      border-radius: var(--radius-md);
-      font-family: inherit;
-      font-weight: 800;
-      font-size: 14px;
-      padding: 12px 10px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      transition: all 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
+      border: none; border-radius: var(--r-md); padding: 14px; font-size: 15px; font-weight: 800; color: #fff;
+      background: var(--inner); border: 1px solid var(--border);
     }
+    .btn.primary { background: var(--primary); border-color: var(--primary); box-shadow: 0 4px 14px var(--primary-glow); }
+    .btn.good { background: var(--success); border-color: var(--success); color: #032018; }
+    .btn.bad { background: var(--danger); border-color: var(--danger); color: #2a0606; }
+    .btn-row { display: flex; gap: 10px; }
+    .btn-row .btn { flex: 1; }
 
-    .btn:active { transform: scale(0.96); }
-
-    .btn-secondary {
-      background: var(--card-card-inner);
-      border: 1px solid var(--card-border);
-      color: var(--text);
+    /* Flashcard */
+    .flash-wrap { perspective: 1200px; }
+    .flash {
+      position: relative; width: 100%; height: 330px; transform-style: preserve-3d;
+      transition: transform .5s cubic-bezier(.4, .2, .2, 1); cursor: pointer;
     }
-
-    .btn-primary {
-      background: linear-gradient(135deg, var(--primary), #e11d48);
-      color: white;
-      box-shadow: 0 4px 14px var(--primary-glow);
+    .flash.flipped { transform: rotateY(180deg); }
+    .face {
+      position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--r-lg);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+      padding: 22px; text-align: center;
     }
-
-    .guide-toggle-row {
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: var(--card-card-inner);
-      padding: 10px 14px;
-      border-radius: var(--radius-md);
-      border: 1px solid var(--card-border);
-      font-size: 13px;
-      font-weight: 700;
+    .face.back { transform: rotateY(180deg); background: linear-gradient(160deg, #1a253c, #141c2e); }
+    .face .tag { position: absolute; top: 14px; left: 16px; font-size: 11px; font-weight: 700; color: var(--muted); }
+    .face .boxdots { position: absolute; top: 14px; right: 16px; }
+    .big-word { font-size: 46px; font-weight: 800; line-height: 1.2; word-break: keep-all; }
+    .kanji-sub { font-size: 22px; color: var(--secondary); font-weight: 700; }
+    .meaning { font-size: 26px; font-weight: 900; word-break: keep-all; }
+    .pron { font-size: 14px; color: var(--accent); font-weight: 700; }
+    .pos { display: inline-block; font-size: 11px; font-weight: 800; padding: 3px 9px; border-radius: 99px; background: rgba(56,189,248,.15); color: var(--secondary); }
+    .pos.adj-i { background: rgba(255,77,128,.15); color: var(--primary); }
+    .pos.adj-na { background: rgba(251,191,36,.15); color: var(--accent); }
+    .note { font-size: 13px; color: var(--muted); line-height: 1.5; word-break: keep-all; max-width: 420px; }
+    .hint { font-size: 12px; color: var(--muted); position: absolute; bottom: 14px; }
+    .speak {
+      background: var(--inner); border: 1px solid var(--border); color: var(--text);
+      border-radius: 99px; padding: 6px 12px; font-size: 13px; font-weight: 700;
     }
+    .dots { display: inline-flex; gap: 3px; }
+    .dots span { width: 7px; height: 7px; border-radius: 50%; background: var(--border); }
+    .dots span.f { background: var(--success); }
+    .done-box { text-align: center; padding: 34px 20px; display: flex; flex-direction: column; gap: 12px; align-items: center; }
+    .done-box .emoji { font-size: 50px; }
+    .done-box h3 { font-size: 20px; }
 
-    /* Switch */
-    .switch-label {
-      position: relative;
-      display: inline-block;
-      width: 44px;
-      height: 24px;
+    /* Quiz */
+    .q-head { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); font-weight: 700; }
+    .q-prompt { text-align: center; padding: 30px 16px; display: flex; flex-direction: column; gap: 8px; align-items: center; }
+    .q-prompt .label { font-size: 12px; color: var(--muted); font-weight: 700; }
+    .options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .opt {
+      background: var(--card); border: 2px solid var(--border); color: var(--text);
+      border-radius: var(--r-md); padding: 16px 10px; font-size: 15px; font-weight: 700; min-height: 70px;
+      word-break: keep-all; line-height: 1.35;
     }
+    .opt.jp-opt { font-family: var(--jp); font-size: 20px; }
+    .opt.correct { border-color: var(--success); background: rgba(52,211,153,.15); }
+    .opt.wrong { border-color: var(--danger); background: rgba(248,113,113,.15); }
+    .opt:disabled { cursor: default; }
+    .feedback { text-align: center; font-size: 13px; color: var(--muted); min-height: 20px; line-height: 1.5; }
+    .wrong-list { text-align: left; width: 100%; display: flex; flex-direction: column; gap: 6px; }
+    .wrong-list div { background: var(--inner); border-radius: var(--r-sm); padding: 9px 12px; font-size: 14px; display: flex; justify-content: space-between; gap: 8px; }
 
-    .switch-label input { opacity: 0; width: 0; height: 0; }
-
-    .slider {
-      position: absolute;
-      cursor: pointer;
-      inset: 0;
-      background-color: #334155;
-      transition: 0.3s;
-      border-radius: 24px;
+    /* Spell */
+    .slots { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; min-height: 54px; }
+    .slot {
+      width: 46px; height: 52px; border-radius: var(--r-sm); border: 2px dashed var(--border);
+      display: flex; align-items: center; justify-content: center; font-family: var(--jp); font-size: 24px; font-weight: 800;
+      background: transparent; color: var(--text);
     }
-
-    .slider:before {
-      position: absolute;
-      content: "";
-      height: 18px;
-      width: 18px;
-      left: 3px;
-      bottom: 3px;
-      background-color: white;
-      transition: 0.3s;
-      border-radius: 50%;
+    .slot.filled { border-style: solid; border-color: var(--secondary); background: rgba(56,189,248,.08); }
+    .slots.ok .slot { border-color: var(--success); background: rgba(52,211,153,.15); }
+    .slots.ng .slot { border-color: var(--danger); animation: shake .35s; }
+    @keyframes shake { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+    .tiles { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+    .tile {
+      width: 52px; height: 52px; border-radius: var(--r-sm); background: var(--inner); border: 1px solid var(--border);
+      color: var(--text); font-family: var(--jp); font-size: 24px; font-weight: 800;
     }
+    .tile.used { opacity: .2; pointer-events: none; }
 
-    input:checked + .slider { background-color: var(--primary); }
-    input:checked + .slider:before { transform: translateX(20px); }
-
-    /* ========================================================
-       SCREEN 2: 3D FLASHCARD & MNEMONICS (연상 암기)
-    ======================================================== */
-    .flashcard-wrap {
-      perspective: 1000px;
-      width: 100%;
-      height: 330px;
+    /* Match */
+    .match-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .mcard {
+      background: var(--card); border: 2px solid var(--border); color: var(--text); border-radius: var(--r-md);
+      padding: 12px 8px; min-height: 62px; font-size: 14px; font-weight: 700; word-break: keep-all; line-height: 1.3;
     }
+    .mcard.jp-opt { font-family: var(--jp); font-size: 19px; }
+    .mcard.sel { border-color: var(--secondary); background: rgba(56,189,248,.12); }
+    .mcard.gone { opacity: 0; pointer-events: none; transition: opacity .3s; }
+    .mcard.ng { border-color: var(--danger); animation: shake .35s; }
 
-    .flashcard-inner {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      text-align: center;
-      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-      transform-style: preserve-3d;
-      cursor: pointer;
+    /* List */
+    .search {
+      width: 100%; background: var(--inner); border: 1px solid var(--border); color: var(--text);
+      border-radius: var(--r-md); padding: 11px 14px; font-size: 15px; font-family: inherit; outline: none;
     }
-
-    .flashcard-inner.flipped { transform: rotateY(180deg); }
-
-    .flashcard-face {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      -webkit-backface-visibility: hidden;
-      backface-visibility: hidden;
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--card-border);
-      background: var(--card-bg);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    .search:focus { border-color: var(--secondary); }
+    select.search { padding: 9px 12px; font-size: 13px; width: auto; }
+    .list { display: flex; flex-direction: column; gap: 6px; }
+    .row {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--r-md);
+      padding: 11px 12px; display: grid; grid-template-columns: 30px 1fr auto; gap: 10px; align-items: center;
     }
+    .row .num { font-size: 11px; color: var(--muted); text-align: center; font-weight: 700; }
+    .row .w { font-family: var(--jp); font-size: 19px; font-weight: 800; cursor: pointer; }
+    .row .w small { font-size: 13px; color: var(--secondary); margin-left: 6px; }
+    .row .m { font-size: 13px; color: var(--muted); margin-top: 2px; word-break: keep-all; }
+    .row .m b { color: var(--text); font-weight: 700; }
+    .row .extra { grid-column: 2 / 4; font-size: 12px; color: var(--muted); line-height: 1.5; display: none; }
+    .row.open .extra { display: block; }
+    .row .acts { display: flex; gap: 4px; align-items: center; }
+    .star { background: none; border: none; font-size: 19px; color: var(--border); }
+    .star.on { color: var(--accent); }
+    .wrong-mark { font-size: 10px; color: var(--danger); font-weight: 800; }
+    .empty { text-align: center; color: var(--muted); padding: 30px; font-size: 14px; }
 
-    .flashcard-back {
-      transform: rotateY(180deg);
-      background: linear-gradient(145deg, #162035, #121929);
-      justify-content: space-between;
+    /* Grammar */
+    .gram h3 { font-size: 16px; margin-bottom: 8px; display: flex; gap: 8px; align-items: center; }
+    .gram p { font-size: 14px; color: var(--muted); line-height: 1.65; word-break: keep-all; }
+    .gram .ex { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+    .gram .ex div { background: var(--inner); border-radius: var(--r-sm); padding: 10px 12px; cursor: pointer; }
+    .gram .ex .j { font-family: var(--jp); font-size: 17px; font-weight: 700; }
+    .gram .ex .k { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .gram table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 13px; }
+    .gram td, .gram th { border: 1px solid var(--border); padding: 7px; text-align: center; }
+    .gram th { background: var(--inner); color: var(--muted); font-weight: 700; }
+    .gram td.jp { font-size: 16px; }
+
+    .toast {
+      position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%) translateY(80px);
+      background: var(--inner); border: 1px solid var(--border); color: var(--text);
+      padding: 10px 18px; border-radius: 99px; font-size: 13px; font-weight: 700; transition: transform .3s; z-index: 10;
+      max-width: calc(100% - 32px); text-align: center;
     }
+    .toast.show { transform: translateX(-50%) translateY(0); }
 
-    .flashcard-kana {
-      font-family: 'M PLUS Rounded 1c', sans-serif;
-      font-size: 110px;
-      font-weight: 900;
-      color: var(--text);
-      line-height: 1;
-    }
-
-    .flashcard-hint-tag {
-      margin-top: 14px;
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--secondary);
-      background: rgba(56, 189, 248, 0.1);
-      padding: 6px 14px;
-      border-radius: 99px;
-      border: 1px solid rgba(56, 189, 248, 0.2);
-    }
-
-    .mnemonic-box {
-      background: rgba(251, 191, 36, 0.08);
-      border: 1px dashed rgba(251, 191, 36, 0.3);
-      border-radius: var(--radius-md);
-      padding: 14px;
-      margin: 10px 0;
-      width: 100%;
-    }
-
-    .mnemonic-title {
-      font-size: 12px;
-      font-weight: 800;
-      color: var(--accent);
-      margin-bottom: 4px;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .mnemonic-story {
-      font-size: 14px;
-      color: #fef08a;
-      line-height: 1.5;
-      font-weight: 600;
-    }
-
-    .srs-buttons {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      width: 100%;
-    }
-
-    .btn-srs {
-      padding: 12px 6px;
-      border-radius: var(--radius-md);
-      font-size: 13px;
-      font-weight: 800;
-      border: none;
-      cursor: pointer;
-      transition: transform 0.15s;
-    }
-
-    .btn-srs:active { transform: scale(0.95); }
-    .btn-srs.hard { background: rgba(248, 113, 113, 0.15); border: 1px solid var(--danger); color: var(--danger); }
-    .btn-srs.good { background: rgba(56, 189, 248, 0.15); border: 1px solid var(--secondary); color: var(--secondary); }
-    .btn-srs.easy { background: rgba(52, 211, 153, 0.15); border: 1px solid var(--success); color: var(--success); }
-
-    /* ========================================================
-       SCREEN 3: 4-CHOICE SPEED QUIZ
-    ======================================================== */
-    .quiz-container {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-lg);
-      padding: 24px 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 20px;
-    }
-
-    .quiz-prompt-box {
-      width: 100%;
-      background: var(--card-card-inner);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-md);
-      padding: 24px;
-      text-align: center;
-      position: relative;
-    }
-
-    .quiz-char {
-      font-family: 'M PLUS Rounded 1c', sans-serif;
-      font-size: 80px;
-      font-weight: 900;
-      color: var(--text);
-      line-height: 1;
-    }
-
-    .quiz-options-grid {
-      width: 100%;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-    }
-
-    .quiz-opt-btn {
-      background: var(--card-card-inner);
-      border: 1.5px solid var(--card-border);
-      color: var(--text);
-      font-size: 18px;
-      font-weight: 800;
-      padding: 16px;
-      border-radius: var(--radius-md);
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-
-    .quiz-opt-btn:active { transform: scale(0.97); }
-    .quiz-opt-btn.correct { background: rgba(52, 211, 153, 0.2); border-color: var(--success); color: var(--success); }
-    .quiz-opt-btn.wrong { background: rgba(248, 113, 113, 0.2); border-color: var(--danger); color: var(--danger); }
-
-    /* ========================================================
-       SCREEN 4: MATCHING PAIRS GAME (짝맞추기 게임)
-    ======================================================== */
-    .match-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 10px;
-      width: 100%;
-    }
-
-    .match-card {
-      aspect-ratio: 1;
-      background: var(--card-bg);
-      border: 2px solid var(--card-border);
-      border-radius: var(--radius-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 24px;
-      font-weight: 900;
-      cursor: pointer;
-      transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-
-    .match-card.selected {
-      border-color: var(--secondary);
-      background: rgba(56, 189, 248, 0.15);
-      transform: scale(1.05);
-    }
-
-    .match-card.matched {
-      border-color: var(--success);
-      background: rgba(52, 211, 153, 0.2);
-      opacity: 0.4;
-      pointer-events: none;
-    }
-
-    /* ========================================================
-       SCREEN 5: 50음도표 (Interactive Chart)
-    ======================================================== */
-    .table-section {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-lg);
-      padding: 16px;
-    }
-
-    .kana-chart {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 6px;
-    }
-
-    .chart-cell {
-      background: var(--card-card-inner);
-      border: 1px solid var(--card-border);
-      border-radius: var(--radius-sm);
-      aspect-ratio: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-
-    .chart-cell:active { transform: scale(0.92); }
-    .chart-cell .k-char { font-family: 'M PLUS Rounded 1c', sans-serif; font-size: 20px; font-weight: 800; }
-    .chart-cell .k-romaji { font-size: 10px; color: var(--text-muted); font-weight: 600; }
-
-    /* Particles Canvas */
-    canvas#fxCanvas {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 9999;
+    @media (max-width: 400px) {
+      body { padding: 12px; }
+      .big-word { font-size: 38px; }
+      .opt { font-size: 14px; }
     }
   </style>
 </head>
 <body>
+<div class="app">
+  <header>
+    <div class="logo">🌸 일본어 단어 <span class="badge">3·4과</span></div>
+    <button class="icon-btn" id="soundBtn" title="자동 발음">🔊</button>
+  </header>
 
-  <canvas id="fxCanvas"></canvas>
-
-  <div class="app-wrapper">
-    <!-- Header -->
-    <header class="main-header">
-      <div class="brand-logo">
-        <span>히라가나</span>
-        <span class="badge-pro">PRO MAX</span>
-      </div>
-      <div class="header-actions">
-        <button class="sound-toggle-btn active" id="soundBtn" title="효과음 토글">🔊</button>
-      </div>
-    </header>
-
-    <!-- Original Sub-Header Banner -->
-    <div class="hero-banner">
-      <h2 class="hero-title">오늘도 10분 일본어 🇯🇵</h2>
-      <p class="hero-desc">직접 쓰면 실시간 자동 인식! 읽기 → 쓰기 → 연상 암기 → 게임까지 한 번에.</p>
-    </div>
-
-    <!-- Original Stat Dashboard -->
-    <div class="stat-dashboard">
-      <div class="stat-box">
-        <span class="stat-val streak" id="statStreak">0</span>
-        <span class="stat-lbl">연속 정답</span>
-      </div>
-      <div class="stat-box">
-        <span class="stat-val rate" id="statMastery">0%</span>
-        <span class="stat-lbl">전체 숙련도</span>
-      </div>
-      <div class="stat-box">
-        <span class="stat-val today" id="statToday">0</span>
-        <span class="stat-lbl">오늘 문제</span>
-      </div>
-      <div class="stat-box">
-        <span class="stat-val wrong" id="statWrong">0</span>
-        <span class="stat-lbl">오답</span>
-      </div>
-    </div>
-
-    <!-- Mode Navigation Menu -->
-    <nav class="mode-navbar">
-      <button class="nav-item active" data-tab="tab-write">
-        <i>✍️</i>
-        <span>스마트 쓰기</span>
-      </button>
-      <button class="nav-item" data-tab="tab-flashcard">
-        <i>💡</i>
-        <span>연상 암기</span>
-      </button>
-      <button class="nav-item" data-tab="tab-quiz">
-        <i>🎯</i>
-        <span>스피드 퀴즈</span>
-      </button>
-      <button class="nav-item" data-tab="tab-match">
-        <i>🧩</i>
-        <span>짝맞추기</span>
-      </button>
-      <button class="nav-item" data-tab="tab-table">
-        <i>📖</i>
-        <span>50음도표</span>
-      </button>
-    </nav>
-
-    <!-- ========================================================
-         TAB 1: SMART HANDWRITING & AUTO RECOGNITION
-    ======================================================== -->
-    <section class="tab-view active" id="tab-write">
-      <div class="writing-card">
-        <div class="char-header">
-          <div class="char-info-col">
-            <h3><span class="romaji" id="writeRomaji">a</span> <span id="writeRow">아행</span></h3>
-            <p id="writeWord">대표단어: 朝 (あさ - 아침)</p>
-          </div>
-          <button class="tts-sound-btn" id="writeTtsBtn" title="원어민 발음">🔊</button>
-        </div>
-
-        <div class="guide-toggle-row">
-          <span>워터마크 가이드 표시</span>
-          <label class="switch-label">
-            <input type="checkbox" id="guideToggle" checked>
-            <span class="slider"></span>
-          </label>
-        </div>
-
-        <!-- Canvas Container -->
-        <div class="canvas-container">
-          <div class="tianzige-grid"></div>
-          <div class="watermark-guide" id="watermarkGuide">あ</div>
-          <canvas id="writeCanvas"></canvas>
-        </div>
-
-        <!-- Auto Check Timer & Progress -->
-        <div class="auto-check-status">
-          <div class="auto-check-info">
-            <span id="strokeIndicator">0 / 3 획 작성 중</span>
-            <span id="autoTimerText">펜을 떼면 자동 채점</span>
-          </div>
-          <div class="timer-track">
-            <div class="timer-bar" id="autoTimerBar"></div>
-          </div>
-        </div>
-
-        <!-- Feedback Banner -->
-        <div class="eval-banner" id="writeEvalBanner">
-          <span id="writeEvalText">글자를 따라 쓰면 자동으로 인식합니다!</span>
-        </div>
-
-        <!-- Actions -->
-        <div class="writing-actions">
-          <button class="btn btn-secondary" id="clearCanvasBtn">지우기</button>
-          <button class="btn btn-primary" id="manualCheckBtn">✨ 채점</button>
-          <button class="btn btn-secondary" id="nextCharBtn">다음 ➔</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ========================================================
-         TAB 2: FLASHCARD & MNEMONICS
-    ======================================================== -->
-    <section class="tab-view" id="tab-flashcard">
-      <div class="flashcard-wrap">
-        <div class="flashcard-inner" id="flashcardBox">
-          <!-- Front -->
-          <div class="flashcard-face flashcard-front">
-            <span class="flashcard-kana" id="cardKana">あ</span>
-            <div class="flashcard-hint-tag">카드를 터치하면 연상 암기 비법이 열려요! 👆</div>
-          </div>
-          <!-- Back -->
-          <div class="flashcard-face flashcard-back">
-            <div>
-              <h2 id="cardRomaji" style="font-size: 28px; color: var(--secondary);">a [아]</h2>
-              <div class="mnemonic-box">
-                <div class="mnemonic-title">💡 연상 기억 비법</div>
-                <p class="mnemonic-story" id="cardMnemonic">사과(Apple) 모양의 둥근 배를 잡고 "아!" 하고 소리치는 모습</p>
-              </div>
-              <p style="font-size: 13px; color: var(--text-muted);" id="cardWordBack">대표 단어: 朝 (あさ - 아침)</p>
-            </div>
-            <div class="srs-buttons">
-              <button class="btn-srs hard" data-srs="1">어려움 😅</button>
-              <button class="btn-srs good" data-srs="2">보통 🙂</button>
-              <button class="btn-srs easy" data-srs="3">쉬움 😎</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div style="text-align: center;">
-        <button class="btn btn-secondary" style="width: 100%;" id="cardNextBtn">다른 카드 보기 ➔</button>
-      </div>
-    </section>
-
-    <!-- ========================================================
-         TAB 3: 4-CHOICE SPEED QUIZ
-    ======================================================== -->
-    <section class="tab-view" id="tab-quiz">
-      <div class="quiz-container">
-        <div style="font-size: 13px; font-weight: 800; color: var(--secondary);" id="quizRoundText">문제 1 / 10</div>
-        <div class="quiz-prompt-box">
-          <div class="quiz-char" id="quizQuestionChar">あ</div>
-          <p style="font-size: 13px; color: var(--text-muted); margin-top: 8px;">올바른 발음을 고르세요</p>
-        </div>
-        <div class="quiz-options-grid" id="quizOptionsGrid"></div>
-      </div>
-    </section>
-
-    <!-- ========================================================
-         TAB 4: MATCHING PAIRS GAME
-    ======================================================== -->
-    <section class="tab-view" id="tab-match">
-      <div style="display: flex; justify-content: space-between; align-items: center; padding: 0 4px;">
-        <span style="font-size: 13px; font-weight: 800; color: var(--text-muted);">문자와 발음을 짝지어 보세요!</span>
-        <button class="btn btn-secondary" style="padding: 6px 12px; font-size: 12px;" id="restartMatchBtn">새 게임 🔄</button>
-      </div>
-      <div class="match-grid" id="matchGrid"></div>
-    </section>
-
-    <!-- ========================================================
-         TAB 5: 50음도표 (Interactive Chart)
-    ======================================================== -->
-    <section class="tab-view" id="tab-table">
-      <div class="table-section">
-        <div class="kana-chart" id="kanaChartGrid"></div>
-      </div>
-    </section>
+  <div class="panel">
+    <div class="chips" id="scopeChips"></div>
+    <div class="progress-row"><span id="progressText"></span><span id="progressPct"></span></div>
+    <div class="bar"><div id="progressBar"></div></div>
   </div>
 
-  <script>
-    /* ========================================================
-       1. DATABASE (46 청음 + 연상 암기 비법 + 단어 + 획수)
-    ======================================================== */
-    const KANA_DB = [
-      { char: 'あ', romaji: 'a', strokes: 3, row: '아행', mnemonic: '사과(Apple) 모양의 불룩한 배를 감싸 쥐고 "아!" 소리를 지르는 모양', word: '朝 (あさ - 아침)' },
-      { char: 'い', romaji: 'i', strokes: 2, row: '아행', mnemonic: '빨대 두 개(II)가 나란히 서서 "이~" 하고 있는 모양', word: '犬 (いぬ - 개)' },
-      { char: 'う', romaji: 'u', strokes: 2, row: '아행', mnemonic: '옆으로 누운 귀(Ear) 모양으로 "우~" 소리를 듣는 모양', word: '海 (うみ - 바다)' },
-      { char: 'え', romaji: 'e', strokes: 2, row: '아행', mnemonic: '에너지 넘치게 엑소시스트 포즈로 달리는 사람 모양 "에"', word: '駅 (えき - 기차역)' },
-      { char: 'お', romaji: 'o', strokes: 3, row: '아행', mnemonic: '골프공을 홀에 "오(Oh)!" 하고 나이스 샷 넣는 모양', word: 'お金 (おかね - 돈)' },
+  <nav>
+    <button class="nav-item active" data-tab="cards"><i>🃏</i>카드</button>
+    <button class="nav-item" data-tab="quiz"><i>✅</i>퀴즈</button>
+    <button class="nav-item" data-tab="spell"><i>🔤</i>철자</button>
+    <button class="nav-item" data-tab="match"><i>🧩</i>짝맞추기</button>
+    <button class="nav-item" data-tab="list"><i>📖</i>단어장</button>
+    <button class="nav-item" data-tab="grammar"><i>💡</i>문법</button>
+  </nav>
 
-      { char: 'か', romaji: 'ka', strokes: 3, row: '카행', mnemonic: '칼(Ka)을 힘차게 쉭 휘두르는 날카로운 모양 "카"', word: '傘 (かさ - 우산)' },
-      { char: 'き', romaji: 'ki', strokes: 4, row: '카행', mnemonic: '자물쇠를 여는 열쇠(Key)의 홈 모양 "키"', word: '木 (き - 나무)' },
-      { char: 'く', romaji: 'ku', strokes: 1, row: '카행', mnemonic: '뻐꾸기(Cuckoo)가 먹이를 먹으려고 부리를 쩍 벌린 모양 "쿠"', word: '車 (くるま - 자동차)' },
-      { char: 'け', romaji: 'ke', strokes: 3, row: '카행', mnemonic: '맛있는 케이크(Cake)를 자르려고 칼을 댄 모양 "케"', word: '警察 (けいさつ - 경찰)' },
-      { char: 'こ', romaji: 'ko', strokes: 2, row: '카행', mnemonic: '코(Ko)알라 두 마리가 위아래로 마주보고 있는 입술 모양 "코"', word: '子供 (こども - 어린이)' },
+  <!-- 카드 -->
+  <section class="view active" id="view-cards">
+    <div class="toolbar">
+      <div class="seg" id="cardFrontSeg">
+        <button data-v="jp">일본어 → 뜻</button>
+        <button data-v="kr">뜻 → 일본어</button>
+      </div>
+      <div class="seg" id="cardFilterSeg">
+        <button data-v="all">전체</button>
+        <button data-v="todo">못 외운 것만</button>
+      </div>
+    </div>
+    <div id="cardArea"></div>
+  </section>
 
-      { char: 'さ', romaji: 'sa', strokes: 3, row: '사행', mnemonic: '사탕(Sa)을 숟가락으로 떠먹는 모습 "사"', word: '魚 (さかな - 물고기)' },
-      { char: 'し', romaji: 'shi', strokes: 1, row: '사행', mnemonic: '시원하게 낚싯바늘(Shin)을 물에 퐁당 던지는 모양 "시"', word: '鹿 (しか - 사슴)' },
-      { char: 'す', romaji: 'su', strokes: 2, row: '사행', mnemonic: '새총(Su)에 동그란 방울을 걸어 쏘려는 모양 "스"', word: '寿司 (すし - 초밥)' },
-      { char: 'せ', romaji: 'se', strokes: 3, row: '사행', mnemonic: '세계(Se) 평화를 위해 손을 맞잡고 서 있는 모양 "세"', word: '世界 (せかい - 세계)' },
-      { char: 'そ', romaji: 'so', strokes: 1, row: '사행', mnemonic: '소프트(Soft) 아이스크림을 지그재그로 예쁘게 짠 모양 "소"', word: '空 (そら - 하늘)' },
+  <!-- 퀴즈 -->
+  <section class="view" id="view-quiz">
+    <div class="toolbar">
+      <div class="seg" id="quizModeSeg">
+        <button data-v="jp2kr">일 → 뜻</button>
+        <button data-v="kr2jp">뜻 → 일</button>
+        <button data-v="kanji">한자 → 읽기</button>
+      </div>
+    </div>
+    <div id="quizArea"></div>
+  </section>
 
-      { char: 'た', romaji: 'ta', strokes: 4, row: '타행', mnemonic: '영어 알파벳 "ta"를 재빠르게 합쳐 쓴 모양 "타"', word: '卵 (たまご - 달걀)' },
-      { char: 'ち', romaji: 'chi', strokes: 2, row: '타행', mnemonic: '치어리더(Cheer)가 숫자 5 모양으로 춤추는 모습 "치"', word: '地下鉄 (ちかてつ - 지하철)' },
-      { char: 'つ', romaji: 'tsu', strokes: 1, row: '타행', mnemonic: '쓰나미(Tsunami)의 거대한 파도가 굽이쳐 휘어지는 모양 "츠"', word: '机 (つくえ - 책상)' },
-      { char: 'て', romaji: 'te', strokes: 1, row: '타행', mnemonic: '테니스(Tennis) 라켓 손잡이 모양 "테"', word: '手 (て - 손)' },
-      { char: 'と', romaji: 'to', strokes: 2, row: '타행', mnemonic: '토끼(To)의 발가락에 가시가 콕 찔린 모양 "토"', word: '友達 (ともだち - 친구)' },
+  <!-- 철자 -->
+  <section class="view" id="view-spell">
+    <div class="small-note">뜻을 보고 글자 타일을 순서대로 눌러 단어를 완성하세요. 채운 칸을 누르면 지워져요.</div>
+    <div id="spellArea"></div>
+  </section>
 
-      { char: 'な', romaji: 'na', strokes: 4, row: '나행', mnemonic: '나비(Na)가 날아가다 꽃송이에 사뿐 앉은 모습 "나"', word: '夏 (なつ - 여름)' },
-      { char: 'に', romaji: 'ni', strokes: 3, row: '나행', mnemonic: '바늘(Needle)과 실 두 가닥이 나란히 꿰어진 모양 "니"', word: '肉 (にく - 고기)' },
-      { char: 'ぬ', romaji: 'nu', strokes: 2, row: '나행', mnemonic: '누들(Noodle) 젓가락으로 면발을 꼬아 집어 올린 모양 "누"', word: 'ぬいぐるみ (인형)' },
-      { char: 'ね', romaji: 'ne', strokes: 2, row: '나행', mnemonic: '네코(Neko - 고양이)가 꼬리를 돌돌 말고 앉은 모양 "네"', word: '猫 (ねこ - 고양이)' },
-      { char: 'の', romaji: 'no', strokes: 1, row: '나행', mnemonic: '진입 금지 표지판 No(노)처럼 동그랗게 원을 긋는 모양 "노"', word: '飲み物 (のみもの - 음료)' },
+  <!-- 짝맞추기 -->
+  <section class="view" id="view-match">
+    <div id="matchArea"></div>
+  </section>
 
-      { char: 'は', romaji: 'ha', strokes: 3, row: '하행', mnemonic: '하회탈(Ha)을 쓰고 껄껄 웃는 사람 모양 "하"', word: '花 (はな - 꽃)' },
-      { char: 'ひ', romaji: 'hi', strokes: 1, row: '하행', mnemonic: '히(Hi)죽히죽 웃는 사람의 커다란 미소 입꼬리 모양 "히"', word: '飛行機 (ひこうき - 비행기)' },
-      { char: 'ふ', romaji: 'fu', strokes: 4, row: '하행', mnemonic: '후지산(Fuji) 정상에서 촛불을 후~ 부는 모습 "후"', word: '冬 (ふゆ - 겨울)' },
-      { char: 'へ', romaji: 'he', strokes: 1, row: '하행', mnemonic: '헤이(Hey)! 외치며 산등성이를 폴짝 오르는 모양 "헤"', word: '部屋 (へや - 방)' },
-      { char: 'ほ', romaji: 'ho', strokes: 4, row: '하행', mnemonic: '모자를 쓴 산타가 "호(Ho)호호" 웃는 모습 "호"', word: '本 (ほん - 책)' },
+  <!-- 단어장 -->
+  <section class="view" id="view-list">
+    <input class="search" id="searchInput" placeholder="단어·뜻·발음 검색 (예: ねこ, 고양이, 네코)">
+    <div class="toolbar">
+      <select class="search" id="posFilter"></select>
+      <span class="small-note" id="listCount"></span>
+    </div>
+    <div class="list" id="wordList"></div>
+  </section>
 
-      { char: 'ま', romaji: 'ma', strokes: 3, row: '마행', mnemonic: '마술사(Ma)가 모자에서 비둘기 두 마리를 꺼내는 모습 "마"', word: '町 (まち - 마을)' },
-      { char: 'み', romaji: 'mi', strokes: 2, row: '마행', mnemonic: '음악(Music)의 높은음자리표와 음표 모양 "미"', word: '水 (みず - 물)' },
-      { char: 'む', romaji: 'mu', strokes: 3, row: '마행', mnemonic: '소(Moo)의 얼굴과 꼬리가 살랑이는 모습 "무"', word: '虫 (むし - 벌레)' },
-      { char: 'め', romaji: 'me', strokes: 2, row: '마행', mnemonic: '안경 쓴 눈(Me) 모양 "메"', word: '眼鏡 (めがね - 안경)' },
-      { char: 'も', romaji: 'mo', strokes: 3, row: '마행', mnemonic: '물고기를 모(Mo)조리 낚으려는 삼지창 갈고리 "모"', word: '森 (もり - 숲)' },
+  <!-- 문법 -->
+  <section class="view" id="view-grammar">
+    <div class="panel gram">
+      <h3>① い형용사 vs な형용사</h3>
+      <p><b class="jp">きれいだ</b>·<b class="jp">ゆうめいだ</b>는 い로 끝나는 것처럼 보이지만 <b>な형용사</b>예요. 정중형은 だ를 です로 바꿔서 <span class="jp">きれいです</span>, <span class="jp">ゆうめいです</span>.
+      반면 <span class="jp">かわいい・おいしい・うれしい</span>는 <b>い형용사</b>로, 그대로 <span class="jp">かわいいです</span>.</p>
+      <table>
+        <tr><th>い형용사</th><th>な형용사</th></tr>
+        <tr><td class="jp" id="adjI"></td><td class="jp" id="adjNa"></td></tr>
+      </table>
+    </div>
+    <div class="panel gram">
+      <h3>② 코소아도 — 대명사 vs 연체사</h3>
+      <p><b class="jp">これ</b>(이것)·<b class="jp">それ</b>(그것)은 혼자 쓰는 <b>대명사</b>. <b class="jp">この</b>(이~)·<b class="jp">その</b>(그~)·<b class="jp">どんな</b>(어떤~)는 반드시 뒤에 명사가 오는 <b>연체사</b>예요.</p>
+      <div class="ex">
+        <div data-say="これは ねこです。"><div class="j">これは ねこです。</div><div class="k">이것은 고양이입니다.</div></div>
+        <div data-say="この ねこは かわいいです。"><div class="j">この ねこは かわいいです。</div><div class="k">이 고양이는 귀엽습니다.</div></div>
+        <div data-say="その しゃしんは すてきですね。"><div class="j">その しゃしんは すてきですね。</div><div class="k">그 사진은 멋지네요.</div></div>
+      </div>
+    </div>
+    <div class="panel gram">
+      <h3>③ 비교 표현</h3>
+      <p><b class="jp">どちら</b>(어느 쪽) + <b class="jp">～より</b>(~보다) + <b class="jp">ほう</b>(~쪽) + <b class="jp">いい</b>(좋다)를 조합하면 비교 문장이 돼요.<br>
+      <b class="jp">A より B の ほうが いいです</b> = A보다 B 쪽이 좋습니다.</p>
+      <div class="ex">
+        <div data-say="ラーメンと うどんと どちらが いいですか。"><div class="j">ラーメンと うどんと どちらが いいですか。</div><div class="k">라면과 우동 중 어느 쪽이 좋습니까?</div></div>
+        <div data-say="ラーメンより うどんの ほうが いいです。"><div class="j">ラーメンより うどんの ほうが いいです。</div><div class="k">라면보다 우동 쪽이 좋습니다.</div></div>
+      </div>
+    </div>
+    <div class="panel gram">
+      <h3>④ 물건 사기 & 숫자</h3>
+      <p>개수는 <span class="jp">ひとつ・ふたつ・みっつ・よっつ・いつつ</span>, 값은 <span class="jp">いくら</span>로 물어요. 만 단위에는 반드시 <span class="jp">いち</span>를 붙여 <b class="jp">いちまん</b>.</p>
+      <div class="ex">
+        <div data-say="すみません、この ペンは いくらですか。"><div class="j">すみません、この ペンは いくらですか。</div><div class="k">저기요, 이 펜은 얼마예요?</div></div>
+        <div data-say="りんごを みっつ ください。"><div class="j">りんごを みっつ ください。</div><div class="k">사과를 세 개 주세요.</div></div>
+        <div data-say="おたんじょうび おめでとう！"><div class="j">おたんじょうび おめでとう！</div><div class="k">생일 축하해!</div></div>
+      </div>
+      <p style="margin-top:10px">예문을 누르면 발음을 들을 수 있어요.</p>
+    </div>
+  </section>
+</div>
+<div class="toast" id="toast"></div>
 
-      { char: 'や', romaji: 'ya', strokes: 3, row: '야행', mnemonic: '야구(Ya) 글러브로 공을 콱 잡는 모습 "야"', word: '山 (やま - 산)' },
-      { char: 'ゆ', romaji: 'yu', strokes: 2, row: '야행', mnemonic: '유턴(U-turn)하는 자동차의 물고기 궤적 모양 "유"', word: '雪 (ゆき - 눈)' },
-      { char: 'よ', romaji: 'yo', strokes: 2, row: '야행', mnemonic: '요요(Yo-yo)를 손가락에 걸고 튕기는 모습 "요"', word: '夜 (よる - 밤)' },
+<script>
+/* ============================================================
+   1. 단어 데이터  [과, 단어(가나), 한자, 발음, 품사, 뜻, 설명, TTS 읽기(선택)]
+============================================================ */
+const RAW = [
+  [3,'ちち','父','치치','명사','(나의) 아버지','남에게 자신의 아버지를 낮추어 부르는 말'],
+  [3,'はは','母','하하','명사','(나의) 어머니','남에게 자신의 어머니를 낮추어 부르는 말'],
+  [3,'あに','兄','아니','명사','(나의) 형, 오빠',''],
+  [3,'あね','姉','아네','명사','(나의) 누나, 언니',''],
+  [3,'おとうと','弟','오토-토','명사','(나의) 남동생',''],
+  [3,'いもうと','妹','이모-토','명사','(나의) 여동생',''],
+  [3,'はい','','하이','감탄사','네, 예','대답할 때, 또는 무언가를 건넬 때 "자, 여기"의 뜻으로도 사용'],
+  [3,'～と','','~토','조사','~와/과','명사와 명사를 나열할 때 쓰는 병렬 조사'],
+  [3,'いってきます','行ってきます','잇테키마스','인사말','다녀오겠습니다','외출할 때 하는 인사'],
+  [3,'いらっしゃい','','이랏샤이','인사말','어서 와, 어서 오세요','손님을 반갑게 맞이할 때'],
+  [3,'ただいま','','타다이마','인사말','다녀왔습니다','귀가했을 때 하는 인사'],
+  [3,'おかえり','お帰り','오카에리','인사말','(귀가한 사람에게) 어서 와','정중형은 おかえりなさい'],
+  [3,'いってらっしゃい','行ってらっしゃい','잇테랏샤이','인사말','다녀오세요, 잘 다녀와','외출하는 사람에게 하는 인사'],
+  [3,'おじゃまします','お邪魔します','오자마시마스','인사말','(남의 집에 들어갈 때) 실례합니다','남의 집이나 방에 들어갈 때 하는 인사'],
+  [3,'まるい','丸い','마루이','い형용사','둥글다',''],
+  [3,'かわいい','可愛い','카와이-','い형용사','귀엽다',''],
+  [3,'おもしろい','面白い','오모시로이','い형용사','재미있다, 흥미롭다',''],
+  [3,'かお','顔','카오','명사','얼굴',''],
+  [3,'あおい','青い','아오이','い형용사','파랗다, 푸르다',''],
+  [3,'とり','鳥','토리','명사','새',''],
+  [3,'すきだ','好きだ','스키다','な형용사','좋아하다','대상 뒤에 조사 が를 주로 사용 (ねこが すきだ)'],
+  [3,'きれいだ','綺麗だ','키레-다','な형용사','예쁘다, 깨끗하다','い로 끝나지만 な형용사! → きれいです'],
+  [3,'じょうずだ','上手だ','조-즈다','な형용사','능숙하다, 잘하다','대상 뒤에 が (にほんごが じょうずだ)'],
+  [3,'へや','部屋','헤야','명사','방',''],
+  [3,'ゆうめいだ','有名だ','유-메-다','な형용사','유명하다','い로 끝나지만 な형용사! → ゆうめいです'],
+  [3,'あら','','아라','감탄사','어머, 어머나','가볍게 놀라거나 의아할 때'],
+  [3,'-ちゃん','','-쨩','접미사','~양, ~아/야 (친근한 호칭)','아이, 여성, 친근한 대상의 이름 뒤에 붙임','ちゃん'],
+  [3,'-くん','-君','-쿤','접미사','~군','남자아이나 친구, 아랫사람의 이름 뒤에 붙임','くん'],
+  [3,'ひさしぶり','久しぶり','히사시부리','인사말','오랜만이야','정중형은 おひさしぶりです'],
+  [3,'それ','','소레','대명사','그것','청자에게 가까운 사물을 가리킴'],
+  [3,'ぜんぶ','全部','젠부','명사/부사','전부, 모두',''],
+  [3,'まんが','漫画','망가','명사','만화',''],
+  [3,'そうです','','소-데스','관용 표현','그렇습니다, 맞습니다',''],
+  [3,'～が','','~가','조사','~이/가','주격 조사, 또는 すきだ·じょうずだ 등의 대상 표시'],
+  [3,'ほんとう','本当','혼토-','명사','정말, 진짜',''],
+  [3,'～も','','~모','조사','~도','포함·첨가의 의미'],
+  [3,'とても','','토테모','부사','매우, 무척, 아주',''],
+  [3,'その','','소노','연체사','그 ~','반드시 뒤에 명사가 옴 (その しゃしん)'],
+  [3,'しゃしん','写真','샤신','명사','사진',''],
+  [3,'かぞく','家族','카조쿠','명사','가족',''],
+  [3,'あ','','아','감탄사','아 (발견·생각났을 때)','무언가를 발견하거나 생각이 났을 때'],
+  [3,'ねこ','猫','네코','명사','고양이',''],
+  [3,'～だ','','~다','조동사','~이다 (반말 단정)','명사나 な형용사 어간 뒤에 붙음'],
+  [3,'この','','코노','연체사','이 ~','화자에게 가까운 대상을 수식, 반드시 뒤에 명사가 옴'],
+  [3,'こ','子','코','명사','아이, 애','동식물이나 사물을 친근하게 부를 때도 사용 (この こ)'],
+  [3,'わあ','','와-','감탄사','와 (감탄)','감탄하거나 놀랐을 때 내는 소리'],
+  [3,'おいしい','美味しい','오이시-','い형용사','맛있다',''],
+  [3,'すてきだ','素敵だ','스테키다','な형용사','멋지다, 근사하다',''],
+  [3,'けしき','景色','케시키','명사','경치, 풍경',''],
+  [3,'うみ','海','우미','명사','바다',''],
+  [3,'ホテル','','호테루','명사','호텔','외래어 → 가타카나'],
 
-      { char: 'ら', romaji: 'ra', strokes: 2, row: '라행', mnemonic: '라면(Ra)을 후루룩 먹는 사람의 옆모습 "라"', word: 'ライオン (사자)' },
-      { char: 'り', romaji: 'ri', strokes: 2, row: '라행', mnemonic: '리본(Ribbon) 두 줄이 하늘하늘 휘날리는 모습 "리"', word: '林檎 (りんご - 사과)' },
-      { char: 'る', romaji: 'ru', strokes: 1, row: '라행', mnemonic: '루비(Ruby) 보석을 동그랗게 감싼 반지 모양 "루"', word: '留学生 (유학생)' },
-      { char: 'れ', romaji: 're', strokes: 2, row: '라행', mnemonic: '레슬링(Re) 선수가 멋지게 턴하며 착지하는 모양 "레"', word: '歴史 (れきし - 역사)' },
-      { char: 'ろ', romaji: 'ro', strokes: 1, row: '라행', mnemonic: '길 로(Road)자 처럼 도로가 굽이쳐 돌아가는 모양 "로"', word: '蝋燭 (ろうそく - 양초)' },
+  [4,'ひとつ','一つ','히토츠','수사','한 개, 하나',''],
+  [4,'ふたつ','二つ','후타츠','수사','두 개, 둘',''],
+  [4,'みっつ','三つ','밋츠','수사','세 개, 셋','촉음 っ 주의'],
+  [4,'よっつ','四つ','욧츠','수사','네 개, 넷','촉음 っ 주의'],
+  [4,'いつつ','五つ','이츠츠','수사','다섯 개, 다섯',''],
+  [4,'いくつ','幾つ','이쿠츠','의문사','몇 개, 몇 살','나이를 물을 때 "몇 살"의 의미로도 사용'],
+  [4,'もも','桃','모모','명사','복숭아',''],
+  [4,'ください','下さい','쿠다사이','관용 표현','주세요','물건을 주문하거나 요청할 때'],
+  [4,'りんご','林檎','링고','명사','사과',''],
+  [4,'みかん','蜜柑','미캉','명사','귤',''],
+  [4,'ひゃく','百','햐쿠','수사','백 (100)',''],
+  [4,'せん','千','센','수사','천 (1,000)',''],
+  [4,'いちまん','一万','이치만','수사','만 (10,000)','만 단위에는 반드시 いち를 붙임'],
+  [4,'すみません','','스미마셍','인사말','저기요, 실례합니다, 미안합니다','점원을 부를 때나 사과할 때'],
+  [4,'ペン','','펭','명사','펜',''],
+  [4,'いくら','幾ら','이쿠라','의문사','얼마','가격을 물어볼 때'],
+  [4,'えん','円','엔','조수사','~엔 (일본 화폐 단위)',''],
+  [4,'はし','箸','하시','명사','젓가락',''],
+  [4,'ほん','本','홍','명사/조수사','책 / ~자루, ~병','길고 가느다란 물건을 세는 단위로도 사용'],
+  [4,'ぼうし','帽子','보-시','명사','모자',''],
+  [4,'たんじょうび','誕生日','탄조-비','명사','생일',''],
+  [4,'おめでとう','','오메데토-','인사말','축하해','정중형은 おめでとうございます'],
+  [4,'ありがとう','','아리가토-','인사말','고마워','정중형은 ありがとうございます'],
+  [4,'にゅうがく','入学','뉴-가쿠','명사','입학',''],
+  [4,'ごうかく','合格','고-카쿠','명사','합격',''],
+  [4,'そつぎょう','卒業','소츠교-','명사','졸업',''],
+  [4,'いちご','苺','이치고','명사','딸기',''],
+  [4,'どちら','','도치라','대명사','어느 쪽','둘 중 선택할 때, 방향·장소를 정중히 물을 때'],
+  [4,'いい','良い','이-','い형용사','좋다',''],
+  [4,'ほう','方','호-','명사','~쪽, ~편','비교문에서 ～の ほうが 형태로 자주 쓰임'],
+  [4,'ラーメン','','라-멘','명사','라면',''],
+  [4,'うどん','','우동','명사','우동',''],
+  [4,'あか','赤','아카','명사','빨강, 빨간색',''],
+  [4,'しろ','白','시로','명사','하양, 흰색',''],
+  [4,'こわい','怖い','코와이','い형용사','무섭다, 두렵다',''],
+  [4,'げんきだ','元気だ','겡키다','な형용사','건강하다, 기운차다',''],
+  [4,'たいへんだ','大変だ','타이헨다','な형용사','힘들다, 큰일이다','부사로 쓰이면 "매우"'],
+  [4,'にぎやかだ','賑やかだ','니기야카다','な형용사','번화하다, 활기차다',''],
+  [4,'～へ','','~에','조사','~로, ~(으)로 (방향)','이동의 방향을 나타냄. 발음은 え!','え'],
+  [4,'～より','','~요리','조사','~보다','비교의 기준을 나타냄'],
+  [4,'うれしい','嬉しい','우레시-','い형용사','기쁘다',''],
+  [4,'いらっしゃいませ','','이랏샤이마세','인사말','어서 오십시오 (가게)','가게 등에서 손님을 맞이할 때'],
+  [4,'どんな','','돈나','연체사','어떤 ~','성질·상태를 물을 때 명사 앞에 붙임'],
+  [4,'おかし','お菓子','오카시','명사','과자',''],
+  [4,'～かな','','~카나','종조사','~일까, ~려나','혼잣말로 가벼운 의문·추측'],
+  [4,'まっちゃ','抹茶','맛챠','명사','말차, 가루녹차',''],
+  [4,'うーん','','우-응','감탄사','음~ (고민할 때)','고민하거나 생각할 때 내는 소리'],
+  [4,'～ね','','~네','종조사','~네(요), ~지(요)','문장 끝에서 공감·확인'],
+  [4,'あのう','','아노-','감탄사','저기요, 저… (조심스럽게)','말을 꺼내거나 조심스럽게 부를 때'],
+  [4,'これ','','코레','대명사','이것','화자에게 가까운 사물을 가리킴'],
+  [4,'プレゼント','','푸레젠토','명사','선물',''],
+  [4,'コーヒー','','코-히-','명사','커피',''],
+  [4,'すし','寿司','스시','명사','초밥',''],
+  [4,'まち','町 / 街','마치','명사','마을, 동네, 거리',''],
+  [4,'ケーキ','','케-키','명사','케이크',''],
+  [4,'てんいん','店員','텐인','명사','점원',''],
+];
 
-      { char: 'わ', romaji: 'wa', strokes: 2, row: '와행', mnemonic: '와인(Wine) 잔을 손으로 우아하게 받쳐 든 모양 "와"', word: '鰐 (わに - 악어)' },
-      { char: 'を', romaji: 'wo', strokes: 3, row: '와행', mnemonic: '워(Wo)메! 휠체어를 탄 사람이 달리는 모습 "~을/를"', word: '本を読む (책을 읽다)' },
-      { char: 'ん', romaji: 'n', strokes: 1, row: '응', mnemonic: '영어 소문자 n과 똑같이 생긴 받침 "응"', word: '日本 (にほん - 일본)' }
-    ];
+const WORDS = [];
+{ const cnt = {3: 0, 4: 0};
+  RAW.forEach(([l, w, k, p, pos, m, n, tts]) => {
+    cnt[l]++;
+    WORDS.push({ id: `${l}-${cnt[l]}`, l, no: cnt[l], w, k, p, pos, m, n,
+      tts: tts || w.replace(/[～\-]/g, ''), bare: w.replace(/[～\-]/g, '') });
+  });
+}
+const byId = Object.fromEntries(WORDS.map(x => [x.id, x]));
 
-    /* ========================================================
-       2. STATE & LOCALSTORAGE ENGINE
-    ======================================================== */
-    const Storage = {
-      KEY: 'hiragana_pro_max_v1',
-      data: {
-        streak: 0,
-        todayCount: 0,
-        wrongCount: 0,
-        soundEnabled: true,
-        mastery: {} // char -> { correct: 0, count: 0 }
-      },
-      load() {
-        const raw = localStorage.getItem(this.KEY);
-        if (raw) {
-          try { this.data = Object.assign(this.data, JSON.parse(raw)); } catch(e){}
-        }
-        this.renderStats();
-      },
-      save() {
-        localStorage.setItem(this.KEY, JSON.stringify(this.data));
-        this.renderStats();
-      },
-      recordAnswer(char, isCorrect) {
-        if (!this.data.mastery[char]) this.data.mastery[char] = { correct: 0, count: 0 };
-        this.data.mastery[char].count++;
-        this.data.todayCount++;
+/* ============================================================
+   2. 저장 상태 (localStorage)
+============================================================ */
+const KEY = 'jpvocab34_v1';
+const DEF = { box: {}, star: {}, wrong: {}, sound: true, scope: 'all', cardFront: 'jp', cardFilter: 'all', quizMode: 'jp2kr' };
+let S = { ...DEF };
+try { S = { ...DEF, ...JSON.parse(localStorage.getItem(KEY) || '{}') }; } catch (e) {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+const MASTER = 3; // 연속 3번 맞히면 '외움'
 
-        if (isCorrect) {
-          this.data.streak++;
-          this.data.mastery[char].correct++;
-        } else {
-          this.data.streak = 0;
-          this.data.wrongCount++;
-        }
-        this.save();
-      },
-      renderStats() {
-        document.getElementById('statStreak').innerText = this.data.streak;
-        document.getElementById('statToday').innerText = this.data.todayCount;
-        document.getElementById('statWrong').innerText = this.data.wrongCount;
+const $ = s => document.querySelector(s);
+const shuffle = a => { a = [...a]; for (let i = a.length - 1; i > 0; i--) { const j = Math.random() * (i + 1) | 0; [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const box = id => S.box[id] || 0;
+const isKnown = id => box(id) >= MASTER;
+const posClass = pos => pos === 'い형용사' ? 'adj-i' : pos === 'な형용사' ? 'adj-na' : '';
+const dots = id => `<span class="dots">${[0,1,2].map(i => `<span class="${box(id) > i ? 'f' : ''}"></span>`).join('')}</span>`;
 
-        // Calculate total mastery %
-        let totalC = 0, totalA = 0;
-        KANA_DB.forEach(k => {
-          const rec = this.data.mastery[k.char];
-          if (rec && rec.count > 0) {
-            totalC += Math.min(rec.correct, 3);
-            totalA += 3;
-          } else {
-            totalA += 3;
-          }
-        });
-        const pct = totalA > 0 ? Math.round((totalC / totalA) * 100) : 0;
-        document.getElementById('statMastery').innerText = `${pct}%`;
-      }
-    };
+function mark(id, ok) {
+  if (ok) { S.box[id] = Math.min(box(id) + 1, MASTER); delete S.wrong[id]; }
+  else { S.box[id] = 0; S.wrong[id] = true; }
+  save(); renderProgress(); renderScope();
+}
 
-    /* ========================================================
-       3. SYNTHESIZED SOUND & SPEECH ENGINE
-    ======================================================== */
-    const SoundEngine = {
-      ctx: null,
-      init() {
-        if (!this.ctx) {
-          const AudioContext = window.AudioContext || window.webkitAudioContext;
-          this.ctx = new AudioContext();
-        }
-        if (this.ctx.state === 'suspended') this.ctx.resume();
-      },
-      playSuccess(combo = 1) {
-        if (!Storage.data.soundEnabled) return;
-        this.init();
-        const base = 523.25; // C5
-        const chords = [base, base * 1.25, base * 1.5, base * 2];
-        chords.forEach((freq, idx) => {
-          const osc = this.ctx.createOscillator();
-          const gain = this.ctx.createGain();
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(freq * Math.min(1 + combo * 0.04, 1.6), this.ctx.currentTime + idx * 0.07);
-          gain.gain.setValueAtTime(0.18, this.ctx.currentTime + idx * 0.07);
-          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + idx * 0.07 + 0.3);
-          osc.connect(gain);
-          gain.connect(this.ctx.destination);
-          osc.start(this.ctx.currentTime + idx * 0.07);
-          osc.stop(this.ctx.currentTime + idx * 0.07 + 0.35);
-        });
-      },
-      playError() {
-        if (!Storage.data.soundEnabled) return;
-        this.init();
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(180, this.ctx.currentTime);
-        osc.frequency.linearRampToValueAtTime(110, this.ctx.currentTime + 0.22);
-        gain.gain.setValueAtTime(0.18, this.ctx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.001, this.ctx.currentTime + 0.22);
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-        osc.start();
-        osc.stop(this.ctx.currentTime + 0.23);
-      },
-      playPop() {
-        if (!Storage.data.soundEnabled) return;
-        this.init();
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(450 + Math.random() * 50, this.ctx.currentTime);
-        gain.gain.setValueAtTime(0.04, this.ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.06);
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-        osc.start();
-        osc.stop(this.ctx.currentTime + 0.07);
-      }
-    };
+function toast(msg) {
+  const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toast.t); toast.t = setTimeout(() => t.classList.remove('show'), 1600);
+}
 
-    function speakKana(char) {
-      if (!('speechSynthesis' in window)) return;
-      window.speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(char);
-      u.lang = 'ja-JP';
-      u.rate = 0.85;
-      window.speechSynthesis.speak(u);
-    }
+function speak(text, force) {
+  if (!force && !S.sound) return;
+  if (!('speechSynthesis' in window)) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'ja-JP'; u.rate = 0.85;
+  const v = speechSynthesis.getVoices().find(v => v.lang && v.lang.startsWith('ja'));
+  if (v) u.voice = v;
+  speechSynthesis.speak(u);
+}
 
-    /* ========================================================
-       4. SMART HANDWRITING & AUTOMATIC RECOGNITION
-    ======================================================== */
-    let writeIndex = 0;
-    let isDrawing = false;
-    let strokes = []; // [ [ {x,y}, ... ], ... ]
-    let currentStroke = [];
-    let autoRecognizeTimer = null;
-    let autoTimerAnim = null;
+/* ============================================================
+   3. 범위 선택 & 진도
+============================================================ */
+const SCOPES = [
+  ['all', '전체', () => true],
+  ['3', '3과', w => w.l === 3],
+  ['4', '4과', w => w.l === 4],
+  ['star', '★ 즐겨찾기', w => S.star[w.id]],
+  ['wrong', '✗ 오답노트', w => S.wrong[w.id]],
+];
+const scopeWords = () => WORDS.filter(SCOPES.find(s => s[0] === S.scope)[2]);
 
-    const writeCanvas = document.getElementById('writeCanvas');
-    const writeCtx = writeCanvas.getContext('2d');
-    const watermarkGuide = document.getElementById('watermarkGuide');
-    const strokeIndicator = document.getElementById('strokeIndicator');
-    const autoTimerBar = document.getElementById('autoTimerBar');
-    const autoTimerText = document.getElementById('autoTimerText');
-    const writeEvalBanner = document.getElementById('writeEvalBanner');
-    const writeEvalText = document.getElementById('writeEvalText');
+function renderScope() {
+  $('#scopeChips').innerHTML = SCOPES.map(([k, label, f]) =>
+    `<button class="chip ${S.scope === k ? 'active' : ''}" data-k="${k}">${label}<small>${WORDS.filter(f).length}</small></button>`).join('');
+}
+$('#scopeChips').addEventListener('click', e => {
+  const b = e.target.closest('.chip'); if (!b) return;
+  S.scope = b.dataset.k; save(); renderScope(); renderProgress(); refreshActive(true);
+});
 
-    function setupCanvasSize() {
-      const rect = writeCanvas.getBoundingClientRect();
-      const dpr = window.devicePixelRatio || 1;
-      writeCanvas.width = rect.width * dpr;
-      writeCanvas.height = rect.height * dpr;
-      writeCtx.scale(dpr, dpr);
-      redrawStrokes();
-    }
+function renderProgress() {
+  const ws = scopeWords(), k = ws.filter(w => isKnown(w.id)).length;
+  const pct = ws.length ? Math.round(k / ws.length * 100) : 0;
+  $('#progressText').textContent = `암기 완료 ${k} / ${ws.length}개`;
+  $('#progressPct').textContent = pct + '%';
+  $('#progressBar').style.width = pct + '%';
+}
 
-    function getCanvasPos(e) {
-      const rect = writeCanvas.getBoundingClientRect();
-      let cx = e.clientX, cy = e.clientY;
-      if (e.touches && e.touches.length > 0) {
-        cx = e.touches[0].clientX;
-        cy = e.touches[0].clientY;
-      }
-      return { x: cx - rect.left, y: cy - rect.top };
-    }
+function emptyMsg() {
+  return S.scope === 'star' ? '즐겨찾기한 단어가 없어요. 단어장에서 ☆를 눌러 추가하세요.'
+       : S.scope === 'wrong' ? '오답노트가 비어 있어요! 🎉' : '단어가 없어요.';
+}
 
-    function onDrawStart(e) {
-      e.preventDefault();
-      cancelAutoCheckTimer();
-      isDrawing = true;
-      const pt = getCanvasPos(e);
-      currentStroke = [pt];
-      strokes.push(currentStroke);
-      SoundEngine.playPop();
-      renderCurrentPath(currentStroke);
-      updateStrokeStatus();
-    }
+/* ============================================================
+   4. 플래시카드
+============================================================ */
+let deck = [], cur = 0, flipped = false;
 
-    function onDrawMove(e) {
-      if (!isDrawing) return;
-      e.preventDefault();
-      const pt = getCanvasPos(e);
-      currentStroke.push(pt);
-      renderCurrentPath(currentStroke);
-    }
+function buildDeck() {
+  let ws = scopeWords();
+  if (S.cardFilter === 'todo') ws = ws.filter(w => !isKnown(w.id));
+  // 덜 외운 단어 먼저, 같은 단계 안에서는 섞기
+  deck = shuffle(ws).sort((a, b) => box(a.id) - box(b.id)).map(w => w.id);
+  cur = 0; flipped = false; renderCard();
+}
 
-    function onDrawEnd(e) {
-      if (!isDrawing) return;
-      isDrawing = false;
-      // Start Auto-Recognition Timer (Automatic trigger after 900ms)
-      triggerAutoCheckCountdown();
-    }
+function renderCard() {
+  const area = $('#cardArea');
+  if (!deck.length) { area.innerHTML = `<div class="panel empty">${S.cardFilter === 'todo' && scopeWords().length ? '이 범위의 단어를 모두 외웠어요! 🎉' : emptyMsg()}</div>`; return; }
+  if (cur >= deck.length) {
+    area.innerHTML = `<div class="panel done-box"><div class="emoji">🎉</div><h3>한 바퀴 완료!</h3>
+      <div class="small-note">이 범위에서 ${scopeWords().filter(w => isKnown(w.id)).length}개를 외웠어요.</div>
+      <button class="btn primary" id="againBtn" style="width:100%">다시 섞어서 시작</button></div>`;
+    $('#againBtn').onclick = buildDeck; return;
+  }
+  const w = byId[deck[cur]];
+  const jpFace = `<div class="big-word jp">${esc(w.w)}</div>${w.k ? `<div class="kanji-sub jp">${esc(w.k)}</div>` : ''}`;
+  const krFace = `<div class="meaning">${esc(w.m)}</div><span class="pos ${posClass(w.pos)}">${w.pos}</span>`;
+  const info = `<div class="pron">[${esc(w.p)}]</div>${w.n ? `<div class="note">${esc(w.n)}</div>` : ''}
+    <button class="speak" data-say="${esc(w.tts)}">🔊 발음 듣기</button>`;
+  const front = S.cardFront === 'jp' ? jpFace : krFace;
+  const back = S.cardFront === 'jp' ? `${krFace}${info}` : `${jpFace}<span class="pos ${posClass(w.pos)}">${w.pos}</span>${info}`;
+  area.innerHTML = `
+    <div class="q-head"><span>${w.l}과 · ${w.no}번</span><span>${cur + 1} / ${deck.length}</span></div>
+    <div class="flash-wrap"><div class="flash ${flipped ? 'flipped' : ''}" id="flash">
+      <div class="face"><span class="tag">${S.star[w.id] ? '★ ' : ''}${S.cardFront === 'jp' ? '뜻은?' : '일본어로?'}</span><span class="boxdots">${dots(w.id)}</span>${front}<span class="hint">탭해서 뒤집기</span></div>
+      <div class="face back">${back}</div>
+    </div></div>
+    <div class="btn-row">
+      <button class="btn bad" id="noBtn">😵 몰라요</button>
+      <button class="btn good" id="yesBtn">😎 알아요</button>
+    </div>`;
+  $('#flash').onclick = e => { if (e.target.closest('.speak')) return; flipCard(); };
+  $('#noBtn').onclick = () => answerCard(false);
+  $('#yesBtn').onclick = () => answerCard(true);
+  if (S.cardFront === 'jp' && !flipped) speak(w.tts);
+}
 
-    function renderCurrentPath(pts) {
-      if (pts.length < 2) return;
-      writeCtx.strokeStyle = '#ff4d80';
-      writeCtx.lineWidth = 14;
-      writeCtx.lineCap = 'round';
-      writeCtx.lineJoin = 'round';
+function flipCard() {
+  flipped = !flipped; $('#flash').classList.toggle('flipped', flipped);
+  if (flipped && S.cardFront === 'kr') speak(byId[deck[cur]].tts);
+}
 
-      writeCtx.beginPath();
-      writeCtx.moveTo(pts[0].x, pts[0].y);
-      for (let i = 1; i < pts.length; i++) {
-        const xc = (pts[i].x + pts[i - 1].x) / 2;
-        const yc = (pts[i].y + pts[i - 1].y) / 2;
-        writeCtx.quadraticCurveTo(pts[i - 1].x, pts[i - 1].y, xc, yc);
-      }
-      writeCtx.stroke();
-    }
+function answerCard(ok) {
+  const id = deck[cur];
+  mark(id, ok);
+  if (!ok) deck.splice(Math.min(cur + 4, deck.length), 0, id); // 몇 장 뒤에 다시 나오게
+  cur++; flipped = false; renderCard();
+}
 
-    function redrawStrokes() {
-      const rect = writeCanvas.getBoundingClientRect();
-      writeCtx.clearRect(0, 0, rect.width, rect.height);
-      strokes.forEach(s => renderCurrentPath(s));
-    }
+/* ============================================================
+   5. 4지선다 퀴즈
+============================================================ */
+const QN = 10;
+let quiz = null;
 
-    function updateStrokeStatus() {
-      const cur = KANA_DB[writeIndex];
-      strokeIndicator.innerText = `${strokes.length} / ${cur.strokes} 획 작성 중`;
-    }
+function quizPool() {
+  let ws = scopeWords();
+  if (S.quizMode === 'kanji') ws = ws.filter(w => w.k && !/^-/.test(w.k));
+  return ws;
+}
 
-    function cancelAutoCheckTimer() {
-      if (autoRecognizeTimer) {
-        clearTimeout(autoRecognizeTimer);
-        autoRecognizeTimer = null;
-      }
-      autoTimerBar.style.transition = 'none';
-      autoTimerBar.style.width = '0%';
-      autoTimerText.innerText = '작성 중...';
-    }
+function startQuiz() {
+  const pool = quizPool();
+  const area = $('#quizArea');
+  if (pool.length < 1) { area.innerHTML = `<div class="panel empty">${S.quizMode === 'kanji' ? '이 범위에 한자 단어가 없어요.' : emptyMsg()}</div>`; return; }
+  // 덜 외운 단어 우선 출제
+  const qs = shuffle(pool).sort((a, b) => box(a.id) - box(b.id)).slice(0, QN);
+  quiz = { qs: shuffle(qs), i: 0, score: 0, wrong: [] };
+  renderQuestion();
+}
 
-    function triggerAutoCheckCountdown() {
-      cancelAutoCheckTimer();
-      autoTimerText.innerText = '✨ 1초 후 자동 채점...';
-      requestAnimationFrame(() => {
-        autoTimerBar.style.transition = 'width 950ms ease-out';
-        autoTimerBar.style.width = '100%';
-      });
+function distractors(w, key) {
+  const same = shuffle(WORDS.filter(x => x.id !== w.id && x.pos === w.pos && x[key] !== w[key]));
+  const other = shuffle(WORDS.filter(x => x.id !== w.id && x.pos !== w.pos && x[key] !== w[key]));
+  const out = [], seen = new Set([w[key]]);
+  for (const x of [...same, ...other]) { if (!seen.has(x[key])) { seen.add(x[key]); out.push(x); } if (out.length === 3) break; }
+  return out;
+}
 
-      autoRecognizeTimer = setTimeout(() => {
-        evaluateHandwriting(true);
-      }, 950);
-    }
+function renderQuestion() {
+  const area = $('#quizArea');
+  if (quiz.i >= quiz.qs.length) return renderQuizEnd();
+  const w = quiz.qs[quiz.i], mode = S.quizMode;
+  const key = mode === 'jp2kr' ? 'm' : 'w';
+  const opts = shuffle([w, ...distractors(w, key)]);
+  const prompt = mode === 'jp2kr'
+    ? `<div class="label">이 단어의 뜻은?</div><div class="big-word jp">${esc(w.w)}</div>${w.k ? `<div class="kanji-sub jp">${esc(w.k)}</div>` : ''}`
+    : mode === 'kr2jp'
+    ? `<div class="label">일본어로 하면?</div><div class="meaning">${esc(w.m)}</div><span class="pos ${posClass(w.pos)}">${w.pos}</span>`
+    : `<div class="label">이 한자의 읽기는?</div><div class="big-word jp">${esc(w.k)}</div><div class="small-note">${esc(w.m)}</div>`;
+  area.innerHTML = `
+    <div class="q-head"><span>${quiz.i + 1} / ${quiz.qs.length}</span><span>점수 ${quiz.score}</span></div>
+    <div class="bar"><div style="width:${quiz.i / quiz.qs.length * 100}%"></div></div>
+    <div class="panel q-prompt">${prompt}</div>
+    <div class="options">${opts.map(o => `<button class="opt ${key === 'w' ? 'jp-opt' : ''}" data-id="${o.id}">${esc(o[key])}</button>`).join('')}</div>
+    <div class="feedback" id="qFeedback"></div>`;
+  if (mode === 'jp2kr') speak(w.tts);
+  area.querySelectorAll('.opt').forEach(b => b.onclick = () => pickAnswer(b, w));
+}
 
-    function clearWriteCanvas() {
-      cancelAutoCheckTimer();
-      strokes = [];
-      currentStroke = [];
-      const rect = writeCanvas.getBoundingClientRect();
-      writeCtx.clearRect(0, 0, rect.width, rect.height);
-      updateStrokeStatus();
-      autoTimerText.innerText = '펜을 떼면 자동 채점';
-      autoTimerBar.style.transition = 'none';
-      autoTimerBar.style.width = '0%';
-      writeEvalBanner.className = 'eval-banner';
-    }
+function pickAnswer(btn, w) {
+  const ok = btn.dataset.id === w.id;
+  $('#quizArea').querySelectorAll('.opt').forEach(b => {
+    b.disabled = true;
+    if (b.dataset.id === w.id) b.classList.add('correct');
+  });
+  if (!ok) { btn.classList.add('wrong'); quiz.wrong.push(w); } else quiz.score++;
+  mark(w.id, ok);
+  if (S.quizMode !== 'jp2kr') speak(w.tts);
+  $('#qFeedback').innerHTML = `${ok ? '⭕ 정답!' : '❌ 오답'} &nbsp;<b class="jp">${esc(w.w)}</b>${w.k ? ` (${esc(w.k)})` : ''} [${esc(w.p)}] = ${esc(w.m)}${w.n ? `<br>${esc(w.n)}` : ''}`;
+  setTimeout(() => { quiz.i++; renderQuestion(); }, ok ? 900 : 2200);
+}
 
-    // Mathematical Optical Raster Evaluation Engine
-    function evaluateHandwriting(isAuto = false) {
-      cancelAutoCheckTimer();
-      if (strokes.length === 0) {
-        showEvalMessage(false, '글씨를 먼저 작성해 주세요! ✏️');
-        return;
-      }
+function renderQuizEnd() {
+  const n = quiz.qs.length, s = quiz.score;
+  $('#quizArea').innerHTML = `<div class="panel done-box">
+    <div class="emoji">${s === n ? '🏆' : s >= n * .7 ? '👏' : '💪'}</div>
+    <h3>${n}문제 중 ${s}개 정답</h3>
+    ${quiz.wrong.length ? `<div class="small-note">틀린 단어 (오답노트에 저장됨)</div>
+      <div class="wrong-list">${quiz.wrong.map(w => `<div><b class="jp">${esc(w.w)}${w.k ? ` · ${esc(w.k)}` : ''}</b><span>${esc(w.m)}</span></div>`).join('')}</div>` : '<div class="small-note">완벽해요!</div>'}
+    <button class="btn primary" id="quizAgain" style="width:100%">다시 풀기</button></div>`;
+  $('#quizAgain').onclick = startQuiz;
+}
 
-      const target = KANA_DB[writeIndex];
-      const size = 140;
+/* ============================================================
+   6. 철자 맞추기 (글자 타일)
+============================================================ */
+let spell = null;
+const isKata = s => /[ァ-ヶ]/.test(s);
+const CHARS_H = [...new Set(WORDS.filter(w => !isKata(w.bare)).flatMap(w => [...w.bare]))];
+const CHARS_K = [...new Set(WORDS.filter(w => isKata(w.bare)).flatMap(w => [...w.bare]))];
 
-      // 1. Offscreen Reference Image
-      const refCanv = document.createElement('canvas');
-      refCanv.width = size; refCanv.height = size;
-      const refCtx = refCanv.getContext('2d');
-      refCtx.font = 'bold 95px "M PLUS Rounded 1c", sans-serif';
-      refCtx.textAlign = 'center';
-      refCtx.textBaseline = 'middle';
-      refCtx.fillStyle = '#ffffff';
-      refCtx.fillText(target.char, size / 2, size / 2 + 4);
-      const refData = refCtx.getImageData(0, 0, size, size).data;
+function startSpell() {
+  const pool = scopeWords().filter(w => [...w.bare].length >= 2);
+  const area = $('#spellArea');
+  if (!pool.length) { area.innerHTML = `<div class="panel empty">${emptyMsg()}</div>`; return; }
+  const w = shuffle(pool).sort((a, b) => box(a.id) - box(b.id))[Math.random() * Math.min(5, pool.length) | 0];
+  const chars = [...w.bare];
+  const src = (isKata(w.bare) ? CHARS_K : CHARS_H).filter(c => !chars.includes(c));
+  const extra = shuffle(src).slice(0, Math.min(3, Math.max(2, 7 - chars.length)));
+  spell = { w, chars, tiles: shuffle([...chars, ...extra]).map((c, i) => ({ c, i, used: false })), picked: [], done: false, hinted: false };
+  renderSpell();
+}
 
-      // 2. Offscreen User Image
-      const userCanv = document.createElement('canvas');
-      userCanv.width = size; userCanv.height = size;
-      const userCtx = userCanv.getContext('2d');
-      userCtx.drawImage(writeCanvas, 0, 0, size, size);
-      const userData = userCtx.getImageData(0, 0, size, size).data;
+function renderSpell() {
+  const { w, chars, tiles, picked } = spell;
+  $('#spellArea').innerHTML = `
+    <div class="panel q-prompt">
+      <div class="label">${w.l}과 · <span class="pos ${posClass(w.pos)}">${w.pos}</span></div>
+      <div class="meaning">${esc(w.m)}</div>
+      <div class="pron">${spell.hinted || spell.done ? `[${esc(w.p)}]` : ''}</div>
+    </div>
+    <div class="slots" id="slots">${chars.map((_, i) => `<button class="slot ${picked[i] ? 'filled' : ''}" data-i="${i}">${picked[i] ? picked[i].c : ''}</button>`).join('')}</div>
+    <div class="tiles">${tiles.map(t => `<button class="tile ${t.used ? 'used' : ''}" data-i="${t.i}">${t.c}</button>`).join('')}</div>
+    <div class="feedback" id="spFeedback"></div>
+    <div class="btn-row">
+      <button class="btn" id="spHint">💡 발음 힌트</button>
+      <button class="btn" id="spSkip">정답 보기</button>
+      <button class="btn primary" id="spNext">다음 ▶</button>
+    </div>`;
+  document.querySelectorAll('#spellArea .tile').forEach(b => b.onclick = () => {
+    if (spell.done) return;
+    const t = spell.tiles.find(t => t.i == b.dataset.i);
+    if (t.used || spell.picked.length >= spell.chars.length) return;
+    t.used = true; spell.picked.push(t); renderSpell(); checkSpell();
+  });
+  document.querySelectorAll('#spellArea .slot').forEach(b => b.onclick = () => {
+    if (spell.done) return;
+    const i = +b.dataset.i; if (!spell.picked[i]) return;
+    spell.picked.splice(i).forEach(t => t.used = false); renderSpell();
+  });
+  $('#spHint').onclick = () => { spell.hinted = true; speak(w.tts, true); renderSpell(); };
+  $('#spSkip').onclick = () => { if (spell.done) return; spell.done = true; mark(w.id, false); showSpellAnswer(false); };
+  $('#spNext').onclick = startSpell;
+}
 
-      // 3. Pixel Matrix Matching with Radius Tolerance
-      let targetPixels = 0;
-      let matchedPixels = 0;
-      let userPixels = 0;
-      let overflowPixels = 0;
-      const r = 5;
+function checkSpell() {
+  const { w, chars, picked } = spell;
+  if (picked.length < chars.length) return;
+  const ok = picked.map(t => t.c).join('') === chars.join('');
+  if (ok) {
+    spell.done = true;
+    if (!spell.hinted) mark(w.id, true); // 힌트 쓰면 점수 변동 없음
+    $('#slots').classList.add('ok'); speak(w.tts); showSpellAnswer(true);
+  } else {
+    const el = $('#slots'); el.classList.add('ng');
+    $('#spFeedback').textContent = '다시 해보세요! 칸을 눌러 지울 수 있어요.';
+    if (!S.wrong[w.id]) { S.wrong[w.id] = true; S.box[w.id] = 0; save(); renderProgress(); renderScope(); }
+    setTimeout(() => el.classList.remove('ng'), 400);
+  }
+}
 
-      for (let y = 0; y < size; y++) {
-        for (let x = 0; x < size; x++) {
-          const idx = (y * size + x) * 4;
-          const isT = refData[idx + 3] > 50;
-          const isU = userData[idx + 3] > 50;
+function showSpellAnswer(ok) {
+  const w = spell.w;
+  if (!ok) { spell.picked = spell.chars.map(c => ({ c })); renderSpell(); speak(w.tts); }
+  $('#spFeedback').innerHTML = `${ok ? '⭕ 정답!' : '정답은'} <b class="jp">${esc(w.w)}</b>${w.k ? ` (${esc(w.k)})` : ''} [${esc(w.p)}]${w.n ? `<br>${esc(w.n)}` : ''}`;
+}
 
-          if (isT) targetPixels++;
-          if (isU) userPixels++;
+/* ============================================================
+   7. 짝맞추기
+============================================================ */
+let match = null;
 
-          if (isT) {
-            let found = false;
-            for (let dy = -r; dy <= r && !found; dy++) {
-              for (let dx = -r; dx <= r && !found; dx++) {
-                const nx = x + dx, ny = y + dy;
-                if (nx >= 0 && nx < size && ny >= 0 && ny < size) {
-                  if (userData[(ny * size + nx) * 4 + 3] > 50) found = true;
-                }
-              }
-            }
-            if (found) matchedPixels++;
-          }
-
-          if (isU) {
-            let near = false;
-            for (let dy = -r*2; dy <= r*2 && !near; dy++) {
-              for (let dx = -r*2; dx <= r*2 && !near; dx++) {
-                const nx = x + dx, ny = y + dy;
-                if (nx >= 0 && nx < size && ny >= 0 && ny < size) {
-                  if (refData[(ny * size + nx) * 4 + 3] > 50) near = true;
-                }
-              }
-            }
-            if (!near) overflowPixels++;
-          }
-        }
-      }
-
-      if (targetPixels === 0 || userPixels === 0) {
-        showEvalMessage(false, '글씨가 감지되지 않았습니다.');
-        return;
-      }
-
-      const coverage = matchedPixels / targetPixels;
-      const precision = Math.max(0, 1 - (overflowPixels / (userPixels + 1)));
-      const strokeDiff = Math.abs(strokes.length - target.strokes);
-      let strokeBonus = 1.0;
-      if (strokeDiff === 1) strokeBonus = 0.85;
-      else if (strokeDiff >= 2) strokeBonus = 0.6;
-
-      const finalScore = Math.min(100, Math.round(
-        (coverage * 0.60 + precision * 0.25 + strokeBonus * 0.15) * 100
-      ));
-
-      if (finalScore >= 55) {
-        // PASS
-        Storage.recordAnswer(target.char, true);
-        SoundEngine.playSuccess(Storage.data.streak);
-        speakKana(target.char);
-        triggerConfetti();
-        showEvalMessage(true, `자동 인식 완료! (${finalScore}점) 정답입니다 🎉`);
+function startMatch() {
+  const pool = scopeWords();
+  const area = $('#matchArea');
+  if (pool.length < 2) { area.innerHTML = `<div class="panel empty">${pool.length ? '짝맞추기는 단어가 2개 이상 필요해요.' : emptyMsg()}</div>`; return; }
+  const picks = [];
+  const seenM = new Set();
+  for (const w of shuffle(pool)) { if (!seenM.has(w.m)) { seenM.add(w.m); picks.push(w); } if (picks.length === 6) break; }
+  match = { picks, left: shuffle(picks), right: shuffle(picks), sel: null, done: 0, miss: 0, t0: Date.now() };
+  area.innerHTML = `
+    <div class="q-head"><span>왼쪽 단어와 오른쪽 뜻을 연결하세요</span><span id="mStat">0 / ${picks.length}</span></div>
+    <div class="match-grid" id="mGrid">${match.left.map((w, i) =>
+      `<button class="mcard jp-opt" data-side="L" data-id="${w.id}">${esc(w.w)}</button><button class="mcard" data-side="R" data-id="${match.right[i].id}">${esc(match.right[i].m)}</button>`).join('')}</div>
+    <button class="btn" id="mRestart">🔄 새 문제</button>`;
+  $('#mRestart').onclick = startMatch;
+  $('#mGrid').onclick = e => {
+    const b = e.target.closest('.mcard'); if (!b || b.classList.contains('gone')) return;
+    if (b.dataset.side === 'L') speak(byId[b.dataset.id].tts);
+    if (!match.sel) { match.sel = b; b.classList.add('sel'); return; }
+    if (match.sel === b) { b.classList.remove('sel'); match.sel = null; return; }
+    if (match.sel.dataset.side === b.dataset.side) { match.sel.classList.remove('sel'); match.sel = b; b.classList.add('sel'); return; }
+    const a = match.sel; match.sel = null; a.classList.remove('sel');
+    if (a.dataset.id === b.dataset.id) {
+      a.classList.add('gone'); b.classList.add('gone'); match.done++;
+      $('#mStat').textContent = `${match.done} / ${match.picks.length}`;
+      if (match.done === match.picks.length) {
+        const sec = ((Date.now() - match.t0) / 1000).toFixed(1);
         setTimeout(() => {
-          nextWriteKana();
-        }, 1500);
-      } else {
-        // RETRY
-        Storage.recordAnswer(target.char, false);
-        SoundEngine.playError();
-        let hint = `조금 더 가이드에 맞춰 써보세요! (${finalScore}점)`;
-        if (strokeDiff > 1) hint = `획수가 달라요! (목표: ${target.strokes}획 / 현재: ${strokes.length}획)`;
-        showEvalMessage(false, hint);
+          $('#mGrid').outerHTML = `<div class="panel done-box"><div class="emoji">🧩</div><h3>${sec}초 완료!</h3><div class="small-note">틀린 횟수 ${match.miss}번</div></div>`;
+        }, 350);
       }
+    } else {
+      match.miss++;
+      [a, b].forEach(x => { x.classList.add('ng'); setTimeout(() => x.classList.remove('ng'), 400); });
+      const lid = a.dataset.side === 'L' ? a.dataset.id : b.dataset.id;
+      S.wrong[lid] = true; S.box[lid] = 0; save(); renderProgress(); renderScope();
     }
+  };
+}
 
-    function showEvalMessage(pass, text) {
-      writeEvalBanner.className = `eval-banner show ${pass ? 'pass' : 'retry'}`;
-      writeEvalText.innerText = text;
-    }
+/* ============================================================
+   8. 단어장
+============================================================ */
+const POS_LIST = [...new Set(WORDS.map(w => w.pos))];
+$('#posFilter').innerHTML = `<option value="">품사 전체</option>` + POS_LIST.map(p => `<option>${p}</option>`).join('');
 
-    function loadWriteChar(idx) {
-      writeIndex = (idx + KANA_DB.length) % KANA_DB.length;
-      const cur = KANA_DB[writeIndex];
-      document.getElementById('writeRomaji').innerText = cur.romaji;
-      document.getElementById('writeRow').innerText = cur.row;
-      document.getElementById('writeWord').innerText = `대표단어: ${cur.word}`;
-      watermarkGuide.innerText = cur.char;
-      clearWriteCanvas();
-    }
+function renderList() {
+  const q = $('#searchInput').value.trim().toLowerCase();
+  const pf = $('#posFilter').value;
+  const ws = scopeWords().filter(w => (!pf || w.pos === pf) &&
+    (!q || [w.w, w.k, w.p, w.m, w.n, w.bare].join(' ').toLowerCase().includes(q)));
+  $('#listCount').textContent = `${ws.length}개`;
+  $('#wordList').innerHTML = ws.length ? ws.map(w => `
+    <div class="row" data-id="${w.id}">
+      <div class="num">${w.l}-${w.no}</div>
+      <div>
+        <div class="w" data-say="${esc(w.tts)}">${esc(w.w)}${w.k ? `<small>${esc(w.k)}</small>` : ''}</div>
+        <div class="m"><b>${esc(w.m)}</b> · ${esc(w.p)}</div>
+      </div>
+      <div class="acts">${S.wrong[w.id] ? '<span class="wrong-mark">오답</span>' : ''}${dots(w.id)}<button class="star ${S.star[w.id] ? 'on' : ''}" data-star="${w.id}">${S.star[w.id] ? '★' : '☆'}</button></div>
+      <div class="extra"><span class="pos ${posClass(w.pos)}">${w.pos}</span> ${esc(w.n || '')}</div>
+    </div>`).join('') : `<div class="empty">${q || pf ? '검색 결과가 없어요.' : emptyMsg()}</div>`;
+}
+$('#searchInput').addEventListener('input', renderList);
+$('#posFilter').addEventListener('change', renderList);
+$('#wordList').addEventListener('click', e => {
+  const st = e.target.closest('[data-star]');
+  if (st) {
+    const id = st.dataset.star;
+    if (S.star[id]) delete S.star[id]; else S.star[id] = true;
+    save(); renderScope(); renderList(); return;
+  }
+  const row = e.target.closest('.row'); if (!row) return;
+  row.classList.toggle('open');
+  speak(byId[row.dataset.id].tts, true);
+});
 
-    function nextWriteKana() {
-      loadWriteChar(writeIndex + 1);
-    }
+/* ============================================================
+   9. 문법 탭
+============================================================ */
+$('#adjI').innerHTML = WORDS.filter(w => w.pos === 'い형용사').map(w => esc(w.w)).join('<br>');
+$('#adjNa').innerHTML = WORDS.filter(w => w.pos === 'な형용사').map(w => esc(w.w)).join('<br>');
 
-    // Canvas Events
-    writeCanvas.addEventListener('mousedown', onDrawStart);
-    window.addEventListener('mousemove', onDrawMove);
-    window.addEventListener('mouseup', onDrawEnd);
+/* ============================================================
+   10. 공통: 탭, 세그먼트, 사운드
+============================================================ */
+let activeTab = 'cards';
+const started = {};
+function refreshActive(force) {
+  if (activeTab === 'cards') buildDeck();
+  else if (activeTab === 'quiz') startQuiz();
+  else if (activeTab === 'spell') startSpell();
+  else if (activeTab === 'match') startMatch();
+  else if (activeTab === 'list') renderList();
+  if (force) Object.keys(started).forEach(k => { if (k !== activeTab) delete started[k]; });
+  started[activeTab] = true;
+}
+document.querySelectorAll('.nav-item').forEach(b => b.onclick = () => {
+  document.querySelectorAll('.nav-item').forEach(x => x.classList.toggle('active', x === b));
+  activeTab = b.dataset.tab;
+  document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === 'view-' + activeTab));
+  if (!started[activeTab] || activeTab === 'list') refreshActive();
+});
 
-    writeCanvas.addEventListener('touchstart', onDrawStart, { passive: false });
-    window.addEventListener('touchmove', onDrawMove, { passive: false });
-    window.addEventListener('touchend', onDrawEnd);
+function bindSeg(sel, key, onChange) {
+  const el = $(sel);
+  const paint = () => el.querySelectorAll('button').forEach(b => b.classList.toggle('active', b.dataset.v === S[key]));
+  paint();
+  el.onclick = e => { const b = e.target.closest('button'); if (!b) return; S[key] = b.dataset.v; save(); paint(); onChange(); };
+}
+bindSeg('#cardFrontSeg', 'cardFront', buildDeck);
+bindSeg('#cardFilterSeg', 'cardFilter', buildDeck);
+bindSeg('#quizModeSeg', 'quizMode', startQuiz);
 
-    document.getElementById('clearCanvasBtn').addEventListener('click', clearWriteCanvas);
-    document.getElementById('manualCheckBtn').addEventListener('click', () => evaluateHandwriting(false));
-    document.getElementById('nextCharBtn').addEventListener('click', nextWriteKana);
-    document.getElementById('writeTtsBtn').addEventListener('click', () => speakKana(KANA_DB[writeIndex].char));
+const paintSound = () => { $('#soundBtn').classList.toggle('on', S.sound); $('#soundBtn').textContent = S.sound ? '🔊' : '🔇'; };
+$('#soundBtn').onclick = () => { S.sound = !S.sound; save(); paintSound(); toast(S.sound ? '자동 발음 켜짐' : '자동 발음 꺼짐 (🔊 버튼은 계속 동작)'); };
+paintSound();
 
-    document.getElementById('guideToggle').addEventListener('change', (e) => {
-      watermarkGuide.classList.toggle('hidden', !e.target.checked);
-    });
+document.addEventListener('click', e => {
+  const s = e.target.closest('[data-say]');
+  if (s && !e.target.closest('.row')) speak(s.dataset.say, true);
+});
 
-    /* ========================================================
-       5. 3D FLASHCARD & MNEMONICS
-    ======================================================== */
-    let cardIdx = 0;
-    const flashcardBox = document.getElementById('flashcardBox');
+document.addEventListener('keydown', e => {
+  if (activeTab !== 'cards' || e.target.tagName === 'INPUT' || !$('#flash')) return;
+  if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); flipCard(); }
+  else if (e.key === 'ArrowLeft') answerCard(false);
+  else if (e.key === 'ArrowRight') answerCard(true);
+});
 
-    function renderCard(idx) {
-      cardIdx = (idx + KANA_DB.length) % KANA_DB.length;
-      const c = KANA_DB[cardIdx];
-      flashcardBox.classList.remove('flipped');
-      document.getElementById('cardKana').innerText = c.char;
-      document.getElementById('cardRomaji').innerText = `${c.romaji} [${c.char}]`;
-      document.getElementById('cardMnemonic').innerText = c.mnemonic;
-      document.getElementById('cardWordBack').innerText = `대표 단어: ${c.word}`;
-    }
-
-    flashcardBox.addEventListener('click', (e) => {
-      if (e.target.closest('.srs-buttons')) return;
-      flashcardBox.classList.toggle('flipped');
-      if (flashcardBox.classList.contains('flipped')) {
-        speakKana(KANA_DB[cardIdx].char);
-      }
-    });
-
-    document.querySelectorAll('.btn-srs').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const rating = parseInt(btn.dataset.srs);
-        Storage.recordAnswer(KANA_DB[cardIdx].char, rating >= 2);
-        if (rating >= 2) SoundEngine.playSuccess();
-        else SoundEngine.playError();
-        renderCard(cardIdx + 1);
-      });
-    });
-
-    document.getElementById('cardNextBtn').addEventListener('click', () => renderCard(cardIdx + 1));
-
-    /* ========================================================
-       6. 4-CHOICE SPEED QUIZ
-    ======================================================== */
-    let quizCurrent = null;
-    let quizRound = 1;
-
-    function nextQuizQuestion() {
-      document.getElementById('quizRoundText').innerText = `문제 ${quizRound} / 10`;
-      quizCurrent = KANA_DB[Math.floor(Math.random() * KANA_DB.length)];
-      document.getElementById('quizQuestionChar').innerText = quizCurrent.char;
-
-      // 1 correct + 3 distinct distractors
-      const opts = [quizCurrent.romaji];
-      while (opts.length < 4) {
-        const r = KANA_DB[Math.floor(Math.random() * KANA_DB.length)].romaji;
-        if (!opts.includes(r)) opts.push(r);
-      }
-      opts.sort(() => Math.random() - 0.5);
-
-      const grid = document.getElementById('quizOptionsGrid');
-      grid.innerHTML = '';
-      opts.forEach(opt => {
-        const b = document.createElement('button');
-        b.className = 'quiz-opt-btn';
-        b.innerText = opt;
-        b.addEventListener('click', () => handleQuizAnswer(opt, b));
-        grid.appendChild(b);
-      });
-    }
-
-    function handleQuizAnswer(selected, btn) {
-      const isCorrect = selected === quizCurrent.romaji;
-      Storage.recordAnswer(quizCurrent.char, isCorrect);
-
-      if (isCorrect) {
-        btn.classList.add('correct');
-        SoundEngine.playSuccess(Storage.data.streak);
-        speakKana(quizCurrent.char);
-        triggerConfetti();
-      } else {
-        btn.classList.add('wrong');
-        SoundEngine.playError();
-      }
-
-      setTimeout(() => {
-        quizRound = (quizRound % 10) + 1;
-        nextQuizQuestion();
-      }, 1000);
-    }
-
-    /* ========================================================
-       7. MATCHING PAIRS GAME
-    ======================================================== */
-    let firstSelected = null;
-    let lockMatch = false;
-
-    function initMatchingGame() {
-      const grid = document.getElementById('matchGrid');
-      grid.innerHTML = '';
-      firstSelected = null;
-      lockMatch = false;
-
-      // Pick 6 random characters -> 12 cards
-      const subset = [...KANA_DB].sort(() => Math.random() - 0.5).slice(0, 6);
-      let cards = [];
-      subset.forEach(k => {
-        cards.push({ id: k.char, display: k.char, type: 'kana' });
-        cards.push({ id: k.char, display: k.romaji, type: 'romaji' });
-      });
-      cards.sort(() => Math.random() - 0.5);
-
-      cards.forEach(c => {
-        const d = document.createElement('div');
-        d.className = 'match-card';
-        d.innerText = c.display;
-        d.dataset.id = c.id;
-        d.addEventListener('click', () => onMatchCardClick(d, c));
-        grid.appendChild(d);
-      });
-    }
-
-    function onMatchCardClick(el, data) {
-      if (lockMatch || el.classList.contains('matched') || el.classList.contains('selected')) return;
-
-      SoundEngine.playPop();
-      el.classList.add('selected');
-
-      if (!firstSelected) {
-        firstSelected = { el, data };
-      } else {
-        lockMatch = true;
-        if (firstSelected.data.id === data.id && firstSelected.data.type !== data.type) {
-          // MATCH!
-          setTimeout(() => {
-            firstSelected.el.classList.remove('selected');
-            el.classList.remove('selected');
-            firstSelected.el.classList.add('matched');
-            el.classList.add('matched');
-            SoundEngine.playSuccess(Storage.data.streak);
-            speakKana(data.id);
-            firstSelected = null;
-            lockMatch = false;
-
-            if (document.querySelectorAll('.match-card:not(.matched)').length === 0) {
-              triggerConfetti();
-            }
-          }, 300);
-        } else {
-          // MISMATCH
-          setTimeout(() => {
-            SoundEngine.playError();
-            firstSelected.el.classList.remove('selected');
-            el.classList.remove('selected');
-            firstSelected = null;
-            lockMatch = false;
-          }, 600);
-        }
-      }
-    }
-
-    document.getElementById('restartMatchBtn').addEventListener('click', initMatchingGame);
-
-    /* ========================================================
-       8. 50음도표 (Interactive Chart)
-    ======================================================== */
-    function initKanaChart() {
-      const chart = document.getElementById('kanaChartGrid');
-      chart.innerHTML = '';
-      KANA_DB.forEach((k, idx) => {
-        const cell = document.createElement('div');
-        cell.className = 'chart-cell';
-        cell.innerHTML = `<span class="k-char">${k.char}</span><span class="k-romaji">${k.romaji}</span>`;
-        cell.addEventListener('click', () => {
-          speakKana(k.char);
-          loadWriteChar(idx);
-          switchTab('tab-write');
-        });
-        chart.appendChild(cell);
-      });
-    }
-
-    /* ========================================================
-       9. CONFETTI FX
-    ======================================================== */
-    const fxCanvas = document.getElementById('fxCanvas');
-    const fxCtx = fxCanvas.getContext('2d');
-    const particles = [];
-
-    function setupFxCanvas() {
-      fxCanvas.width = window.innerWidth;
-      fxCanvas.height = window.innerHeight;
-    }
-    window.addEventListener('resize', () => {
-      setupCanvasSize();
-      setupFxCanvas();
-    });
-
-    function triggerConfetti() {
-      const colors = ['#ff4d80', '#38bdf8', '#fbbf24', '#34d399', '#f43f5e'];
-      for (let i = 0; i < 50; i++) {
-        particles.push({
-          x: window.innerWidth / 2,
-          y: window.innerHeight / 2 - 40,
-          vx: (Math.random() - 0.5) * 14,
-          vy: (Math.random() - 0.7) * 16,
-          size: Math.random() * 8 + 4,
-          color: colors[Math.floor(Math.random() * colors.length)],
-          rot: Math.random() * 360,
-          vrot: (Math.random() - 0.5) * 12,
-          alpha: 1
-        });
-      }
-    }
-
-    function animateConfetti() {
-      fxCtx.clearRect(0, 0, fxCanvas.width, fxCanvas.height);
-      for (let i = particles.length - 1; i >= 0; i--) {
-        const p = particles[i];
-        p.x += p.vx;
-        p.y += p.vy;
-        p.vy += 0.35;
-        p.rot += p.vrot;
-        p.alpha -= 0.015;
-
-        if (p.alpha <= 0) {
-          particles.splice(i, 1);
-          continue;
-        }
-
-        fxCtx.save();
-        fxCtx.globalAlpha = p.alpha;
-        fxCtx.translate(p.x, p.y);
-        fxCtx.rotate((p.rot * Math.PI) / 180);
-        fxCtx.fillStyle = p.color;
-        fxCtx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
-        fxCtx.restore();
-      }
-      requestAnimationFrame(animateConfetti);
-    }
-    animateConfetti();
-
-    /* ========================================================
-       10. ROUTING & INIT
-    ======================================================== */
-    function switchTab(tabId) {
-      document.querySelectorAll('.nav-item').forEach(b => {
-        b.classList.toggle('active', b.dataset.tab === tabId);
-      });
-      document.querySelectorAll('.tab-view').forEach(v => {
-        v.classList.toggle('active', v.id === tabId);
-      });
-
-      if (tabId === 'tab-write') {
-        setTimeout(setupCanvasSize, 50);
-      } else if (tabId === 'tab-quiz') {
-        nextQuizQuestion();
-      } else if (tabId === 'tab-match') {
-        initMatchingGame();
-      }
-    }
-
-    document.querySelectorAll('.nav-item').forEach(btn => {
-      btn.addEventListener('click', () => switchTab(btn.dataset.tab));
-    });
-
-    // Sound toggle
-    const soundBtn = document.getElementById('soundBtn');
-    soundBtn.addEventListener('click', () => {
-      Storage.data.soundEnabled = !Storage.data.soundEnabled;
-      soundBtn.classList.toggle('active', Storage.data.soundEnabled);
-      soundBtn.innerText = Storage.data.soundEnabled ? '🔊' : '🔇';
-      Storage.save();
-    });
-
-    window.addEventListener('DOMContentLoaded', () => {
-      Storage.load();
-      setupCanvasSize();
-      setupFxCanvas();
-      loadWriteChar(0);
-      renderCard(0);
-      initKanaChart();
-    });
-  </script>
+if ('speechSynthesis' in window) speechSynthesis.getVoices();
+renderScope(); renderProgress(); refreshActive();
+</script>
 </body>
 </html>
