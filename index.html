@@ -4,6 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>일본어 단어 PRO - 3·4과 단어 암기</title>
+  <meta name="theme-color" content="#0b0f19">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" href="icons/favicon-64.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="일본어 단어">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800&family=Noto+Sans+KR:wght@400;600;700;900&display=swap" rel="stylesheet">
@@ -78,7 +86,7 @@
     }
     nav::-webkit-scrollbar { display: none; }
     .nav-item {
-      flex: 1; min-width: 50px; padding: 8px 2px; background: transparent; border: none;
+      flex: 1; min-width: 46px; padding: 8px 1px; background: transparent; border: none;
       color: var(--muted); font-size: 12px; font-weight: 700; border-radius: var(--r-md);
       display: flex; flex-direction: column; align-items: center; gap: 2px; white-space: nowrap;
     }
@@ -234,7 +242,7 @@
     .ctbl td small { color: var(--muted); font-size: 11px; }
     .ctbl td.j { font-family: var(--jp); font-size: 15px; color: var(--text); font-weight: 700; white-space: nowrap; }
     .ctbl small.kr { font-family: 'Noto Sans KR', sans-serif; font-weight: 600; white-space: normal; }
-    .ctbl small.f { color: var(--secondary); font-size: 12px; font-weight: 700; white-space: nowrap; }
+    .ctbl small.f { color: var(--secondary); font-size: 12px; font-weight: 700; }
     .ctbl tr[data-say], .ctbl td[data-say] { cursor: pointer; }
     .ctbl.num td { font-size: 12px; color: var(--muted); }
     .ctbl.num td .jp { font-size: 16px; font-weight: 700; color: var(--text); }
@@ -264,6 +272,64 @@
     .opt.jp-opt.long { font-size: 16px; }
     .seg { flex-wrap: wrap; }
 
+    /* 본문 */
+    .toggles { display: flex; gap: 6px; flex-wrap: wrap; }
+    .tog { background: var(--inner); border: 1px solid var(--border); color: var(--muted); border-radius: 99px; padding: 7px 12px; font-size: 12px; font-weight: 700; }
+    .tog.on { background: var(--secondary); border-color: var(--secondary); color: #04121c; }
+    .btn.slim { padding: 9px 14px; font-size: 13px; }
+    .goal { display: flex; flex-wrap: wrap; gap: 6px; }
+    .goal div { background: var(--inner); border: 1px solid var(--border); border-radius: 99px; padding: 6px 12px; font-size: 12px; color: var(--muted); cursor: pointer; }
+    .goal b { font-family: var(--jp); color: var(--text); margin-left: 4px; font-size: 14px; }
+    .lines { display: flex; flex-direction: column; gap: 8px; }
+    .line { background: var(--card); border: 1px solid var(--border); border-radius: var(--r-md); padding: 12px; display: grid; grid-template-columns: 74px 1fr; gap: 10px; align-items: start; cursor: pointer; transition: border-color .2s, background .2s; }
+    .line.playing { border-color: var(--secondary); background: rgba(56,189,248,.1); }
+    .line .who { display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }
+    .line .num { color: var(--muted); font-size: 15px; }
+    .spk { font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 99px; background: var(--inner); color: var(--muted); white-space: nowrap; }
+    .spk.s1 { color: var(--secondary); background: rgba(56,189,248,.14); }
+    .spk.s2 { color: var(--primary); background: rgba(255,77,128,.14); }
+    .spk.s3 { color: var(--accent); background: rgba(251,191,36,.14); }
+    .spk.s4 { color: var(--success); background: rgba(52,211,153,.14); }
+    .line .lt { min-width: 0; }
+    .line .ja { font-size: 18px; font-weight: 700; line-height: 1.5; word-break: keep-all; overflow-wrap: anywhere; }
+    .line .ko { font-size: 13px; color: var(--muted); margin-top: 3px; line-height: 1.5; word-break: keep-all; }
+    .lines.hide-jp .line:not(.peek) .ja, .lines.hide-kr .line:not(.peek) .ko { filter: blur(7px); user-select: none; }
+    .story-box { display: flex; flex-direction: column; gap: 10px; }
+    .story-box h4 { font-size: 15px; }
+    .story-box h4 small { font-size: 11px; color: var(--muted); font-weight: 600; margin-left: 6px; }
+    .qa { background: var(--inner); border-radius: var(--r-sm); padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; font-size: 14px; word-break: keep-all; }
+    .qa .speak { align-self: flex-start; }
+    .qa-a { color: var(--success); font-weight: 700; font-family: var(--jp); }
+    .note-line { background: var(--inner); border-radius: var(--r-sm); padding: 10px 12px; cursor: pointer; }
+    .note-line .jp { font-size: 17px; font-weight: 700; }
+    .note-line .ko { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .point { display: flex; flex-direction: column; gap: 2px; font-size: 13px; color: var(--muted); line-height: 1.5; word-break: keep-all; padding-bottom: 8px; border-bottom: 1px dashed var(--border); }
+    .point:last-child { border-bottom: none; padding-bottom: 0; }
+    .point b { color: var(--text); font-size: 15px; }
+
+    /* 개념 탭 추가 */
+    .group-label { font-size: 12px; font-weight: 800; color: var(--muted); letter-spacing: .08em; margin: 6px 4px -4px; }
+    .dots-list { padding-left: 18px; display: flex; flex-direction: column; gap: 4px; }
+    .ctbl.count td { text-align: center; }
+    .ctbl.tight th { white-space: normal; font-size: 11px; }
+    .ctbl.tight td { padding: 6px 5px; }
+    .ctbl.tight td.j { font-size: 13px; white-space: normal; word-break: normal; overflow-wrap: anywhere; }
+    .passage { background: var(--card); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 10px 12px; font-size: 15px; line-height: 1.7; color: var(--text); font-weight: 600; cursor: pointer; word-break: keep-all; overflow-wrap: anywhere; }
+    .kr-trans { margin-top: 6px; font-size: 12px; color: var(--muted); line-height: 1.6; }
+    .speak.listen { align-self: flex-start; }
+    .pick.mc { flex-direction: column; }
+    .pick.mc button { font-family: 'Noto Sans KR', sans-serif; font-size: 14px; text-align: left; min-width: 0; }
+    .pick.ox-pick button { font-family: 'Noto Sans KR', sans-serif; }
+    .ex-item .shown { font-size: 16px; color: var(--text); font-weight: 700; }
+
+    /* 설치 안내 */
+    .head-actions { display: flex; gap: 8px; align-items: center; }
+    .offline-badge { font-size: 11px; font-weight: 700; color: var(--success); display: none; }
+    .offline-badge.show { display: inline; }
+    .install-panel { display: none; flex-direction: column; gap: 8px; font-size: 13px; color: var(--muted); line-height: 1.6; }
+    .install-panel.show { display: flex; }
+    .install-panel b { color: var(--text); }
+
     .toast {
       position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%) translateY(80px);
       background: var(--inner); border: 1px solid var(--border); color: var(--text);
@@ -283,8 +349,21 @@
 <div class="app">
   <header>
     <div class="logo">🌸 일본어 단어 <span class="badge">3·4과</span></div>
-    <button class="icon-btn" id="soundBtn" title="자동 발음">🔊</button>
+    <div class="head-actions">
+      <span class="offline-badge" id="offlineBadge">✓ 오프라인</span>
+      <button class="icon-btn" id="installBtn" title="앱으로 설치 · 오프라인 사용" aria-label="앱으로 설치하는 방법">📲</button>
+      <button class="icon-btn" id="soundBtn" title="자동 발음">🔊</button>
+    </div>
   </header>
+
+  <div class="panel install-panel" id="installPanel">
+    <div><b>📲 앱으로 설치하면 인터넷 없이도 열려요</b></div>
+    <div id="installStatus">확인하는 중…</div>
+    <div><b>아이폰 (Safari)</b>: 아래쪽 공유 버튼(□↑) → <b>홈 화면에 추가</b> → 홈 화면의 아이콘으로 열기</div>
+    <div><b>안드로이드 (Chrome)</b>: 오른쪽 위 메뉴(⋮) → <b>앱 설치</b> 또는 <b>홈 화면에 추가</b></div>
+    <div>처음 한 번은 인터넷이 연결된 상태에서 열어 주세요. 그다음부터는 비행기 모드에서도 열리고, 외운 기록은 이 기기에 저장돼요.</div>
+    <button class="btn primary slim" id="installNow" hidden>지금 설치하기</button>
+  </div>
 
   <div class="panel">
     <div class="chips" id="scopeChips"></div>
@@ -298,6 +377,7 @@
     <button class="nav-item" data-tab="spell"><i>🔤</i>철자</button>
     <button class="nav-item" data-tab="match"><i>🧩</i>짝맞추기</button>
     <button class="nav-item" data-tab="list"><i>📖</i>단어장</button>
+    <button class="nav-item" data-tab="story"><i>💬</i>본문</button>
     <button class="nav-item" data-tab="grammar"><i>💡</i>개념</button>
   </nav>
 
@@ -351,21 +431,43 @@
     <div class="list" id="wordList"></div>
   </section>
 
+  <!-- 본문 -->
+  <section class="view" id="view-story">
+    <div class="toolbar">
+      <div class="seg" id="storySeg">
+        <button data-v="3">3과 おじゃまします</button>
+        <button data-v="4">4과 ありがとう</button>
+      </div>
+    </div>
+    <div class="toolbar">
+      <div class="toggles">
+        <button class="tog" id="togKr" aria-pressed="false">한국어 가리기</button>
+        <button class="tog" id="togJp" aria-pressed="false">일본어 가리기</button>
+      </div>
+      <button class="btn primary slim" id="playAll">▶ 전체 듣기</button>
+    </div>
+    <div id="storyArea"></div>
+  </section>
+
   <!-- 개념 -->
   <section class="view concept" id="view-grammar">
     <div class="key">
-      <h3>⭐ 시험 전에 꼭 알아야 할 핵심 8가지</h3>
+      <h3>⭐ 시험 전에 꼭 알아야 할 핵심 10가지</h3>
       <ol>
         <li>형용사는 두 종류예요. 기본형 끝이 <span class="jp">い</span>면 <b>い형용사</b>, <span class="jp">だ</span>면 <b>な형용사</b>.</li>
-        <li><b>い형용사</b>는 정중형에 <span class="jp">です</span>만 붙여요. 부정·과거는 끝의 <span class="jp">い</span>를 자르고 <span class="jp">くないです / かったです</span>.</li>
-        <li><b>な형용사</b>는 <span class="jp">だ</span>를 지우고 <span class="jp">です / じゃないです / でした</span>. 명사를 꾸밀 때만 <span class="jp">だ → な</span>.</li>
-        <li><b>함정 단어</b>: <span class="jp">きれいだ・ゆうめいだ・きらいだ</span>는 い로 끝나 보여도 な형용사예요. <span class="jp">きれくない</span> ✕ → <span class="jp">きれいじゃない</span> ○</li>
-        <li><b>예외</b>: <span class="jp">いい</span>(좋다)는 활용할 때 <span class="jp">よ</span>로 바뀌어요. <span class="jp">よくないです・よかったです</span> (<span class="jp">いくない</span> ✕)</li>
-        <li><b>인사말은 짝꿍으로</b>: <span class="jp">いってきます ↔ いってらっしゃい</span>, <span class="jp">ただいま ↔ おかえり</span>, <span class="jp">おじゃまします ↔ いらっしゃい</span></li>
-        <li><b>가족 호칭</b>: 남에게 <b>내 가족</b>은 낮춰서 <span class="jp">ちち・はは</span>, <b>남의 가족</b>은 높여서 <span class="jp">おとうさん・おかあさん</span>.</li>
-        <li><b>숫자 발음 변화</b>: <span class="jp">300 さんびゃく・600 ろっぴゃく・800 はっぴゃく・3000 さんぜん・8000 はっせん</span>, 10000은 반드시 <span class="jp">いちまん</span>.</li>
+        <li><b>い형용사</b>: 정중형은 <span class="jp">+です</span>, 수식형은 그대로 + 명사, 부정·과거는 끝의 <span class="jp">い</span>를 자르고 <span class="jp">くないです / かったです</span>.</li>
+        <li><b>な형용사</b>: <span class="jp">だ</span>를 지우고 <span class="jp">です / じゃないです / でした</span>. 명사를 꾸밀 때만 <span class="jp">だ → な</span>.</li>
+        <li><b>함정</b>: <span class="jp">きれいだ・ゆうめいだ・きらいだ</span>는 な형용사. <b>예외</b>: <span class="jp">いい</span>는 <span class="jp">よくない・よかった</span>.</li>
+        <li><b>가족 호칭</b>: 남에게 <b>내 가족</b>은 <span class="jp">ちち・はは</span>, <b>남의 가족</b>은 <span class="jp">おとうさん・おかあさん</span>.</li>
+        <li><b>인사말 짝꿍</b>: <span class="jp">いってきます ↔ いってらっしゃい</span>, <span class="jp">ただいま ↔ おかえり</span>, <span class="jp">おじゃまします ↔ いらっしゃい</span>.</li>
+        <li><b>개수</b>: <span class="jp">ひとつ・ふたつ・みっつ・よっつ・いつつ</span>. 주문은 <span class="jp">ももを ひとつ ください</span>.</li>
+        <li><b>숫자 발음 변화</b>: <span class="jp">300 さんびゃく・600 ろっぴゃく・800 はっぴゃく・3000 さんぜん・8000 はっせん</span>, 10000은 <span class="jp">いちまん</span>. 값은 <span class="jp">～は いくらですか</span>.</li>
+        <li><b>비교</b>: <span class="jp">Aと Bと どちらが いいですか</span> → <span class="jp">Bの ほうが いいです</span>.</li>
+        <li><b>축하·감사</b>: <span class="jp">たんじょうび おめでとう / ありがとう</span>, 정중하게는 <span class="jp">～ございます</span>. 편지는 받는 사람 <span class="jp">～へ</span>(발음 [e]), 보내는 사람 <span class="jp">～より</span>.</li>
       </ol>
     </div>
+
+    <div class="group-label">문법</div>
 
     <details>
       <summary>① 형용사 두 종류 구별하기</summary>
@@ -374,6 +476,7 @@
         <div class="tbl-wrap"><table class="ctbl">
           <tr><th>い형용사</th><th>な형용사</th></tr>
           <tr><td>기본형이 <b class="jp">~い</b>로 끝남</td><td>기본형이 <b class="jp">~だ</b>로 끝남</td></tr>
+          <tr><td class="j" data-say="まるい">まるい・かわいい</td><td class="j" data-say="すきだ">すきだ・きれいだ</td></tr>
         </table></div>
         <p>이 앱에 들어 있는 형용사 전부예요. 누르면 아래 <b>⑦ 활용표</b>가 바로 나와요.</p>
         <div><b>い형용사</b></div><div class="adj-chips" id="adjIChips"></div>
@@ -386,6 +489,10 @@
       <div class="body">
         <div class="rule">정중형·수식형은 그대로 붙이고, 부정형·과거형은 끝의 <span class="jp">い</span>를 잘라요!</div>
         <div id="iTable"></div>
+        <div class="ex">
+          <div data-say="おおきい かさ"><div class="j">おおきい - おおきいです - おおきい かさ</div><div class="k">크다 - 큽니다 - 큰 우산 (지도서 예문)</div></div>
+          <div data-say="おもしろかったです"><div class="j">おもしろい - おもしろかった - おもしろかったです</div><div class="k">재미있다 - 재미있었다 - 재미있었습니다</div></div>
+        </div>
         <p>빨간 글자가 바뀌는 부분이에요. 줄을 누르면 발음을 들을 수 있어요.</p>
       </div>
     </details>
@@ -393,8 +500,12 @@
     <details>
       <summary>③ な형용사 활용 <small>예: きれいだ</small></summary>
       <div class="body">
-        <div class="rule">활용할 때는 끝의 <span class="jp">だ</span>를 지워요! 명사를 꾸밀 때는 <span class="jp">だ</span>가 <span class="jp">な</span>로 바뀌어요.</div>
+        <div class="rule">활용할 때는 끝의 <span class="jp">だ</span>를 지워요! 명사를 꾸밀 때는 <span class="jp">だ</span>가 <span class="jp">な</span>로 바뀌어요. (그래서 이름이 な형용사)</div>
         <div id="naTable"></div>
+        <div class="ex">
+          <div data-say="しんせつな せんせい"><div class="j">しんせつだ - しんせつです - しんせつな せんせい</div><div class="k">친절하다 - 친절합니다 - 친절한 선생님 (지도서 예문)</div></div>
+          <div data-say="きれいでした"><div class="j">きれいだ - きれいだった - きれいでした</div><div class="k">깨끗하다 - 깨끗했다 - 깨끗했습니다</div></div>
+        </div>
         <p><span class="jp">じゃないです</span>는 <span class="jp">ではありません</span>과 같은 뜻이에요. (더 딱딱한 말)</p>
       </div>
     </details>
@@ -403,7 +514,7 @@
       <summary>④ 명사는 な형용사와 쌍둥이</summary>
       <div class="body">
         <p>명사 뒤에 <span class="jp">だ</span>를 붙이면 "~이다"가 돼요. (서술격 조사) 활용 방법은 な형용사와 똑같아요.</p>
-        <div class="tbl-wrap"><table class="ctbl">
+        <div class="tbl-wrap"><table class="ctbl tight">
           <tr><th>형태</th><th>명사 (がくせい 학생)</th><th>な형용사 (ひまだ)</th></tr>
           <tr data-say="がくせいだ"><td>기본형</td><td class="j">がくせいだ</td><td class="j">ひまだ</td></tr>
           <tr data-say="がくせいです"><td>정중형</td><td class="j">がくせい<em>です</em></td><td class="j">ひま<em>です</em></td></tr>
@@ -415,13 +526,14 @@
     </details>
 
     <details>
-      <summary>⑤ 함정 주의! い처럼 보이는 な형용사</summary>
+      <summary>⑤ 함정 주의! 자주 틀리는 활용</summary>
       <div class="body">
         <p>겉보기엔 い가 들어 있지만 기본형이 <b class="jp">だ</b>로 끝나요. 그래서 な형용사예요.</p>
         <div class="tbl-wrap"><table class="ctbl">
           <tr data-say="きれいだ"><td class="j">きれいだ</td><td>예쁘다, 깨끗하다</td></tr>
           <tr data-say="ゆうめいだ"><td class="j">ゆうめいだ</td><td>유명하다</td></tr>
           <tr data-say="きらいだ"><td class="j">きらいだ</td><td>싫어하다</td></tr>
+          <tr data-say="ていねいだ"><td class="j">ていねいだ</td><td>정중하다 (지도서 보충)</td></tr>
         </table></div>
         <p><b>시험 단골 문제</b></p>
         <div class="ox">
@@ -429,10 +541,12 @@
           <div class="x">✕ きれくないです</div><div>○ きれいじゃないです</div>
           <div class="x">✕ きれかったです</div><div>○ きれいでした</div>
         </div>
-        <p><b>반대 실수도 조심</b>: い형용사에 な형용사 규칙을 쓰면 틀려요.</p>
+        <p><b>반대 실수도 조심</b>: い형용사에 な형용사 규칙을 쓰면 틀려요. (4과 확인하기 문제)</p>
         <div class="ox">
-          <div class="x">✕ さむいでした</div><div>○ さむかったです (추웠습니다)</div>
-          <div class="x">✕ ちいさいじゃないです</div><div>○ ちいさくないです (작지 않습니다)</div>
+          <div class="x">✕ おいしいかったです</div><div>○ おいしかったです (い를 빼고 かった)</div>
+          <div class="x">✕ うれしいでした</div><div>○ うれしかったです</div>
+          <div class="x">✕ にぎやかったです</div><div>○ にぎやかでした (な형용사는 でした)</div>
+          <div class="x">✕ ちいさいじゃないです</div><div>○ ちいさくないです</div>
         </div>
       </div>
     </details>
@@ -448,7 +562,7 @@
         </table></div>
         <div class="ox"><div class="x">✕ いくないです</div><div class="x">✕ いかったです</div></div>
         <p><b>과거 부정형</b> (~지 않았습니다)</p>
-        <div class="tbl-wrap"><table class="ctbl">
+        <div class="tbl-wrap"><table class="ctbl tight">
           <tr><th></th><th>공식</th><th>예</th></tr>
           <tr data-say="おもしろくなかったです"><td>い형용사</td><td class="j">い → くなかったです</td><td class="j">おもしろくなかったです</td></tr>
           <tr data-say="ひまじゃなかったです"><td>な형용사</td><td class="j">だ → じゃなかったです</td><td class="j">ひまじゃなかったです</td></tr>
@@ -473,136 +587,314 @@
     </details>
 
     <details>
-      <summary>⑧ 활동지 확인 문제</summary>
+      <summary>⑧ 지시어 코소아도</summary>
       <div class="body">
-        <p><b>⑨ 알맞은 것을 고르세요.</b></p>
-        <div class="ex-list" id="ex9"></div>
-        <p><b>STEP 5 틀린 곳을 찾아 고쳐 봅시다.</b> 먼저 머릿속으로 고쳐 본 다음 정답을 확인하세요.</p>
-        <div class="ex-list" id="ex5"></div>
-        <button class="btn" id="exReset">🔄 다시 풀기</button>
+        <p>혼자 쓰는 <b>대명사</b>(これ 이것)와 뒤에 반드시 명사가 오는 <b>연체사</b>(この 이~)를 구별하세요.</p>
+        <div class="tbl-wrap"><table class="ctbl tight">
+          <tr><th></th><th>사물<br>(대명사)</th><th>명사 꾸미기<br>(연체사)</th><th>언제?</th></tr>
+          <tr><td>こ</td><td class="j" data-say="これ">これ 이것</td><td class="j" data-say="この">この 이~</td><td>나와 가까울 때</td></tr>
+          <tr><td>そ</td><td class="j" data-say="それ">それ 그것</td><td class="j" data-say="その">その 그~</td><td>상대와 가까울 때</td></tr>
+          <tr><td>あ</td><td class="j" data-say="あれ">あれ 저것</td><td class="j" data-say="あの">あの 저~</td><td>둘 다에게 멀 때</td></tr>
+          <tr><td>ど</td><td class="j" data-say="どれ">どれ 어느 것</td><td class="j" data-say="どの">どの 어느~</td><td>정해지지 않았을 때</td></tr>
+        </table></div>
+        <p>4과의 <span class="jp">どんな</span>(어떤~)도 연체사예요: <span class="jp">どんな おかしが いいかな</span>.</p>
+        <div class="ex">
+          <div data-say="それ、ぜんぶ まんがですか。"><div class="j">それ、ぜんぶ まんがですか。</div><div class="k">그거, 전부 만화예요? (3과 본문)</div></div>
+          <div data-say="その しゃしん、ジホさんの かぞくですか。"><div class="j">その しゃしん、ジホさんの かぞくですか。</div><div class="k">그 사진, 지호의 가족인가요? (3과 본문)</div></div>
+          <div data-say="この こも ぼくの かぞくです。"><div class="j">この こも ぼくの かぞくです。</div><div class="k">이 아이도 저의 가족이에요. (3과 본문)</div></div>
+        </div>
       </div>
     </details>
 
     <details>
-      <summary>⑨ 인사말 짝꿍 & 어원</summary>
+      <summary>⑨ 비교 표현</summary>
+      <div class="body">
+        <div class="rule">둘 중에: <span class="jp">Aと Bと どちらが ～ですか</span> → 대답은 반드시 <span class="jp">Bの ほうが ～です</span></div>
+        <div class="ex">
+          <div data-say="いちごと みかんと どちらが いいですか。"><div class="j">いちごと みかんと どちらが いいですか。</div><div class="k">딸기와 귤 중 어느 쪽이 좋습니까?</div></div>
+          <div data-say="いちごの ほうが いいです。"><div class="j">いちごの ほうが いいです。</div><div class="k">딸기 쪽이 좋습니다.</div></div>
+          <div data-say="うみと やまと どちらが いいですか。"><div class="j">うみと やまと どちらが いいですか。</div><div class="k">바다와 산 중 어느 쪽이 좋습니까?</div></div>
+          <div data-say="やまの ほうが いいです。"><div class="j">やまの ほうが いいです。</div><div class="k">산 쪽이 좋습니다.</div></div>
+        </div>
+        <p>대답을 부드럽게 할 때는 <span class="jp">～かな</span>: <span class="jp">ぼくは いちごの ほうが いいかな</span> (나는 딸기 쪽이 좋은데).</p>
+        <div class="rule">셋 이상 중에 (지도서 보충): <span class="jp">～の なかで なにが いちばん ～ですか</span></div>
+        <div class="ex">
+          <div data-say="くだものの なかで なにが いちばん すきですか。"><div class="j">くだものの なかで なにが いちばん すきですか。</div><div class="k">과일 중에서 무엇을 가장 좋아합니까?</div></div>
+          <div data-say="いちごが いちばん すきです。"><div class="j">いちごが いちばん すきです。</div><div class="k">딸기를 가장 좋아합니다.</div></div>
+        </div>
+        <p>なに 자리에 <span class="jp">どれ(어느 것)・どこ(어디)・いつ(언제)・だれ(누구)</span>를 넣을 수도 있어요.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>⑩ 개수 · 숫자 · 가격</summary>
+      <div class="body">
+        <p><b>개수 세기</b> (1~5는 교과서, 6~10과 ～こ는 정리하기·지도서 보충)</p>
+        <div class="tbl-wrap"><table class="ctbl count">
+          <tr><th></th><th>고유 수사</th><th>～こ(個)</th></tr>
+          <tr><td>1</td><td class="j" data-say="ひとつ">ひとつ</td><td class="j" data-say="いっこ"><em>いっ</em>こ</td></tr>
+          <tr><td>2</td><td class="j" data-say="ふたつ">ふたつ</td><td class="j" data-say="にこ">にこ</td></tr>
+          <tr><td>3</td><td class="j" data-say="みっつ">みっつ</td><td class="j" data-say="さんこ">さんこ</td></tr>
+          <tr><td>4</td><td class="j" data-say="よっつ">よっつ</td><td class="j" data-say="よんこ">よんこ</td></tr>
+          <tr><td>5</td><td class="j" data-say="いつつ">いつつ</td><td class="j" data-say="ごこ">ごこ</td></tr>
+          <tr><td>6</td><td class="j" data-say="むっつ">むっつ</td><td class="j" data-say="ろっこ"><em>ろっ</em>こ</td></tr>
+          <tr><td>7</td><td class="j" data-say="ななつ">ななつ</td><td class="j" data-say="ななこ">ななこ</td></tr>
+          <tr><td>8</td><td class="j" data-say="やっつ">やっつ</td><td class="j" data-say="はっこ"><em>はっ</em>こ</td></tr>
+          <tr><td>9</td><td class="j" data-say="ここのつ">ここのつ</td><td class="j" data-say="きゅうこ">きゅうこ</td></tr>
+          <tr><td>10</td><td class="j" data-say="とお">とお</td><td class="j" data-say="じゅっこ"><em>じゅっ</em>こ</td></tr>
+          <tr><td>?</td><td class="j" data-say="いくつ">いくつ 몇 개</td><td></td></tr>
+        </table></div>
+        <div class="ex">
+          <div data-say="ももを ひとつ ください。"><div class="j">ももを ひとつ ください。</div><div class="k">복숭아를 한 개 주세요. (원하는 것 + を + ください)</div></div>
+          <div data-say="かきを よっつ ください。"><div class="j">かきを よっつ ください。</div><div class="k">감을 네 개 주세요.</div></div>
+          <div data-say="かさを ください。"><div class="j">かさを ください。</div><div class="k">우산을 주세요.</div></div>
+        </div>
+        <p><b>숫자 읽기</b>: 빨간 숫자는 발음이 바뀌어요! 3·6·8을 특히 조심하세요.</p>
+        <div id="numTable"></div>
+        <p><b>가격 묻고 답하기</b>: 일본 돈의 단위는 <span class="jp">円</span>(えん), 기호는 <b>￥</b>.</p>
+        <div class="ex">
+          <div data-say="すみません。ペンは いくらですか。"><div class="j">すみません。ペンは いくらですか。</div><div class="k">여기요. 펜은 얼마입니까?</div></div>
+          <div data-say="さんびゃくえんです。"><div class="j">300円です。(さんびゃくえん)</div><div class="k">300엔입니다.</div></div>
+          <div data-say="はしは ろっぴゃくえんです。"><div class="j">はしは 600円です。(ろっぴゃくえん)</div><div class="k">젓가락은 600엔입니다.</div></div>
+          <div data-say="ほんは はっぴゃくえんです。"><div class="j">本は 800円です。(はっぴゃくえん)</div><div class="k">책은 800엔입니다.</div></div>
+          <div data-say="ぼうしは せんごひゃくえんです。"><div class="j">ぼうしは 1,500円です。(せんごひゃくえん)</div><div class="k">모자는 1,500엔입니다.</div></div>
+        </div>
+        <p>퀴즈 탭의 <b>가격 읽기</b>로 더 연습할 수 있어요.</p>
+      </div>
+    </details>
+
+    <div class="group-label">표현</div>
+
+    <details>
+      <summary>⑪ 인사말 짝꿍 · 어원 · ございます</summary>
       <div class="body">
         <div class="tbl-wrap"><table class="ctbl">
           <tr><th>상황</th><th>하는 사람</th><th>받는 사람</th></tr>
-          <tr><td>집을 나갈 때</td><td><span class="jp say" data-say="いってきます">いってきます</span><br>다녀오겠습니다</td><td><span class="jp say" data-say="いってらっしゃい">いってらっしゃい</span><br>다녀오세요</td></tr>
-          <tr><td>집에 돌아왔을 때</td><td><span class="jp say" data-say="ただいま">ただいま</span><br>다녀왔습니다</td><td><span class="jp say" data-say="おかえり">おかえり(なさい)</span><br>어서 와</td></tr>
+          <tr><td>집을 나갈 때</td><td><span class="jp say" data-say="いってきます">いってきます</span><br>다녀오겠습니다</td><td><span class="jp say" data-say="いってらっしゃい">いってらっしゃい</span><br>잘 다녀와</td></tr>
+          <tr><td>집에 돌아왔을 때</td><td><span class="jp say" data-say="ただいま">ただいま</span><br>다녀왔습니다</td><td><span class="jp say" data-say="おかえり">おかえり(なさい)</span><br>잘 다녀왔니?</td></tr>
           <tr><td>남의 집에 갈 때</td><td><span class="jp say" data-say="おじゃまします">おじゃまします</span><br>실례합니다</td><td><span class="jp say" data-say="いらっしゃい">いらっしゃい</span><br>어서 와</td></tr>
         </table></div>
         <p><b>어원을 알면 안 헷갈려요</b></p>
         <div class="ox">
           <div><span class="jp">いって</span>(<span class="jp">いく</span> 가다) + <span class="jp">きます</span>(<span class="jp">くる</span> 오다) = 갔다 오겠습니다</div>
-          <div><span class="jp">いって</span>(<span class="jp">いく</span> 가다) + <span class="jp">らっしゃい</span>(오세요) = 갔다 오세요</div>
-          <div><span class="jp">お</span> + <span class="jp">かえり</span>(<span class="jp">かえる</span> 돌아오다) = 돌아왔구나, 어서 와</div>
+          <div><span class="jp">お</span> + <span class="jp">かえり</span>(<span class="jp">かえる</span> 돌아오다) = 잘 다녀왔니? 윗사람에게는 <span class="jp">おかえりなさい</span></div>
+          <div><span class="jp">おじゃまします</span>의 <span class="jp">じゃま</span>(邪魔)는 "방해". 남의 공간에 들어가 방해가 될까 하는 겸손한 말이에요. 회사·교무실 같은 곳에서는 <span class="jp">しつれいします</span>(失礼します).</div>
+          <div>집에 온 손님에게는 <span class="jp">いらっしゃい</span>, 가게·식당에서 점원은 <span class="jp">いらっしゃいませ</span>.</div>
         </div>
-        <p><b>ございます를 붙이면 정중해져요</b> (교과서 75쪽)</p>
+        <p><b>～ございます를 붙이면 정중해져요</b></p>
+        <div class="tbl-wrap"><table class="ctbl tight">
+          <tr><th>친구·아랫사람에게</th><th>윗사람·처음 만난 사람에게</th></tr>
+          <tr><td class="j" data-say="おはよう">おはよう 안녕</td><td class="j" data-say="おはようございます">おはよう<em>ございます</em> 안녕하세요</td></tr>
+          <tr><td class="j" data-say="おめでとう">おめでとう 축하해</td><td class="j" data-say="おめでとうございます">おめでとう<em>ございます</em> 축하합니다</td></tr>
+          <tr><td class="j" data-say="ありがとう">ありがとう 고마워</td><td class="j" data-say="ありがとうございます">ありがとう<em>ございます</em> 고맙습니다</td></tr>
+        </table></div>
+        <p><span class="jp">おめでとう・ありがとう</span>는 형용사 <span class="jp">めでたい</span>(경사스럽다)·<span class="jp">ありがたい</span>(고맙다)에서 나온 말이에요.</p>
+        <div class="ex">
+          <div data-say="たんじょうび おめでとう。ありがとう。"><div class="j">A たんじょうび おめでとう。 B ありがとう。</div><div class="k">생일 축하해. / 고마워. (にゅうがく 입학, ごうかく 합격, そつぎょう 졸업도 같은 방법)</div></div>
+        </div>
+      </div>
+    </details>
+
+    <details>
+      <summary>⑫ 가족 호칭</summary>
+      <div class="body">
+        <p>일본어는 <b>누구의 가족이냐</b>, <b>누구에게 말하느냐</b>에 따라 부르는 말이 달라요. 남에게 내 가족을 말할 때는 윗사람(아버지·어머니)이라도 높이지 않아요.</p>
+        <div class="tbl-wrap"><table class="ctbl tight">
+          <tr><th></th><th>남에게 말하는<br>내 가족</th><th>남의<br>가족</th><th>내 가족을<br>직접 부를 때</th></tr>
+          <tr><td>아버지</td><td class="j" data-say="ちち">ちち</td><td class="j" data-say="おとうさん">おとうさん</td><td class="j" data-say="おとうさん">おとうさん</td></tr>
+          <tr><td>어머니</td><td class="j" data-say="はは">はは</td><td class="j" data-say="おかあさん">おかあさん</td><td class="j" data-say="おかあさん">おかあさん</td></tr>
+          <tr><td>형·오빠</td><td class="j" data-say="あに">あに</td><td class="j" data-say="おにいさん">おにいさん</td><td class="j" data-say="おにいちゃん">おにいちゃん</td></tr>
+          <tr><td>누나·언니</td><td class="j" data-say="あね">あね</td><td class="j" data-say="おねえさん">おねえさん</td><td class="j" data-say="おねえちゃん">おねえちゃん</td></tr>
+          <tr><td>남동생</td><td class="j" data-say="おとうと">おとうと</td><td class="j" data-say="おとうとさん">おとうとさん</td><td>이름</td></tr>
+          <tr><td>여동생</td><td class="j" data-say="いもうと">いもうと</td><td class="j" data-say="いもうとさん">いもうとさん</td><td>이름</td></tr>
+        </table></div>
+        <ul class="dots-list">
+          <li>형제·자매 호칭에는 '누나/언니'처럼 말하는 사람의 성별 구별이 없어요.</li>
+          <li>직접 부를 때는 <span class="jp">お</span>를 빼거나(<span class="jp">かあさん</span>) <span class="jp">ちゃん</span>을 붙이기도 해요(<span class="jp">とうちゃん</span>). 아빠·엄마는 <span class="jp">パパ・ママ</span>.</li>
+          <li>장음 주의: <span class="jp">おとうさん・おかあさん・おにいさん・おねえさん・おとうと・いもうと</span></li>
+        </ul>
+        <div class="ex">
+          <div data-say="わたしの ちちです。"><div class="j">わたしの ちちです。</div><div class="k">나의 아버지입니다.</div></div>
+          <div data-say="はるとさんの おにいさんです。"><div class="j">はるとさんの おにいさんです。</div><div class="k">하루토 씨의 형입니다.</div></div>
+          <div data-say="ソミさんの おねえさんですか。はい、わたしの あねです。"><div class="j">ソミさんの おねえさんですか。 ― はい、わたしの あねです。</div><div class="k">소미 씨의 언니입니까? ― 네, 저의 언니입니다.</div></div>
+          <div data-say="りこさんの おとうさんと おかあさんですか。はい、わたしの ちちと ははです。"><div class="j">りこさんの おとうさんと おかあさんですか。 ― はい、わたしの ちちと ははです。</div><div class="k">리코 씨의 아버지와 어머니입니까? ― 네, 저의 아버지와 어머니입니다.</div></div>
+          <div data-say="わたしの かぞくは ちちと ははと おとうとと わたしです。"><div class="j">わたしの かぞくは ちちと ははと おとうとと わたしです。</div><div class="k">저의 가족은 아버지와 어머니와 남동생과 저입니다.</div></div>
+        </div>
+        <p>조사 <span class="jp">の</span>는 "~의", <span class="jp">と</span>는 "~와/과".</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>⑬ 이름 호칭: 様・さん・ちゃん・くん</summary>
+      <div class="body">
+        <p>일본인은 보통 <b>성(名字)에 さん</b>을 붙여 불러요. 친하면 이름에 さん·ちゃん을, 친한 남자에게는 くん을 붙이기도 해요.</p>
         <div class="tbl-wrap"><table class="ctbl">
-          <tr><th>친구에게</th><th>윗사람에게</th></tr>
-          <tr><td class="j" data-say="おはよう">おはよう</td><td class="j" data-say="おはようございます">おはよう<em>ございます</em></td></tr>
-          <tr><td class="j" data-say="ありがとう">ありがとう</td><td class="j" data-say="ありがとうございます">ありがとう<em>ございます</em></td></tr>
-          <tr><td class="j" data-say="おめでとう">おめでとう</td><td class="j" data-say="おめでとうございます">おめでとう<em>ございます</em></td></tr>
+          <tr><td class="j" data-say="さま">～様(さま)</td><td>가장 높은 말. 공적인 상황: <span class="jp">お客様</span>(손님), 공적인 메일 <span class="jp">中沢ゆきこ様</span></td></tr>
+          <tr><td class="j" data-say="さん">～さん</td><td>일상의 기본 호칭: 윗사람(<span class="jp">山田さん、お元気ですか</span>), 거리가 있는 사람, 처음 만난 사람(<span class="jp">キム・ヨンヒさんですか</span>), 가족 호칭(<span class="jp">お父さん</span>)</td></tr>
+          <tr><td class="j" data-say="ちゃん">～ちゃん</td><td>さん보다 친한 사이. 어린아이나 여성에게 많이 써요 (<span class="jp">なみちゃん！</span>)</td></tr>
+          <tr><td class="j" data-say="くん">～くん(君)</td><td>주로 남성, 나보다 어린 사람이나 친구 (<span class="jp">ゆうとくん！</span>)</td></tr>
+          <tr><td class="j" data-say="せんぱい">せんぱい</td><td>선배. 3·4과 본문에서 리코가 하루토를 부르는 말</td></tr>
+        </table></div>
+        <p>자기 이름에는 さん을 붙이지 않아요.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>⑭ どうぞ · すみません 여러 가지 뜻</summary>
+      <div class="body">
+        <p><b class="jp">どうぞ</b>는 무언가를 권할 때 쓰는 공손한 말이에요.</p>
+        <div class="tbl-wrap"><table class="ctbl">
+          <tr><td>음식을 권할 때</td><td>드세요</td></tr>
+          <tr><td>손님이 들어올 때</td><td>들어오세요</td></tr>
+          <tr><td>자리를 권할 때</td><td>앉으세요</td></tr>
+          <tr><td>물건을 건넬 때</td><td>받으세요</td></tr>
+        </table></div>
+        <p><b class="jp">すみません</b>은 '상대에게 폐를 끼쳐 미안하다'는 마음이 공통으로 들어 있어요.</p>
+        <div class="tbl-wrap"><table class="ctbl">
+          <tr><td>사과할 때</td><td>미안합니다</td></tr>
+          <tr><td>사람을 부를 때 (가게에서 점원을 부를 때)</td><td>여기요, 저기요</td></tr>
+          <tr><td>도움을 받았을 때</td><td>감사합니다</td></tr>
+        </table></div>
+        <p>어원은 <span class="jp">済む</span>(すむ, 해결되다)의 부정형이에요. 말할 때는 <span class="jp">すいません</span>이라고도 하지만, 정중한 사과에는 <span class="jp">すみません</span>.</p>
+        <p><b>경어의 3종류</b> (지도서 보충)</p>
+        <div class="tbl-wrap"><table class="ctbl">
+          <tr><td>존경어 (상대를 높임)</td><td class="j">いらっしゃる・めしあがる</td></tr>
+          <tr><td>겸양어 (나를 낮춤)</td><td class="j">わたくし・うかがう</td></tr>
+          <tr><td>정중어 (정중하게)</td><td class="j">です・ます・ございます</td></tr>
         </table></div>
       </div>
     </details>
 
     <details>
-      <summary>⑩ 가족 호칭 & 이름 호칭</summary>
+      <summary>⑮ 본문 속 꼭 알아둘 표현</summary>
       <div class="body">
-        <p>일본어는 <b>누구의 가족이냐</b>에 따라 부르는 말이 달라요. 남에게 <b>내 가족</b>을 말할 때는 낮춰서, <b>남의 가족</b>은 높여서 불러요. (집 안에서 가족끼리 부를 때도 <span class="jp">おとうさん</span>처럼 높여 불러요.)</p>
         <div class="tbl-wrap"><table class="ctbl">
-          <tr><th></th><th>나의 가족</th><th>남의 가족</th></tr>
-          <tr><td>아버지</td><td class="j" data-say="ちち">ちち</td><td class="j" data-say="おとうさん">おとうさん</td></tr>
-          <tr><td>어머니</td><td class="j" data-say="はは">はは</td><td class="j" data-say="おかあさん">おかあさん</td></tr>
-          <tr><td>형·오빠</td><td class="j" data-say="あに">あに</td><td class="j" data-say="おにいさん">おにいさん</td></tr>
-          <tr><td>누나·언니</td><td class="j" data-say="あね">あね</td><td class="j" data-say="おねえさん">おねえさん</td></tr>
-          <tr><td>남동생</td><td class="j" data-say="おとうと">おとうと</td><td class="j" data-say="おとうとさん">おとうとさん</td></tr>
-          <tr><td>여동생</td><td class="j" data-say="いもうと">いもうと</td><td class="j" data-say="いもうとさん">いもうとさん</td></tr>
-        </table></div>
-        <p>남의 가족은 대부분 <span class="jp">お～さん</span> 모양이에요. 할아버지 <span class="jp">おじいさん</span>, 할머니 <span class="jp">おばあさん</span>.</p>
-        <div class="ex">
-          <div data-say="わたしの かぞくは ちちと ははと あにと わたしです。"><div class="j">わたしの かぞくは ちちと ははと あにと わたしです。</div><div class="k">우리 가족은 아버지와 어머니와 형과 저입니다. (교과서 58쪽)</div></div>
-        </div>
-        <p><b>이름 뒤에 붙이는 호칭</b> (교과서 59쪽)</p>
-        <div class="tbl-wrap"><table class="ctbl">
-          <tr><td class="j" data-say="さん">～さん</td><td>~씨, ~님. 누구에게나 쓰는 기본 호칭 (자기 이름에는 ✕)</td></tr>
-          <tr><td class="j" data-say="ちゃん">～ちゃん</td><td>어린아이, 친한 친구 (주로 여자)</td></tr>
-          <tr><td class="j" data-say="くん">～くん</td><td>남자아이, 친구, 아랫사람</td></tr>
-          <tr><td class="j" data-say="せんぱい">せんぱい</td><td>선배 (이름 뒤에 붙여 부르기도 해요)</td></tr>
+          <tr data-say="ぼくは まんがが すきです。"><td class="j">～が すきです</td><td>"~을/를 좋아합니다". すきだ 앞에서는 が를 "을/를"로 해석해요. <span class="jp">ぼくは まんがが すきです</span></td></tr>
+          <tr data-say="あ、ねこだ！"><td class="j">あ、명사だ！</td><td>무언가를 발견했을 때. だ를 빼고 <span class="jp">あ、ねこ！</span>도 OK. 남녀 모두 써요</td></tr>
+          <tr data-say="ほんとう？"><td class="j">ほんとう？</td><td>"정말?" 물음표가 있으면 끝을 올려 읽어요</td></tr>
+          <tr data-say="どんな おかしが いいかな"><td class="j">～かな</td><td>혼잣말로 망설일 때(<span class="jp">どんな おかしが いいかな</span>), 부드럽게 말할 때(<span class="jp">いちごの ほうが いいかな</span>)</td></tr>
+          <tr data-say="そうですね。"><td class="j">そうですね</td><td>"그렇군요". そうです(그렇습니다) + ね(동의·확인)</td></tr>
+          <tr data-say="りこちゃんえ"><td class="j">～へ / ～より</td><td>편지에서 받는 사람 <span class="jp">りこちゃんへ</span>(리코에게), 보내는 사람 <span class="jp">ソミより</span>(소미로부터). に·から로 쓰지 않아요</td></tr>
+          <tr data-say="へや"><td class="j">へ 발음</td><td><span class="jp">へや</span>(방)는 [he], 조사 <span class="jp">りこちゃんへ</span>는 [e]</td></tr>
+          <tr data-say="にほん"><td class="j">にほん / にっぽん</td><td>뜻은 같아요. <span class="jp">日本語・日本人</span>은 にほん, <span class="jp">日本代表・日本一</span>은 にっぽん</td></tr>
+          <tr><td>후리가나</td><td>한자 위에 작게 단 읽는 법 (振り仮名). 예: 円(えん)</td></tr>
         </table></div>
       </div>
     </details>
 
-    <details>
-      <summary>⑪ 숫자 & 가격 읽기</summary>
-      <div class="body">
-        <div class="rule">빨간 숫자는 발음이 바뀌어요! 3·6·8을 특히 조심하세요.</div>
-        <div id="numTable"></div>
-        <p>가격은 숫자 + <span class="jp">えん</span>(円). 퀴즈 탭의 <b>가격 읽기</b>로 연습할 수 있어요.</p>
-        <div class="ex">
-          <div data-say="コーヒーは よんひゃくえんです。"><div class="j">コーヒーは よんひゃくえんです。</div><div class="k">커피는 400엔입니다.</div></div>
-          <div data-say="すいかは にせんえんです。"><div class="j">すいかは にせんえんです。</div><div class="k">수박은 2,000엔입니다.</div></div>
-          <div data-say="りんごを ふたつ ください。"><div class="j">りんごを ふたつ ください。</div><div class="k">사과를 두 개 주세요.</div></div>
-        </div>
-      </div>
-    </details>
+    <div class="group-label">문화</div>
 
     <details>
-      <summary>⑫ 코소아도: 대명사 vs 연체사</summary>
+      <summary>⑯ 일본의 집 · 방문 예절</summary>
       <div class="body">
-        <p><b class="jp">これ</b>(이것)·<b class="jp">それ</b>(그것)은 혼자 쓰는 <b>대명사</b>예요. <b class="jp">この</b>(이~)·<b class="jp">その</b>(그~)·<b class="jp">どんな</b>(어떤~)는 반드시 뒤에 명사가 오는 <b>연체사</b>예요.</p>
-        <div class="ex">
-          <div data-say="これは ねこです。"><div class="j">これは ねこです。</div><div class="k">이것은 고양이입니다.</div></div>
-          <div data-say="この ねこは かわいいです。"><div class="j">この ねこは かわいいです。</div><div class="k">이 고양이는 귀엽습니다.</div></div>
-          <div data-say="その しゃしんは すてきですね。"><div class="j">その しゃしんは すてきですね。</div><div class="k">그 사진은 멋지네요.</div></div>
-        </div>
-      </div>
-    </details>
-
-    <details>
-      <summary>⑬ 비교 표현</summary>
-      <div class="body">
-        <p><b class="jp">どちら</b>(어느 쪽) + <b class="jp">～より</b>(~보다) + <b class="jp">ほう</b>(~쪽) + <b class="jp">いい</b>(좋다)를 조합하면 비교 문장이 돼요.<br>
-        <b class="jp">A より B の ほうが いいです</b> = A보다 B 쪽이 좋습니다.</p>
-        <div class="ex">
-          <div data-say="ラーメンと うどんと どちらが いいですか。"><div class="j">ラーメンと うどんと どちらが いいですか。</div><div class="k">라면과 우동 중 어느 쪽이 좋습니까?</div></div>
-          <div data-say="ラーメンより うどんの ほうが いいです。"><div class="j">ラーメンより うどんの ほうが いいです。</div><div class="k">라면보다 우동 쪽이 좋습니다.</div></div>
-        </div>
-      </div>
-    </details>
-
-    <details>
-      <summary>⑭ 물건 사기 & 축하 인사</summary>
-      <div class="body">
-        <p>개수는 <span class="jp">ひとつ・ふたつ・みっつ・よっつ・いつつ</span>, 값은 <span class="jp">いくら</span>로 물어요. 만 단위에는 반드시 <span class="jp">いち</span>를 붙여 <b class="jp">いちまん</b>.</p>
-        <div class="ex">
-          <div data-say="すみません、この ペンは いくらですか。"><div class="j">すみません、この ペンは いくらですか。</div><div class="k">저기요, 이 펜은 얼마예요?</div></div>
-          <div data-say="りんごを みっつ ください。"><div class="j">りんごを みっつ ください。</div><div class="k">사과를 세 개 주세요.</div></div>
-          <div data-say="おたんじょうび おめでとう！"><div class="j">おたんじょうび おめでとう！</div><div class="k">생일 축하해!</div></div>
-        </div>
-      </div>
-    </details>
-    <details>
-      <summary>⑮ 일본 문화 이모저모</summary>
-      <div class="body">
-        <p><b>주거 문화</b> (교과서 60~61쪽)</p>
+        <p>일본 집은 지진에 강한 유연한 목조 구조와, 덥고 습한 날씨에 맞게 바람이 잘 통하는 구조가 특징이에요. 대신 소리와 불에는 약해요.</p>
         <div class="tbl-wrap"><table class="ctbl">
-          <tr><td>맨션 (マンション)</td><td>우리나라 아파트 같은 고층 공동주택</td></tr>
-          <tr><td>아파트 (アパート)</td><td>2~3층 정도의 작은 공동주택</td></tr>
-          <tr><td class="j" data-say="わしつ">わしつ</td><td>다다미를 깐 일본식 방</td></tr>
-          <tr><td class="j" data-say="とこのま">とこのま</td><td>와시츠에서 족자나 꽃을 장식하는 공간</td></tr>
-          <tr><td class="j" data-say="おしいれ">おしいれ</td><td>이불 등을 넣어 두는 붙박이장</td></tr>
-          <tr><td class="j" data-say="こたつ">こたつ</td><td>탁자 아래 난방기가 있고 이불을 덮은 겨울 난방 기구</td></tr>
+          <tr><td class="j" data-say="いっこだて">いっこだて</td><td>단독 주택. 일본인이 가장 좋아하는 집. 보통 2층에 작은 정원과 주차장. 전용 주차 공간이 있어야 차를 살 수 있어요</td></tr>
+          <tr><td class="j" data-say="マンション">マンション</td><td>맨션 = 우리나라의 중·고층 아파트</td></tr>
+          <tr><td class="j" data-say="アパート">アパート</td><td>아파트 = 2~3층 규모의 작은 공동 주택 (우리나라 연립 주택)</td></tr>
         </table></div>
-        <p>집 안에서는 화장실과 욕실이 따로 나뉜 경우가 많아요. 일본은 환태평양 조산대에 있어 지진이 잦기 때문에 물, 비상식량, 손전등, 라디오 같은 <b>비상 대비용품</b>을 준비해 둬요.</p>
-        <p><b>선물 문화</b> (교과서 76쪽): 여행을 다녀오면 그 지역 특산 과자 같은 <span class="jp">おみやげ</span>를 나눠 줘요. 일본의 대표 기념품으로 <span class="jp">まねきねこ・おまもり・だるま・てまり・こけし</span>가 있어요.</p>
-        <p><b>화폐</b>: 지폐 1,000·2,000·5,000·10,000엔, 동전 1·5·10·50·100·500엔. 5엔과 50엔 동전에는 구멍이 있어요.</p>
-        <p><b>소비세</b>: 물건값에 소비세 10% (식품 등은 8%)가 붙어요. <span class="jp">200円(税込216円)</span>은 "세금 포함 216엔"이라는 뜻이에요.</p>
-        <p><b>결제 방법</b>: 현금도 많이 쓰고, Suica·PASMO 같은 교통카드로 지하철·버스·편의점에서 결제할 수 있어요.</p>
+        <p><b>와시쓰(わしつ)</b>: 일본의 전통 방</p>
+        <div class="tbl-wrap"><table class="ctbl">
+          <tr><td class="j" data-say="たたみ">たたみ</td><td>짚으로 만든 바닥재. 습기·온도 조절이 좋아요. 1장 약 90×180cm, 방 크기를 장 수로 말해요 (1장 = 1畳 じょう)</td></tr>
+          <tr><td class="j" data-say="とこのま">とこのま</td><td>바닥보다 약간 높여 족자나 꽃으로 꾸민 공간</td></tr>
+          <tr><td class="j" data-say="おしいれ">おしいれ</td><td>이불·방석 등을 넣는 수납 공간</td></tr>
+          <tr><td class="j" data-say="こたつ">こたつ</td><td>바닥 난방을 하지 않아서 쓰는 난방 탁자. 탁자 안에 전열 기구, 위에 이불과 나무판</td></tr>
+        </table></div>
+        <p><b>욕실과 화장실</b>: <span class="jp">トイレ</span>(화장실)와 <span class="jp">おふろ</span>(욕실)가 따로 있어요. 매일 욕조에 몸을 담그는데, 몸을 먼저 씻고 들어가서 가족이 같은 물을 순서대로 써요. 욕조에 물을 데우는 기능이 있고, 남은 물은 청소·빨래에 쓰기도 해요. 변기 위에서 손을 씻은 물은 물탱크로 들어가 다시 쓰여요.</p>
+        <p><b>비상 대비용품</b>: 일본은 '불의 고리'라 불리는 환태평양 조산대에 있어 지진과 화산 활동이 잦아요. 그래서 현관에 비상 대비용품을 준비해 둬요.</p>
+        <p><b>방문 예절</b></p>
+        <ul class="dots-list">
+          <li>약속을 미리 하고 방문하기, 작은 선물 준비하기</li>
+          <li>현관에서 신발 코가 입구 쪽을 향하게 벗어 놓기</li>
+          <li>와시쓰에 들어갈 때는 슬리퍼 벗기</li>
+          <li>문턱, 다다미 끝부분, 방석은 밟지 않기</li>
+        </ul>
+        <p><b>더 알아보기 O / X</b></p>
+        <div class="ex-list" data-ex="oxHome"></div>
+        <p class="small-note">일본 집이 잘 보이는 애니메이션: 이웃집 토토로, 코쿠리코 언덕에서, 귀를 기울이면, 짱구는 못말려</p>
       </div>
     </details>
+
+    <details>
+      <summary>⑰ 선물 · 화폐 · 소비세 · 결제</summary>
+      <div class="body">
+        <p><b><span class="jp">おみやげ</span> vs <span class="jp">プレゼント</span></b>: おみやげ는 여행지에서 사 온 과자나 특산품 선물, プレゼント는 생일 같은 특별한 날의 선물이에요.</p>
+        <div class="tbl-wrap"><table class="ctbl">
+          <tr><th>지역</th><th>대표 특산품 (오미야게)</th></tr>
+          <tr><td>北海道 (홋카이도)</td><td>白い恋人 (화이트 초콜릿 쿠키)</td></tr>
+          <tr><td>東京 (도쿄)</td><td>東京ばな奈 (바나나 모양 카스텔라)</td></tr>
+          <tr><td>長崎 (나가사키)</td><td>長崎カステラ (카스텔라)</td></tr>
+          <tr><td>広島 (히로시마)</td><td>もみじ饅頭 (단풍잎 모양 만주)</td></tr>
+          <tr><td>京都 (교토)</td><td>八つ橋 (야츠하시 떡과자)</td></tr>
+          <tr><td>静岡 (시즈오카)</td><td>うなぎパイ (장어 파이)</td></tr>
+        </table></div>
+        <p><b>일본의 공예품</b>: <span class="jp">まねきねこ</span>(복을 부르는 고양이), <span class="jp">おまもり</span>(부적), <span class="jp">だるま</span>(소원을 빌며 한쪽 눈을 그리는 오뚝이), <span class="jp">てまり</span>(색실로 수놓은 공), <span class="jp">こけし</span>(동북 지방의 둥근 머리 목각 인형)</p>
+        <p><b>화폐</b>: 지폐 4종류(1,000·2,000·5,000·10,000엔)와 동전 6종류(1·5·10·50·100·500엔). 5엔과 50엔 동전에는 구멍이 있어요. 2024년에 20년 만에 새 지폐가 나왔어요.</p>
+        <div class="tbl-wrap"><table class="ctbl">
+          <tr><td>1,000엔</td><td>기타사토 시바사부로 (의학자·세균학자), 뒷면 가나가와의 파도</td></tr>
+          <tr><td>5,000엔</td><td>쓰다 우메코 (여성 교육의 선구자), 뒷면 등나무꽃</td></tr>
+          <tr><td>10,000엔</td><td>시부사와 에이이치 (근대 경제의 아버지), 뒷면 도쿄역</td></tr>
+          <tr><td>2,000엔</td><td>오키나와 슈리성의 슈레이몬 (2004년에 발행 중단)</td></tr>
+        </table></div>
+        <p><b>소비세</b>: 물건값의 10%를 소비세로 더 내요. 식품은 8%. 카페 음료는 가게에서 마시면 10%, 포장하면 8%. 1989년에 처음 생겼고, 2021년부터는 세금을 포함한 총액을 꼭 표시해요. <span class="jp">200円(税込216円)</span> = 세금 포함 216엔.</p>
+        <p><b>결제 방법</b>: 신용 카드만큼 현금도 많이 써서 동전 지갑을 들고 다니는 사람이 많아요. 지하철·버스는 Suica, PASMO 같은 IC카드로 타요.</p>
+        <p><b>더 알아보기 O / X</b></p>
+        <div class="ex-list" data-ex="oxMoney"></div>
+      </div>
+    </details>
+
+    <details>
+      <summary>⑱ 함께 하기 · 생각 잇기</summary>
+      <div class="body">
+        <p><b>형용사 박자 게임</b> (3과): 4명이 한 모둠이 되어 형용사(まるい・かわいい・すきだ・きれいだ・じょうずだ)로 팀 이름을 정해요. 8박자 리듬에 맞춰, 선생님이 팀 이름과 숫자를 말하면 그 수만큼 팀 이름을 말해요. 예: <span class="jp">まるい さん</span> → <span class="jp">まるい まるい まるい</span></p>
+        <p><b>환경 히라가나 5행시</b> (3과): 오십음도의 한 행(예: あいうえお)을 골라 환경을 지키는 방법으로 5행시를 지어요. 일본은 절수형 변기, 욕조 덮개, 에코스쿨(태양광·LED, 빗물로 화장실 물 내리기, 목재 학교) 등으로 에너지를 아껴요.</p>
+        <p><b>일본어 입력하기</b> (4과): 휴대폰·컴퓨터에 일본어 키보드를 추가하고 로마자로 입력해요.</p>
+        <div class="tbl-wrap"><table class="ctbl">
+          <tr><td class="j">ん</td><td>nn (예: <span class="jp">ほん</span> honn)</td></tr>
+          <tr><td>촉음 っ</td><td>뒤 글자의 자음을 두 번 (<span class="jp">けっせき</span> kesseki, <span class="jp">いっぱい</span> ippai)</td></tr>
+          <tr><td>조사 は・へ・を</td><td>쓰는 대로 ha·he·wo (<span class="jp">これは</span> koreha, <span class="jp">ソミちゃんへ</span> somichannhe)</td></tr>
+          <tr><td>장음</td><td>글자 그대로 (<span class="jp">ありがとう</span> arigatou)</td></tr>
+          <tr><td>가타카나·한자</td><td>히라가나로 입력한 뒤 스페이스 바로 변환</td></tr>
+        </table></div>
+        <p><b>지역 캐릭터(ゆるキャラ)</b> (4과): 지역 홍보용 귀여운 캐릭터. <span class="jp">くまモン</span>(구마모토현, 곰 くま), <span class="jp">みきゃん</span>(에히메현, みかん + 강아지 소리 キャン), <span class="jp">チーバくん</span>(지바현, 옆모습이 지바현 지도 모양), <span class="jp">しかまろくん</span>(나라시, 사슴). 조건: 향토애가 담긴 메시지, 어설프고 독특한 행동, 사랑스럽고 느슨한 모습.</p>
+        <p><b>てるてる坊主(데루테루보즈)</b>: 맑은 날을 빌며 창가에 매다는 인형. 장마철(6~7월)의 상징이에요. 비를 바랄 때는 거꾸로 매달아요.</p>
+      </div>
+    </details>
+
+    <div class="group-label">문제</div>
+
+    <details>
+      <summary>⑲ 활동지 확인 문제</summary>
+      <div class="body">
+        <p><b>⑨ 알맞은 것을 고르세요.</b></p>
+        <div class="ex-list" data-ex="ex9"></div>
+        <p><b>STEP 5 틀린 곳을 찾아 고쳐 봅시다.</b> 먼저 머릿속으로 고쳐 본 다음 정답을 확인하세요.</p>
+        <div class="ex-list" data-ex="ex5"></div>
+      </div>
+    </details>
+
+    <details>
+      <summary>⑳ 교과서 확인하기 · 쓰고 확인하기</summary>
+      <div class="body">
+        <p><b>3과 듣기</b>: 🔊을 눌러 듣고 알맞은 것을 고르세요.</p>
+        <div class="ex-list" data-ex="l3"></div>
+        <p><b>3과 빈칸 채우기</b> (형용사 정중형·수식형)</p>
+        <div class="ex-list" data-ex="f3"></div>
+        <p><b>3과 쓰고 확인하기</b></p>
+        <div class="ex-list" data-ex="w3"></div>
+        <p><b>3과 읽기</b></p>
+        <div class="ex-list" data-ex="r3"></div>
+        <p><b>4과 듣기</b></p>
+        <div class="ex-list" data-ex="l4"></div>
+        <p><b>4과 틀린 곳 고치기</b></p>
+        <div class="ex-list" data-ex="f4"></div>
+        <p><b>4과 쓰고 확인하기</b></p>
+        <div class="ex-list" data-ex="w4"></div>
+        <p><b>4과 읽기</b></p>
+        <div class="ex-list" data-ex="r4"></div>
+      </div>
+    </details>
+    <button class="btn" id="exReset">🔄 문제 모두 다시 풀기</button>
     <p class="small-note">예문과 표의 줄을 누르면 발음을 들을 수 있어요.</p>
   </section>
 </div>
@@ -624,7 +916,7 @@ const RAW = [
   [3,'いってきます','行ってきます','잇테키마스','인사말','다녀오겠습니다','외출할 때 하는 인사'],
   [3,'いらっしゃい','','이랏샤이','인사말','어서 와, 어서 오세요','손님을 반갑게 맞이할 때'],
   [3,'ただいま','','타다이마','인사말','다녀왔습니다','귀가했을 때 하는 인사'],
-  [3,'おかえり','お帰り','오카에리','인사말','(귀가한 사람에게) 어서 와','정중형은 おかえりなさい'],
+  [3,'おかえり','お帰り','오카에리','인사말','잘 다녀왔니? (어서 와)','귀가한 가족에게 하는 인사. 帰る(かえる 돌아오다)에서 나온 말. 정중형은 おかえりなさい'],
   [3,'いってらっしゃい','行ってらっしゃい','잇테랏샤이','인사말','다녀오세요, 잘 다녀와','외출하는 사람에게 하는 인사'],
   [3,'おじゃまします','お邪魔します','오자마시마스','인사말','(남의 집에 들어갈 때) 실례합니다','남의 집이나 방에 들어갈 때 하는 인사'],
   [3,'まるい','丸い','마루이','い형용사','둥글다',''],
@@ -664,6 +956,16 @@ const RAW = [
   [3,'けしき','景色','케시키','명사','경치, 풍경',''],
   [3,'うみ','海','우미','명사','바다',''],
   [3,'ホテル','','호테루','명사','호텔','외래어 → 가타카나'],
+  [3,'いっこだて','一戸建て','잇코다테','명사','단독 주택','일본인이 가장 선호하는 집. 보통 2층이고 작은 정원과 주차장이 있어요'],
+  [3,'マンション','','만숀','명사','맨션 (한국의 아파트)','일본의 맨션 = 우리나라의 중·고층 아파트'],
+  [3,'アパート','','아파-토','명사','아파트 (한국의 연립 주택)','일본의 아파트 = 2~3층 규모의 작은 공동 주택'],
+  [3,'わしつ','和室','와시츠','명사','와시쓰 (일본식 방)','바닥에 다다미를 깐 일본의 전통 방'],
+  [3,'たたみ','畳','타타미','명사','다다미','짚으로 만든 바닥재. 1장은 약 90×180cm, 방 크기를 다다미 장 수(○畳)로 나타내요'],
+  [3,'とこのま','床の間','토코노마','명사','도코노마 (장식 공간)','방바닥보다 약간 높여 족자나 꽃으로 꾸민 공간'],
+  [3,'おしいれ','押し入れ','오시이레','명사','오시이레 (붙박이장)','이불이나 방석 등을 넣어 두는 수납 공간'],
+  [3,'こたつ','炬燵','코타츠','명사','고타쓰 (난방 탁자)','탁자 안에 전열 기구가 있고 이불을 덮어 쓰는 겨울 난방 기구'],
+  [3,'トイレ','','토이레','명사','화장실','일본 집은 화장실과 욕실이 따로 있는 경우가 많아요'],
+  [3,'おふろ','お風呂','오후로','명사','욕실, 목욕','욕조에 받은 물을 가족이 순서대로 써요'],
 
   [4,'ひとつ','一つ','히토츠','수사','한 개, 하나',''],
   [4,'ふたつ','二つ','후타츠','수사','두 개, 둘',''],
@@ -678,7 +980,7 @@ const RAW = [
   [4,'ひゃく','百','햐쿠','수사','백 (100)',''],
   [4,'せん','千','센','수사','천 (1,000)',''],
   [4,'いちまん','一万','이치만','수사','만 (10,000)','만 단위에는 반드시 いち를 붙임'],
-  [4,'すみません','','스미마셍','인사말','저기요, 실례합니다, 미안합니다','점원을 부를 때나 사과할 때'],
+  [4,'すみません','','스미마셍','인사말','저기요, 실례합니다, 미안합니다','사람을 부를 때(여기요), 사과할 때(미안합니다), 고마울 때(감사합니다) 모두 써요'],
   [4,'ペン','','펭','명사','펜',''],
   [4,'いくら','幾ら','이쿠라','의문사','얼마','가격을 물어볼 때'],
   [4,'えん','円','엔','조수사','~엔 (일본 화폐 단위)',''],
@@ -695,16 +997,16 @@ const RAW = [
   [4,'どちら','','도치라','대명사','어느 쪽','둘 중 선택할 때, 방향·장소를 정중히 물을 때'],
   [4,'いい','良い','이-','い형용사','좋다',''],
   [4,'ほう','方','호-','명사','~쪽, ~편','비교문에서 ～の ほうが 형태로 자주 쓰임'],
-  [4,'ラーメン','','라-멘','명사','라면',''],
+  [4,'ラーメン','','라-멘','명사','라멘 (일본식 라면)',''],
   [4,'うどん','','우동','명사','우동',''],
   [4,'あか','赤','아카','명사','빨강, 빨간색',''],
   [4,'しろ','白','시로','명사','하양, 흰색',''],
   [4,'こわい','怖い','코와이','い형용사','무섭다, 두렵다',''],
   [4,'げんきだ','元気だ','겡키다','な형용사','건강하다, 기운차다',''],
   [4,'たいへんだ','大変だ','타이헨다','な형용사','힘들다, 큰일이다','부사로 쓰이면 "매우"'],
-  [4,'にぎやかだ','賑やかだ','니기야카다','な형용사','번화하다, 활기차다',''],
-  [4,'～へ','','~에','조사','~로, ~(으)로 (방향)','이동의 방향을 나타냄. 발음은 え!','え'],
-  [4,'～より','','~요리','조사','~보다','비교의 기준을 나타냄'],
+  [4,'にぎやかだ','賑やかだ','니기야카다','な형용사','번화하다, 북적이다','과거형은 にぎやかでした (にぎやかった ✕)'],
+  [4,'～へ','','~에','조사','~에게 (편지 받는 사람)','편지에서 받는 사람 이름 뒤에 붙여요 (りこちゃんへ). 발음은 [e]! 이동 방향 "~로"의 뜻도 있어요','え'],
+  [4,'～より','','~요리','조사','~(으)로부터 (편지 보낸 사람)','편지에서 보낸 사람 이름 뒤에 붙여요 (ソミより). 비교할 때는 "~보다"의 뜻도 있어요'],
   [4,'うれしい','嬉しい','우레시-','い형용사','기쁘다',''],
   [4,'いらっしゃいませ','','이랏샤이마세','인사말','어서 오십시오 (가게)','가게 등에서 손님을 맞이할 때'],
   [4,'どんな','','돈나','연체사','어떤 ~','성질·상태를 물을 때 명사 앞에 붙임'],
@@ -721,6 +1023,7 @@ const RAW = [
   [4,'まち','町 / 街','마치','명사','마을, 동네, 거리',''],
   [4,'ケーキ','','케-키','명사','케이크',''],
   [4,'てんいん','店員','텐인','명사','점원',''],
+  [4,'おみやげ','お土産','오미야게','명사','오미야게 (여행 기념 선물)','여행지에서 사 온 과자나 특산품. プレゼント는 생일 같은 특별한 날의 선물'],
 
   // 3과 활동지 (형용사 활동지 + 필기 노트)
   ['A','あつい','暑い','아츠이','い형용사','덥다',''],
@@ -751,35 +1054,76 @@ const RAW = [
   ['A','くる','来る','쿠루','동사','오다','いってきます의 きます가 여기서 나와요 (갔다 오겠습니다)'],
   ['A','かえる','帰る','카에루','동사','돌아오다, 돌아가다','おかえり의 かえり가 여기서 나와요'],
 
-  // 교과서 52~81쪽에서 추가 (가족 호칭, 문화, 4과 듣고 말하기)
-  ['B','おとうさん','お父さん','오토-상','명사','(남의) 아버지, 아버님','남의 가족은 높여서 불러요. 나의 아버지는 ちち (교과서 52쪽)'],
-  ['B','おかあさん','お母さん','오카-상','명사','(남의) 어머니, 어머님','나의 어머니는 はは'],
-  ['B','おにいさん','お兄さん','오니-상','명사','(남의) 형, 오빠','나의 형·오빠는 あに'],
-  ['B','おねえさん','お姉さん','오네-상','명사','(남의) 누나, 언니','나의 누나·언니는 あね'],
-  ['B','おとうとさん','弟さん','오토-토상','명사','(남의) 남동생','나의 남동생은 おとうと'],
-  ['B','いもうとさん','妹さん','이모-토상','명사','(남의) 여동생','나의 여동생은 いもうと'],
+  // 교과서·지도서에서 추가 (본문, 듣고 말하기, 확인하기, 보충 설명)
+  ['B','おとうさん','お父さん','오토-상','명사','(남의) 아버지, 아버님','남의 가족을 말할 때, 내 아버지를 직접 부를 때. 남에게 내 아버지는 ちち'],
+  ['B','おかあさん','お母さん','오카-상','명사','(남의) 어머니, 어머님','남에게 내 어머니는 はは'],
+  ['B','おにいさん','お兄さん','오니-상','명사','(남의) 형, 오빠','남에게 내 형·오빠는 あに'],
+  ['B','おねえさん','お姉さん','오네-상','명사','(남의) 누나, 언니','남에게 내 누나·언니는 あね'],
+  ['B','おとうとさん','弟さん','오토-토상','명사','(남의) 남동생','남에게 내 남동생은 おとうと'],
+  ['B','いもうとさん','妹さん','이모-토상','명사','(남의) 여동생','남에게 내 여동생은 いもうと'],
+  ['B','おにいちゃん','お兄ちゃん','오니-쨩','명사','형, 오빠 (직접 부를 때)','가족끼리 부를 때 ～さん 대신 ～ちゃん을 붙이기도 해요'],
+  ['B','おねえちゃん','お姉ちゃん','오네-쨩','명사','누나, 언니 (직접 부를 때)',''],
   ['B','おじいさん','','오지-상','명사','(남의) 할아버지',''],
   ['B','おばあさん','','오바-상','명사','(남의) 할머니',''],
   ['B','わたし','私','와타시','대명사','나, 저','わたしの かぞく = 나의 가족'],
+  ['B','ぼく','僕','보쿠','대명사','나 (남자)','남자가 자기를 가리킬 때 (ぼくは まんがが すきです)'],
   ['B','-さん','','-상','접미사','~씨, ~님','가장 기본적인 호칭. 자기 이름에는 붙이지 않아요','さん'],
-  ['B','～の','','~노','조사','~의','わたしの かぞく (나의 가족)','の'],
+  ['B','-さま','-様','-사마','접미사','~님 (손님·공적인 상황)','お客様(손님), 공적인 메일의 이름 뒤에','さま'],
   ['B','せんぱい','先輩','셈파이','명사','선배',''],
-  ['B','りょうり','料理','료-리','명사','요리','おいしい りょうり = 맛있는 요리'],
-  ['B','にほん','日本','니혼','명사','일본','これは にほんの ゆうめいな おかしです'],
+  ['B','せんせい','先生','센세-','명사','선생님','ははと ちちは せんせいです (3과 확인하기)'],
+  ['B','～の','','~노','조사','~의','わたしの かぞく (나의 가족)','の'],
+  ['B','こんにちは','','콘니치와','인사말','안녕하세요, 안녕 (낮 인사)','끝의 は는 "와"로 읽어요'],
   ['B','おはよう','','오하요-','인사말','안녕 (아침 인사)','정중형은 おはようございます'],
+  ['B','どうぞ','','도-조','인사말','(권할 때) 드세요, 들어오세요','상황에 따라 드세요·들어오세요·앉으세요·받으세요'],
+  ['B','しつれいします','失礼します','시츠레-시마스','인사말','(직장·교무실 등에 들어갈 때) 실례합니다','남의 집에 들어갈 때는 おじゃまします'],
+  ['B','～ございます','','~고자이마스','관용 표현','(정중하게) ~습니다','おはよう·おめでとう·ありがとう 뒤에 붙이면 정중해져요','ございます'],
+  ['B','あれ','','아레','대명사','저것','나와 상대방 모두에게 멀리 있는 것'],
+  ['B','どれ','','도레','대명사','어느 것','정해지지 않은 것'],
+  ['B','あの','','아노','연체사','저 ~','뒤에 반드시 명사가 와요 (あの ひと)'],
+  ['B','どの','','도노','연체사','어느 ~','뒤에 반드시 명사가 와요 (どの まんが)'],
+  ['B','りょうり','料理','료-리','명사','요리','おいしい りょうり = 맛있는 요리'],
+  ['B','にほん','日本','니혼','명사','일본','にっぽん이라고도 읽어요. 日本語(にほんご), 日本一(にっぽんいち)'],
+  ['B','とうきょう','東京','토-쿄-','명사','도쿄',''],
   ['B','すいか','西瓜','스이카','명사','수박',''],
-  ['B','おみやげ','お土産','오미야게','명사','여행 기념 선물','여행 다녀와서 나눠 주는 지역 특산품 (과자 등)'],
-  ['B','まねきねこ','招き猫','마네키네코','명사','마네키네코 (복을 부르는 고양이 인형)','가게 앞에 두면 손님과 돈을 불러온다고 해요'],
-  ['B','おまもり','お守り','오마모리','명사','부적','신사나 절에서 파는 행운의 부적'],
+  ['B','かき','柿','카키','명사','감','かきを よっつ ください (감을 네 개 주세요)'],
+  ['B','くだもの','果物','쿠다모노','명사','과일','くだものの なかで なにが いちばん すきですか'],
+  ['B','かさ','傘','카사','명사','우산','かさを ください (우산을 주세요)'],
+  ['B','やま','山','야마','명사','산','うみと やまと どちらが いいですか'],
+  ['B','いちばん','一番','이치방','부사','가장, 제일','셋 이상 비교할 때: ～が いちばん すきです'],
+  ['B','なに','何','나니','대명사','무엇','なん이라고도 해요 (すきな まんがは なんですか)'],
+  ['B','めがね','眼鏡','메가네','명사','안경','あおい めがねが すてきです'],
+  ['B','ゲーム','','게-무','명사','게임','この ゲームは おもしろいです'],
+  ['B','こうこう','高校','코-코-','명사','고등학교',''],
+  ['B','いちねんせい','一年生','이치넨세-','명사','1학년 (학생)','こうこう いちねんせい = 고등학교 1학년'],
+  ['B','まねきねこ','招き猫','마네키네코','명사','마네키네코 (복을 부르는 고양이 인형)','행운·복·손님이 찾아오기를 바라며 장식해요'],
+  ['B','おまもり','お守り','오마모리','명사','부적','재난을 피하고 행운을 불러온다고 해요'],
   ['B','だるま','達磨','다루마','명사','다루마 (오뚝이 인형)','소원을 빌며 한쪽 눈을 그리고, 이루어지면 나머지 눈을 그려요'],
-  ['B','てまり','手まり','테마리','명사','테마리 (실로 감은 전통 공)',''],
-  ['B','こけし','','코케시','명사','고케시 (나무 인형)',''],
-  ['B','わしつ','和室','와시츠','명사','일본식 방 (다다미방)','바닥에 다다미를 깐 전통 방'],
-  ['B','とこのま','床の間','토코노마','명사','도코노마 (장식 공간)','와시츠에서 족자나 꽃을 장식하는 곳'],
-  ['B','おしいれ','押し入れ','오시이레','명사','붙박이장 (이불장)','이불 등을 넣어 두는 벽장'],
-  ['B','こたつ','炬燵','코타츠','명사','고타쓰 (이불 덮인 난방 탁자)','탁자 아래 난방기가 있는 겨울 필수품'],
+  ['B','てまり','手まり','테마리','명사','테마리 (색실로 감은 전통 공)','복잡한 기하학 무늬가 특징이에요'],
+  ['B','こけし','','코케시','명사','고케시 (머리가 둥근 목각 인형)','일본 동북 지방의 특산품'],
+  ['B','てるてるぼうず','てるてる坊主','테루테루보-즈','명사','데루테루보즈 (맑은 날을 비는 인형)','장마철(6~7월)에 창가에 매달아요'],
 
-  // 숫자 (교과서 69·80쪽)
+  // 지도서 보충: 기타 い형용사·な형용사
+  ['C','あかい','赤い','아카이','い형용사','빨갛다','명사 あか(빨간색)와 구별하세요'],
+  ['C','くろい','黒い','쿠로이','い형용사','검다',''],
+  ['C','おそい','遅い','오소이','い형용사','느리다, 늦다',''],
+  ['C','はやい','速い','하야이','い형용사','빠르다',''],
+  ['C','きたない','汚い','키타나이','い형용사','더럽다','반대말은 きれいだ'],
+  ['C','すずしい','涼しい','스즈시-','い형용사','시원하다',''],
+  ['C','とおい','遠い','토-이','い형용사','멀다',''],
+  ['C','ちかい','近い','치카이','い형용사','가깝다',''],
+  ['C','ひくい','低い','히쿠이','い형용사','낮다',''],
+  ['C','あまい','甘い','아마이','い형용사','달다',''],
+  ['C','かるい','軽い','카루이','い형용사','가볍다',''],
+  ['C','おもい','重い','오모이','い형용사','무겁다',''],
+  ['C','しあわせだ','幸せだ','시아와세다','な형용사','행복하다',''],
+  ['C','ていねいだ','丁寧だ','테-네-다','な형용사','정중하다, 공손하다','い로 끝나 보이지만 な형용사! → ていねいじゃないです'],
+  ['C','ふくざつだ','複雑だ','후쿠자츠다','な형용사','복잡하다','반대말은 かんたんだ'],
+  ['C','ふべんだ','不便だ','후벤다','な형용사','불편하다','반대말은 べんりだ'],
+  ['C','へただ','下手だ','헤타다','な형용사','서툴다, 잘 못하다','반대말은 じょうずだ'],
+  ['C','へんだ','変だ','헨다','な형용사','이상하다',''],
+  ['C','りっぱだ','立派だ','립파다','な형용사','훌륭하다',''],
+
+  // 숫자·개수 (교과서 69·80쪽, 지도서 보충)
   ['N','いち','一','이치','수사','일 (1)',''],
   ['N','に','二','니','수사','이 (2)',''],
   ['N','さん','三','상','수사','삼 (3)',''],
@@ -806,10 +1150,25 @@ const RAW = [
   ['N','ななせん','七千','나나센','수사','칠천 (7,000)',''],
   ['N','はっせん','八千','핫센','수사','팔천 (8,000)','발음 변화! はち + せん → はっせん'],
   ['N','きゅうせん','九千','큐-센','수사','구천 (9,000)',''],
+  ['N','むっつ','六つ','뭇츠','수사','여섯 개','촉음 っ 주의'],
+  ['N','ななつ','七つ','나나츠','수사','일곱 개',''],
+  ['N','やっつ','八つ','얏츠','수사','여덟 개','촉음 っ 주의'],
+  ['N','ここのつ','九つ','코코노츠','수사','아홉 개',''],
+  ['N','とお','十','토-','수사','열 개','つ가 붙지 않아요'],
+  ['N','いっこ','一個','익코','조수사','한 개 (～こ로 세기)','지도서 보충: 숫자 + こ(個)로도 셀 수 있어요'],
+  ['N','にこ','二個','니코','조수사','두 개 (～こ로 세기)',''],
+  ['N','さんこ','三個','상코','조수사','세 개 (～こ로 세기)',''],
+  ['N','よんこ','四個','용코','조수사','네 개 (～こ로 세기)',''],
+  ['N','ごこ','五個','고코','조수사','다섯 개 (～こ로 세기)',''],
+  ['N','ろっこ','六個','록코','조수사','여섯 개 (～こ로 세기)','발음 변화! ろく → ろっ'],
+  ['N','ななこ','七個','나나코','조수사','일곱 개 (～こ로 세기)',''],
+  ['N','はっこ','八個','학코','조수사','여덟 개 (～こ로 세기)','발음 변화! はち → はっ'],
+  ['N','きゅうこ','九個','큐-코','조수사','아홉 개 (～こ로 세기)',''],
+  ['N','じゅっこ','十個','쥭코','조수사','열 개 (～こ로 세기)','발음 변화! じゅう → じゅっ'],
 ];
 
 const WORDS = [];
-{ const cnt = {3: 0, 4: 0, A: 0, B: 0, N: 0};
+{ const cnt = {3: 0, 4: 0, A: 0, B: 0, C: 0, N: 0};
   RAW.forEach(([l, w, k, p, pos, m, n, tts]) => {
     cnt[l]++;
     WORDS.push({ id: `${l}-${cnt[l]}`, l, no: cnt[l], w, k, p, pos, m, n,
@@ -817,14 +1176,14 @@ const WORDS = [];
   });
 }
 const byId = Object.fromEntries(WORDS.map(x => [x.id, x]));
-const GROUP = { A: ['3과 활동지', '활'], B: ['교과서 추가', '교'], N: ['숫자', '수'] };
+const GROUP = { A: ['3과 활동지', '활'], B: ['교과서 추가', '교'], C: ['보충 형용사', '보'], N: ['숫자·개수', '수'] };
 const lessonName = w => GROUP[w.l] ? GROUP[w.l][0] : w.l + '과';
 
 /* ============================================================
    2. 저장 상태 (localStorage)
 ============================================================ */
 const KEY = 'jpvocab34_v1';
-const DEF = { box: {}, star: {}, wrong: {}, sound: true, scope: 'all', cardFront: 'jp', cardFilter: 'all', quizMode: 'jp2kr' };
+const DEF = { box: {}, star: {}, wrong: {}, sound: true, scope: 'all', cardFront: 'jp', cardFilter: 'all', quizMode: 'jp2kr', story: '3', hideKr: false, hideJp: false };
 let S = { ...DEF };
 try { S = { ...DEF, ...JSON.parse(localStorage.getItem(KEY) || '{}') }; } catch (e) {}
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
@@ -869,7 +1228,8 @@ const SCOPES = [
   ['4', '4과', w => w.l === 4],
   ['A', '3과 활동지', w => w.l === 'A'],
   ['B', '교과서 추가', w => w.l === 'B'],
-  ['N', '숫자', w => w.l === 'N'],
+  ['C', '보충 형용사', w => w.l === 'C'],
+  ['N', '숫자·개수', w => w.l === 'N'],
   ['star', '★ 즐겨찾기', w => S.star[w.id]],
   ['wrong', '✗ 오답노트', w => S.wrong[w.id]],
 ];
@@ -1068,9 +1428,14 @@ function startQuiz() {
   renderQuestion();
 }
 
+// 같은 개수를 뜻하는 말(ひとつ·いっこ)은 서로 오답 보기로 쓰지 않기
+const COUNTS = { ひとつ: 1, ふたつ: 2, みっつ: 3, よっつ: 4, いつつ: 5, むっつ: 6, ななつ: 7, やっつ: 8, ここのつ: 9, とお: 10,
+  いっこ: 1, にこ: 2, さんこ: 3, よんこ: 4, ごこ: 5, ろっこ: 6, ななこ: 7, はっこ: 8, きゅうこ: 9, じゅっこ: 10 };
+const clash = (a, b) => COUNTS[a.bare] && COUNTS[a.bare] === COUNTS[b.bare];
 function distractors(w, key) {
-  const same = shuffle(WORDS.filter(x => x.id !== w.id && x.pos === w.pos && x[key] !== w[key]));
-  const other = shuffle(WORDS.filter(x => x.id !== w.id && x.pos !== w.pos && x[key] !== w[key]));
+  const ok = x => x.id !== w.id && x[key] !== w[key] && !clash(w, x);
+  const same = shuffle(WORDS.filter(x => ok(x) && x.pos === w.pos));
+  const other = shuffle(WORDS.filter(x => ok(x) && x.pos !== w.pos));
   const out = [], seen = new Set([w[key]]);
   for (const x of [...same, ...other]) { if (!seen.has(x[key])) { seen.add(x[key]); out.push(x); } if (out.length === 3) break; }
   return out;
@@ -1364,53 +1729,153 @@ document.querySelectorAll('.adj-chips').forEach(el => el.onclick = e => {
   $('#conjDetails').scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
 
-// 활동지 문제
-const EX9 = [
-  ['파란 새', 'あおい とり', 'あおな とり', 'あおい는 い형용사 → 기본형 그대로 명사를 꾸며요.'],
-  ['깨끗한 방', 'きれいな へや', 'きれい へや', 'きれいだ는 な형용사 → だ를 な로 바꿔 명사를 꾸며요.'],
-  ['유명한 가수', 'ゆうめいな かしゅ', 'ゆうめい かしゅ', 'ゆうめいだ도 な형용사 → な + 명사.'],
-  ['토마토를 좋아하지 않습니다.', 'トマトは すきじゃないです', 'トマトは すきくないです', 'すきだ는 な형용사 → だ를 지우고 じゃないです.'],
-  ['어제는 추웠습니다.', 'きのうは さむかったです', 'きのうは さむいでした', 'い형용사 과거는 い를 자르고 かったです. い형용사에 でした ✕'],
-  ['영화는 재미있었습니다.', 'えいがは おもしろかったです', 'えいがは おもしろいでした', 'い형용사 과거 → おもしろ + かったです.'],
-];
-const EX5 = [
-  ['어제 본 영화는 매우 재미있었습니다.', 'きのうの えいがは とても おもしろいです。', 'きのうの えいがは とても おもしろ[かったです]。', '"재미있었습니다"는 과거 → い를 자르고 かったです.'],
-  ['나는 토마토를 좋아하지 않습니다.', 'トマトは すきくないです。', 'トマトは すき[じゃないです]。', 'すきだ는 な형용사 → くない ✕, じゃないです ○'],
-  ['깨끗한 방이네요.', 'きれい へやですね。', 'きれい[な] へやですね。', 'な형용사가 명사를 꾸밀 땐 な가 필요해요.'],
-  ['이 가방은 작지 않습니다.', 'この かばんは ちいさいじゃないです。', 'この かばんは ちいさ[くないです]。', 'ちいさい는 い형용사 → い를 자르고 くないです.'],
-  ['시험은 간단했습니다.', 'テストは かんたんかったです。', 'テストは かんたん[でした]。', 'かんたんだ는 な형용사 → だ를 지우고 でした.'],
-];
+// ---------- 문제 모음 (활동지 + 교과서 확인하기) ----------
+// pick: [문제, 정답, 오답, 설명]           두 개 중 고르기
+// fix:  [문제, 보여줄 문장, 정답([ ]는 강조), 설명]   정답 보기
+// mc:   {say?, text?, kr?, q, opts, a, why}  여러 개 중 고르기 (say가 있으면 🔊 듣기 문제)
+// ox:   [문장, 맞으면 true, 설명]
+const EXERCISES = {
+  ex9: { type: 'pick', items: [
+    ['파란 새', 'あおい とり', 'あおな とり', 'あおい는 い형용사 → 기본형 그대로 명사를 꾸며요.'],
+    ['깨끗한 방', 'きれいな へや', 'きれい へや', 'きれいだ는 な형용사 → だ를 な로 바꿔 명사를 꾸며요.'],
+    ['유명한 가수', 'ゆうめいな かしゅ', 'ゆうめい かしゅ', 'ゆうめいだ도 な형용사 → な + 명사.'],
+    ['토마토를 좋아하지 않습니다.', 'トマトは すきじゃないです', 'トマトは すきくないです', 'すきだ는 な형용사 → だ를 지우고 じゃないです.'],
+    ['어제는 추웠습니다.', 'きのうは さむかったです', 'きのうは さむいでした', 'い형용사 과거는 い를 자르고 かったです. い형용사에 でした ✕'],
+    ['영화는 재미있었습니다.', 'えいがは おもしろかったです', 'えいがは おもしろいでした', 'い형용사 과거 → おもしろ + かったです.'],
+  ] },
+  ex5: { type: 'fix', strike: true, items: [
+    ['어제 본 영화는 매우 재미있었습니다.', 'きのうの えいがは とても おもしろいです。', 'きのうの えいがは とても おもしろ[かったです]。', '"재미있었습니다"는 과거 → い를 자르고 かったです.'],
+    ['나는 토마토를 좋아하지 않습니다.', 'トマトは すきくないです。', 'トマトは すき[じゃないです]。', 'すきだ는 な형용사 → くない ✕, じゃないです ○'],
+    ['깨끗한 방이네요.', 'きれい へやですね。', 'きれい[な] へやですね。', 'な형용사가 명사를 꾸밀 땐 な가 필요해요.'],
+    ['이 가방은 작지 않습니다.', 'この かばんは ちいさいじゃないです。', 'この かばんは ちいさ[くないです]。', 'ちいさい는 い형용사 → い를 자르고 くないです.'],
+    ['시험은 간단했습니다.', 'テストは かんたんかったです。', 'テストは かんたん[でした]。', 'かんたんだ는 な형용사 → だ를 지우고 でした.'],
+  ] },
+  l3: { type: 'mc', items: [
+    { say: 'おじゃまします。どうぞ。', q: '어떤 장면의 대화일까요?', opts: ['남의 집을 방문하는 장면', '집에서 나가는 장면', '집에 돌아온 장면'], a: 0, why: 'おじゃまします(실례합니다) - どうぞ(들어오세요)는 방문 장면이에요.' },
+    { say: 'わたしの おとうとです。', q: '누구를 소개하고 있나요?', opts: ['나의 남동생', '나의 여동생', '남의 남동생'], a: 0, why: 'おとうと = (나의) 남동생. 여동생은 いもうと, 남의 남동생은 おとうとさん.' },
+    { say: 'あおい かばんです。', q: '어떤 가방인가요?', opts: ['파란 가방', '빨간 가방', '귀여운 가방'], a: 0, why: 'あおい = 파랗다. 빨갛다는 あかい.' },
+  ] },
+  f3: { type: 'fix', items: [
+    ['이 게임은 재미있습니다. (おもしろい)', 'この ゲームは ＿＿＿＿。', 'この ゲームは [おもしろいです]。', 'い형용사 정중형 → 기본형 + です'],
+    ['이 가수는 아주 유명합니다. (ゆうめいだ)', 'この かしゅは とても ＿＿＿＿。', 'この かしゅは とても [ゆうめいです]。', 'な형용사 정중형 → だ를 です로'],
+    ['파란 안경이 멋집니다. (あおい)', '＿＿＿＿ めがねが すてきです。', '[あおい] めがねが すてきです。', 'い형용사 수식형 → 기본형 그대로 + 명사'],
+    ['좋아하는 만화는 무엇입니까? (すきだ)', '＿＿＿＿ まんがは なんですか。', '[すきな] まんがは なんですか。', 'な형용사 수식형 → だ를 な로 + 명사'],
+  ] },
+  w3: { type: 'fix', items: [
+    ['친구가 우리 집에 놀러 왔어요. 맞이하는 사람은?', '＿＿＿＿。', '[いらっしゃい]。', '손님을 맞이할 때 いらっしゃい (어서 와, 어서 오세요)'],
+    ['가족이 학교에 가요. 보내는 사람은?', '＿＿＿＿。', '[いってらっしゃい]。', '나가는 사람에게 いってらっしゃい (잘 다녀와)'],
+    ['저의 가족은 아버지와 어머니와 남동생과 저입니다.', 'わたしの かぞくは ＿＿と ＿＿と ＿＿と わたしです。', 'わたしの かぞくは [ちち]と [はは]と [おとうと]と わたしです。', '남에게 내 가족을 소개할 때는 ちち・はは・おとうと'],
+    ['CHECK LIST: 맛있는 요리', 'おいしい ＿＿＿', 'おいしい [りょうり]', 'い형용사는 기본형 그대로 명사를 꾸며요'],
+    ['CHECK LIST: 멋진 경치', 'すてき＿ けしき', 'すてき[な] けしき', 'すてきだ는 な형용사 → な + 명사'],
+    ['CHECK LIST: 파란 바다', 'あ＿＿ うみ', 'あ[おい] うみ', 'あおい + 명사'],
+    ['CHECK LIST: 유명한 호텔', 'ゆ＿＿＿＿ ホテル', 'ゆ[うめいな] ホテル', 'ゆうめいだ → ゆうめいな + 명사'],
+  ] },
+  r3: { type: 'mc', items: [
+    { text: 'ぼくの かぞくです。ははと ちちは せんせいです。あねは ゆうめいな かしゅです。おとうとは こうこう いちねんせいです。',
+      kr: '저의 가족입니다. 어머니와 아버지는 선생님입니다. 누나는 유명한 가수입니다. 남동생은 고등학교 1학년입니다.',
+      q: '글의 내용으로 알맞은 것은?',
+      opts: ['누나는 선생님이다.', '가족은 모두 4명이다.', '어머니는 유명한 가수다.', '남동생은 고등학교 2학년이다.', '아버지, 어머니, 누나, 남동생이 있다.'], a: 4,
+      why: '가족은 어머니·아버지·누나·남동생·나 5명. 누나는 가수, 어머니는 선생님, 남동생은 고등학교 1학년이에요.' },
+  ] },
+  l4: { type: 'mc', items: [
+    { say: 'すいかを ふたつ ください。はい、さんぜんえんです。', q: '들은 내용과 맞는 것은?', opts: ['수박 2개 = 3,000엔', '수박 2개 = 2,000엔', '수박 3개 = 3,000엔'], a: 0, why: 'ふたつ = 두 개, さんぜん = 3,000' },
+    { say: 'りんごと みかんと どちらが いいですか。りんごの ほうが いいです。', q: '무엇이 더 좋다고 했나요?', opts: ['사과', '귤', '딸기'], a: 0, why: 'りんごの ほうが いいです = 사과 쪽이 좋습니다.' },
+    { say: 'ごうかく おめでとう。ありがとう。', q: '무엇을 축하하고 있나요?', opts: ['합격', '생일', '졸업'], a: 0, why: 'ごうかく = 합격. 생일은 たんじょうび, 졸업은 そつぎょう.' },
+  ] },
+  f4: { type: 'fix', strike: true, items: [
+    ['수박은 맛있었습니다.', 'すいかは おいしいかったです。', 'すいかは [おいしかったです]。', 'い형용사 과거는 い를 빼고 かったです'],
+    ['아주 기뻤습니다.', 'とても うれしいでした。', 'とても [うれしかったです]。', 'い형용사에 でした는 ✕ → かったです'],
+    ['도쿄는 번화했습니다.', 'とうきょうは にぎやかったです。', 'とうきょうは [にぎやかでした]。', 'な형용사 과거는 だ → でした'],
+  ] },
+  w4: { type: 'fix', items: [
+    ['사과를 두 개 주세요.', 'りんごを ＿＿＿ ください。', 'りんごを [ふたつ] ください。', '두 개 = ふたつ'],
+    ['커피는 400엔입니다.', 'コーヒーは ＿＿＿円です。', 'コーヒーは [よんひゃく]円です。', '400 = よんひゃく'],
+    ['초밥은 맛있었습니다. (すしは おいしいです → 과거)', 'すしは ＿＿＿です。', 'すしは [おいしかった]です。', 'い형용사 과거 → い를 かった로'],
+    ['마을은 번화합니다. (→ まちは にぎやかでした)', 'まちは ＿＿＿です。', 'まちは [にぎやか]です。', 'な형용사 정중형 → だ를 빼고 です'],
+    ['にほん을 한자로 쓰면?', 'にほん → ＿＿', 'にほん → [日本]', '일본. にっぽん이라고도 읽어요'],
+    ['げんきだ를 한자로 쓰면?', 'げんきだ → ＿＿だ', 'げんきだ → [元気]だ', '건강하다'],
+  ] },
+  r4: { type: 'mc', items: [
+    { text: '田中：いちごの ケーキと まっちゃの ケーキと どちらが いいですか。\n山田：いちごの ほうが いいかな。\n田中：そうですね。すみません。いちごの ケーキは いくらですか。\n店員：ひとつ 300円です。\n田中：みっつ ください。\n店員：はい、ありがとうございます。',
+      tts: 'いちごの ケーキと まっちゃの ケーキと どちらが いいですか。いちごの ほうが いいかな。そうですね。すみません。いちごの ケーキは いくらですか。ひとつ さんびゃくえんです。みっつ ください。はい、ありがとうございます。',
+      kr: '다나카: 딸기 케이크와 말차 케이크 중 어느 쪽이 좋아요?\n야마다: 딸기 쪽이 좋은데.\n다나카: 그렇군요. 여기요, 딸기 케이크는 얼마예요?\n점원: 한 개 300엔입니다.\n다나카: 세 개 주세요.\n점원: 네, 감사합니다.',
+      q: '대화의 내용으로 알맞은 것은?',
+      opts: ['다나카는 케이크를 두 개 샀다.', '야마다는 말차 케이크를 골랐다.', '다나카는 딸기 케이크를 골랐다.', '말차 케이크는 한 개에 300엔이다.', '다나카가 지불해야 하는 금액은 600엔이다.'], a: 2,
+      why: '다나카는 딸기 케이크를 세 개(みっつ) 사서 900엔을 내요. 야마다도 딸기를 골랐고, 300엔은 딸기 케이크 한 개 값이에요.' },
+  ] },
+  oxHome: { type: 'ox', items: [
+    ['일본은 220V의 전압을 사용한다.', false, '일본은 100V를 사용해요.'],
+    ['일본의 모든 주택에는 와시쓰가 있다.', false, '최근 새로 지은 집에는 와시쓰가 없는 경우가 늘고 있어요.'],
+    ['일본 가정에서는 비상 대비용품을 준비하지 않으면 벌금을 낸다.', false, '벌금은 없어요. 다만 도쿄에는 회사가 직원 3일분의 비상용품을 갖추도록 하는 조례가 있어요.'],
+  ] },
+  oxMoney: { type: 'ox', items: [
+    ['일본 동전에는 연호(일본식 연도)가 표시되어 있다.', true, '서기 대신 일본의 연호가 새겨져 있어요.'],
+    ['일본의 화폐 단위 円은 기호 ￥으로 표시한다.', true, '영어 표기 yen에서 온 ￥를 써요.'],
+    ['일본에서는 결제할 때 소비세 외에 점원에게 팁을 주어야 한다.', false, '일본에는 팁 문화가 없어요.'],
+  ] },
+};
 const plain = s => s.replace(/[\[\]]/g, '');
-const mark5 = s => esc(s).replace(/\[(.+?)\]/g, '<em>$1</em>');
+const markAns = s => esc(s).replace(/\[(.+?)\]/g, '<em>$1</em>');
+const nl = s => esc(s).replace(/\n/g, '<br>');
 
-function renderExercises() {
-  $('#ex9').innerHTML = EX9.map(([q, ok, ng, why], i) => `
-    <div class="ex-item"><div class="kq">${i + 1}. ${q}</div>
-      <div class="pick">${shuffle([[ok, 1], [ng, 0]]).map(([t, c]) => `<button data-c="${c}">${t}</button>`).join('')}</div>
-      <div class="why" hidden>${why}</div></div>`).join('');
-  $('#ex5').innerHTML = EX5.map(([q, ng, ok, why], i) => `
-    <div class="ex-item"><div class="kq">${i + 1}. ${q}</div>
-      <div class="jp wrong-sent">${esc(ng)}</div>
-      <button class="speak reveal">정답 보기</button>
-      <div class="answer" hidden><div class="jp" data-say="${esc(plain(ok))}">→ ${mark5(ok)}</div><div class="why">${why}</div></div></div>`).join('');
+function renderEx(key) {
+  const el = document.querySelector(`[data-ex="${key}"]`); if (!el) return;
+  const { type, items } = EXERCISES[key];
+  el.innerHTML = items.map((it, i) => {
+    if (type === 'pick') {
+      const [q, ok, ng, why] = it;
+      return `<div class="ex-item"><div class="kq">${i + 1}. ${q}</div>
+        <div class="pick">${shuffle([[ok, 1], [ng, 0]]).map(([t, c]) => `<button data-c="${c}">${esc(t)}</button>`).join('')}</div>
+        <div class="why" hidden>${why}</div></div>`;
+    }
+    if (type === 'fix') {
+      const [q, shown, ok, why] = it;
+      return `<div class="ex-item"><div class="kq">${i + 1}. ${q}</div>
+        <div class="jp shown">${esc(shown)}</div>
+        <button class="speak reveal">정답 보기</button>
+        <div class="answer" hidden><div class="jp" data-say="${esc(plain(ok))}">→ ${markAns(ok)}</div><div class="why">${why}</div></div></div>`;
+    }
+    if (type === 'ox') {
+      const [q, t] = it;
+      return `<div class="ex-item"><div class="kq">${i + 1}. ${q}</div>
+        <div class="pick ox-pick"><button data-c="${t ? 1 : 0}">⭕ 맞다</button><button data-c="${t ? 0 : 1}">❌ 아니다</button></div>
+        <div class="why" hidden>${it[2]}</div></div>`;
+    }
+    // mc
+    const order = shuffle(it.opts.map((t, j) => [t, j === it.a ? 1 : 0]));
+    return `<div class="ex-item">
+      ${it.say ? `<button class="speak listen" data-say="${esc(it.say)}">🔊 ${i + 1}번 듣기</button>` : ''}
+      ${it.text ? `<div class="passage jp" data-say="${esc(it.tts || it.text)}">${nl(it.text)}</div>` : ''}
+      <div class="kq">${it.say ? '' : (i + 1) + '. '}${it.q}</div>
+      <div class="pick mc">${order.map(([t, c]) => `<button data-c="${c}">${esc(t)}</button>`).join('')}</div>
+      <div class="why" hidden>${it.why}${it.kr ? `<div class="kr-trans">${nl(it.kr)}</div>` : ''}${it.say ? `<div class="kr-trans jp">${esc(it.say)}</div>` : ''}</div></div>`;
+  }).join('');
 }
-$('#ex9').onclick = e => {
-  const b = e.target.closest('.pick button'); if (!b) return;
-  const item = b.closest('.ex-item'); if (item.dataset.done) return;
-  item.dataset.done = 1;
-  item.querySelectorAll('.pick button').forEach(x => { x.disabled = true; if (x.dataset.c === '1') { x.classList.add('correct'); speak(x.textContent); } });
-  if (b.dataset.c !== '1') b.classList.add('wrong');
-  const why = item.querySelector('.why'); why.hidden = false;
-  why.textContent = (b.dataset.c === '1' ? '⭕ 정답! ' : '❌ ') + why.textContent;
-};
-$('#ex5').onclick = e => {
-  const b = e.target.closest('.reveal'); if (!b) return;
-  const item = b.closest('.ex-item'); b.hidden = true;
-  item.querySelector('.answer').hidden = false;
-  item.querySelector('.wrong-sent').classList.add('x');
-  speak(item.querySelector('.answer [data-say]').dataset.say);
-};
-$('#exReset').onclick = renderExercises;
+function renderExercises() { Object.keys(EXERCISES).forEach(renderEx); }
+
+document.querySelectorAll('[data-ex]').forEach(el => el.addEventListener('click', e => {
+  const b = e.target.closest('.pick button');
+  if (b) {
+    const item = b.closest('.ex-item'); if (item.dataset.done) return;
+    item.dataset.done = 1;
+    item.querySelectorAll('.pick button').forEach(x => { x.disabled = true; if (x.dataset.c === '1') x.classList.add('correct'); });
+    const ok = b.dataset.c === '1';
+    if (!ok) b.classList.add('wrong');
+    const why = item.querySelector('.why'); why.hidden = false;
+    why.insertAdjacentHTML('afterbegin', ok ? '⭕ 정답! ' : '❌ ');
+    const right = item.querySelector('.pick button.correct');
+    if (EXERCISES[el.dataset.ex].type === 'pick') speak(right.textContent);
+    return;
+  }
+  const r = e.target.closest('.reveal');
+  if (r) {
+    const item = r.closest('.ex-item'); r.hidden = true;
+    item.querySelector('.answer').hidden = false;
+    if (EXERCISES[el.dataset.ex].strike) item.querySelector('.shown').classList.add('x');
+    speak(item.querySelector('.answer [data-say]').dataset.say);
+  }
+}));
+$('#exReset').onclick = () => { renderExercises(); toast('문제를 다시 섞었어요'); };
 
 // 숫자표
 {
@@ -1426,6 +1891,183 @@ renderExercises();
 document.querySelectorAll('.concept tr[data-say]').forEach(tr => tr.style.cursor = 'pointer');
 
 /* ============================================================
+   9-1. 본문 (읽고 이해하기 대화문)
+============================================================ */
+const STORIES = {
+  3: {
+    goals: [['외출·귀가', 'ただいま。'], ['방문', 'おじゃまします。'], ['가족 소개', 'ちちと ははと あにです。']],
+    scene: '하루토와 지호는 영상 통화로 서로의 방을 소개합니다. (교과서 56~57쪽)',
+    lines: [
+      ['하루토', 'ただいま。', '다녀왔습니다.'],
+      ['엄마', 'おかえり。', '잘 다녀왔니?'],
+      ['엄마', 'あら、りこちゃん。いらっしゃい。どうぞ。', '어머, 리코야. 어서 와. 들어오렴.'],
+      ['리코', 'おじゃまします。', '실례합니다.'],
+      ['지호', 'こんにちは。', '안녕.'],
+      ['리코', 'ジホくん、ひさしぶり！', '지호 군, 오랜만이야!'],
+      ['지호', 'それ、ぜんぶ まんがですか。', '그거, 전부 만화예요?'],
+      ['하루토', 'はい、そうです。ぼくは まんがが すきです。', '네, 그래요. 나는 만화를 좋아해요.'],
+      ['지호', 'ほんとう？ ぼくも！ にほんの まんがは とても おもしろいです。', '정말? 저도요! 일본 만화는 아주 재미있어요.'],
+      ['하루토', 'その しゃしん、ジホさんの かぞくですか。', '그 사진, 지호의 가족인가요?'],
+      ['지호', 'はい、ちちと ははと あにです。', '네, 아버지와 어머니와 형이에요.'],
+      ['리코', 'あ、ねこだ！', '아, 고양이다!'],
+      ['지호', 'この こも ぼくの かぞくです。', '이 아이도 저의 가족이에요.'],
+      ['리코', 'わあ、かわいい！ まるい かお。', '와, 귀엽다! 동그란 얼굴.'],
+    ],
+    questions: [
+      ['친구의 집을 방문할 때 하는 인사말을 찾아봅시다.', 'おじゃまします (실례합니다)'],
+      ['지호의 가족은 모두 몇 명입니까?', '사람 네 명과 고양이 한 마리 (아버지·어머니·형·지호 + 고양이)'],
+    ],
+    notes: [
+      ['ぼくは まんがが すきです。', '나는 만화를 좋아해요.'],
+      ['にほんの まんがは とても おもしろいです。', '일본 만화는 아주 재미있어요.'],
+      ['ちちと ははと あにです。', '아버지와 어머니와 형이에요.'],
+      ['この こも ぼくの かぞくです。', '이 아이도 저의 가족이에요.'],
+    ],
+    points: [
+      ['いらっしゃい。どうぞ。', '손님을 맞이하며 "어서 와. 들어오렴." どうぞ는 권하는 말'],
+      ['ジホくん / りこちゃん / ジホさん', '친한 남자에게 くん, 친한 여자에게 ちゃん, 기본은 さん'],
+      ['～が すきです', 'すきだ 앞의 が는 "을/를"로 해석해요'],
+      ['それ / その / この', 'それ(그것)는 혼자, その·この는 뒤에 명사가 와요'],
+      ['あ、ねこだ！', '무언가를 발견했을 때 쓰는 말'],
+      ['ほんとう？', '물음표가 있으니 끝을 올려 읽어요'],
+    ],
+  },
+  4: {
+    goals: [['축하', 'おめでとう。'], ['비교', 'いちごと まっちゃと どちらが いいですか。'], ['감사', 'ありがとう。']],
+    scene: '리코와 하루토는 소미에게 줄 선물을 삽니다. (교과서 72~73쪽)',
+    lines: [
+      ['소미의 카드', 'りこちゃんへ\n元気ですか。\nたんじょうび おめでとう！\nソミより', '리코에게 / 잘 지내요? / 생일 축하해! / 소미로부터', 'りこちゃんえ。げんきですか。たんじょうび おめでとう！ ソミより。'],
+      ['리코', 'わあ、うれしい！', '와, 기뻐!'],
+      ['점원', 'いらっしゃいませ。', '어서 오세요.'],
+      ['리코', 'どんな おかしが いいかな……。', '어떤 과자가 좋을까…….'],
+      ['리코', 'せんぱいは いちごと まっちゃと どちらが いいですか。', '선배는 딸기랑 말차 중 어느 쪽이 좋아요?'],
+      ['하루토', 'うーん、ぼくは いちごの ほうが いいかな。', '음, 나는 딸기 쪽이 좋은데.'],
+      ['리코', 'そうですね。', '그렇군요.'],
+      ['리코', 'あのう、すみません。これ いくらですか。', '저기, 실례합니다. 이거 얼마예요?'],
+      ['점원', '600円です。', '600엔입니다.', 'ろっぴゃくえんです。'],
+      ['리코', 'ひとつ ください。', '한 개 주세요.'],
+      ['점원', 'はい。', '네.'],
+      ['리코의 편지', 'たんじょうびの プレゼント、ありがとう！\nとても うれしかったです。\nこれは 日本の 有名な おかしです。\nりこより', '생일 선물 고마워! / 정말 기뻤어요. / 이건 일본의 유명한 과자예요. / 리코로부터'],
+    ],
+    questions: [
+      ['생일 축하 표현을 찾아봅시다.', 'たんじょうび おめでとう！ (생일 축하해!)'],
+      ['리코가 소미에게 준 선물은 무엇입니까?', 'おかし (과자) — 일본의 유명한 과자'],
+    ],
+    notes: [
+      ['いちごと まっちゃと どちらが いいですか。', '딸기와 말차 중 어느 쪽이 좋아요?'],
+      ['ぼくは いちごの ほうが いいかな。', '나는 딸기 쪽이 좋은데.'],
+      ['とても うれしかったです。', '정말 기뻤어요.'],
+      ['これは 日本の 有名な おかしです。', '이건 일본의 유명한 과자예요.'],
+    ],
+    points: [
+      ['～へ / ～より', '편지에서 받는 사람 へ(에게, 발음 [e]), 보내는 사람 より(로부터)'],
+      ['いらっしゃいませ', '가게·식당에서 점원이 손님을 맞이하는 말'],
+      ['～かな', '혼잣말로 망설일 때, 부드럽게 말할 때'],
+      ['Aと Bと どちらが → Bの ほうが', '둘 중 어느 쪽이 좋은지 묻고 답하기'],
+      ['そうですね', '상대 말에 "그렇군요" 하고 동의'],
+      ['すみません', '여기서는 가게에서 점원을 부르는 말 (여기요)'],
+      ['うれしかったです', 'うれしい의 과거 정중형 (い → かったです)'],
+    ],
+  },
+};
+const SPEAKER_CLASS = { 하루토: 's1', 리코: 's2', 지호: 's3', 엄마: 's4', 점원: 's4' };
+const NUMS = '❶❷❸❹❺❻❼❽❾❿⓫⓬⓭⓮';
+let storyPlaying = false;
+
+function jaUtter(text) {
+  const u = new SpeechSynthesisUtterance(text.replace(/\n/g, '。'));
+  u.lang = 'ja-JP'; u.rate = 0.85;
+  const v = speechSynthesis.getVoices().find(v => v.lang && v.lang.startsWith('ja'));
+  if (v) u.voice = v;
+  return u;
+}
+
+function renderStory() {
+  stopStory();
+  const st = STORIES[S.story];
+  $('#storyArea').innerHTML = `
+    <div class="goal">${st.goals.map(([k, j]) => `<div data-say="${esc(j)}">${k} <b>${esc(j)}</b></div>`).join('')}</div>
+    <p class="small-note">${st.scene} 줄을 누르면 그 문장을 들려줘요.</p>
+    <div class="lines ${S.hideKr ? 'hide-kr' : ''} ${S.hideJp ? 'hide-jp' : ''}" id="storyLines">
+      ${st.lines.map(([who, ja, ko], i) => `
+        <div class="line" data-i="${i}">
+          <div class="who"><span class="num">${NUMS[i]}</span><span class="spk ${SPEAKER_CLASS[who] || ''}">${who}</span></div>
+          <div class="lt"><div class="ja jp">${nl(ja)}</div><div class="ko">${esc(ko)}</div></div>
+        </div>`).join('')}
+    </div>
+    <div class="panel story-box">
+      <h4>확인 질문</h4>
+      ${st.questions.map(([q, a], i) => `<div class="qa"><div>${i + 1}. ${q}</div>
+        <button class="speak reveal-qa">정답 보기</button><div class="qa-a" hidden>${esc(a)}</div></div>`).join('')}
+    </div>
+    <div class="panel story-box">
+      <h4>나만의 학습 노트 <small>해석 · 발음 · 따라 쓰기</small></h4>
+      ${st.notes.map(([j, k]) => `<div class="note-line" data-say="${esc(j)}"><div class="jp">${esc(j)}</div><div class="ko">${k}</div></div>`).join('')}
+    </div>
+    <div class="panel story-box">
+      <h4>본문 속 포인트</h4>
+      ${st.points.map(([h, t]) => `<div class="point"><b class="jp">${esc(h)}</b><span>${t}</span></div>`).join('')}
+    </div>`;
+}
+
+function sayLine(i) {
+  const ln = STORIES[S.story].lines[i];
+  speak(ln[3] || ln[1], true);
+}
+
+function playStory() {
+  if (storyPlaying) return stopStory();
+  if (!('speechSynthesis' in window)) { toast('이 기기에서는 음성 읽기를 쓸 수 없어요'); return; }
+  speechSynthesis.cancel();
+  const st = STORIES[S.story];
+  const els = [...document.querySelectorAll('#storyLines .line')];
+  storyPlaying = true;
+  $('#playAll').textContent = '■ 멈춤';
+  // 모든 문장을 한 번에 예약해야 휴대폰에서도 끊기지 않아요
+  st.lines.forEach((ln, i) => {
+    const u = jaUtter(ln[3] || ln[1]);
+    u.onstart = () => {
+      els.forEach(el => el.classList.toggle('playing', el === els[i]));
+      els[i].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    };
+    if (i === st.lines.length - 1) u.onend = () => stopStory(true);
+    speechSynthesis.speak(u);
+  });
+}
+
+function stopStory(finished) {
+  if (!storyPlaying) return;
+  storyPlaying = false;
+  if (!finished && 'speechSynthesis' in window) speechSynthesis.cancel();
+  const b = $('#playAll'); if (b) b.textContent = '▶ 전체 듣기';
+  document.querySelectorAll('#storyLines .line.playing').forEach(el => el.classList.remove('playing'));
+}
+
+$('#storyArea').addEventListener('click', e => {
+  const line = e.target.closest('.line');
+  if (line) {
+    stopStory();
+    const lines = $('#storyLines');
+    if (lines.classList.contains('hide-jp') || lines.classList.contains('hide-kr')) line.classList.toggle('peek');
+    sayLine(+line.dataset.i);
+    return;
+  }
+  const r = e.target.closest('.reveal-qa');
+  if (r) { r.hidden = true; r.nextElementSibling.hidden = false; }
+});
+
+function paintToggles() {
+  $('#togKr').classList.toggle('on', !!S.hideKr); $('#togKr').setAttribute('aria-pressed', !!S.hideKr);
+  $('#togJp').classList.toggle('on', !!S.hideJp); $('#togJp').setAttribute('aria-pressed', !!S.hideJp);
+  const lines = $('#storyLines');
+  if (lines) { lines.classList.toggle('hide-kr', !!S.hideKr); lines.classList.toggle('hide-jp', !!S.hideJp); lines.querySelectorAll('.peek').forEach(l => l.classList.remove('peek')); }
+}
+$('#togKr').onclick = () => { S.hideKr = !S.hideKr; save(); paintToggles(); };
+$('#togJp').onclick = () => { S.hideJp = !S.hideJp; save(); paintToggles(); };
+$('#playAll').onclick = playStory;
+paintToggles();
+
+/* ============================================================
    10. 공통: 탭, 세그먼트, 사운드
 ============================================================ */
 let activeTab = 'cards';
@@ -1436,11 +2078,13 @@ function refreshActive(force) {
   else if (activeTab === 'spell') startSpell();
   else if (activeTab === 'match') startMatch();
   else if (activeTab === 'list') renderList();
+  else if (activeTab === 'story') renderStory();
   if (force) Object.keys(started).forEach(k => { if (k !== activeTab) delete started[k]; });
   started[activeTab] = true;
 }
 document.querySelectorAll('.nav-item').forEach(b => b.onclick = () => {
   document.querySelectorAll('.nav-item').forEach(x => x.classList.toggle('active', x === b));
+  if (activeTab === 'story' && b.dataset.tab !== 'story') stopStory();
   activeTab = b.dataset.tab;
   document.querySelectorAll('.view').forEach(v => v.classList.toggle('active', v.id === 'view-' + activeTab));
   if (!started[activeTab] || activeTab === 'list') refreshActive();
@@ -1455,6 +2099,7 @@ function bindSeg(sel, key, onChange) {
 bindSeg('#cardFrontSeg', 'cardFront', buildDeck);
 bindSeg('#cardFilterSeg', 'cardFilter', buildDeck);
 bindSeg('#quizModeSeg', 'quizMode', startQuiz);
+bindSeg('#storySeg', 'story', renderStory);
 
 const paintSound = () => { $('#soundBtn').classList.toggle('on', S.sound); $('#soundBtn').textContent = S.sound ? '🔊' : '🔇'; };
 $('#soundBtn').onclick = () => { S.sound = !S.sound; save(); paintSound(); toast(S.sound ? '자동 발음 켜짐' : '자동 발음 꺼짐 (🔊 버튼은 계속 동작)'); };
@@ -1474,6 +2119,36 @@ document.addEventListener('keydown', e => {
 
 if ('speechSynthesis' in window) speechSynthesis.getVoices();
 renderScope(); renderProgress(); refreshActive();
+
+/* ============================================================
+   11. 오프라인 사용 (앱 설치)
+============================================================ */
+$('#installBtn').onclick = () => $('#installPanel').classList.toggle('show');
+let installPrompt = null;
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installPrompt = e; $('#installNow').hidden = false; });
+$('#installNow').onclick = async () => {
+  if (!installPrompt) return;
+  installPrompt.prompt();
+  try { await installPrompt.userChoice; } catch (e) {}
+  installPrompt = null; $('#installNow').hidden = true;
+};
+window.addEventListener('offline', () => toast('인터넷이 끊겼어요. 그래도 계속 공부할 수 있어요!'));
+function setOffline(ready, msg) {
+  $('#offlineBadge').classList.toggle('show', ready);
+  $('#installStatus').textContent = msg;
+}
+/*PWA-START*/
+if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+  navigator.serviceWorker.register('sw.js')
+    .then(() => navigator.serviceWorker.ready)
+    .then(() => setOffline(true, '✓ 오프라인 준비 완료! 이제 인터넷 없이도 이 주소가 열려요.'))
+    .catch(() => setOffline(false, '이 주소에서는 오프라인 저장을 할 수 없어요.'));
+} else {
+  setOffline(false, location.protocol === 'file:'
+    ? '✓ 내려받은 파일로 열었어요. 이 파일은 인터넷 없이도 열려요.'
+    : '이 브라우저는 오프라인 저장을 지원하지 않아요.');
+}
+/*PWA-END*/
 </script>
 </body>
 </html>
