@@ -15,7 +15,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap" rel="stylesheet">
 <style>
-/* Layout: one counter column on a gingham tablecloth: the order ticket on top, the pizza on its wooden board in the middle, the ingredient tray below. Wide screens put the board left and ticket + tray right. */
+/* Layout: one counter column on a gingham tablecloth. Work view: order ticket, pizza board, ingredient tray. Evening view: a sky band that darkens hour by hour, then activity cards. Home view: a front-on room with wall and floor slots. Wide screens split board | controls and room | panel. */
 :root {
   --cloth: #f8f4ef;
   --check: rgba(206, 52, 44, 0.13);
@@ -31,6 +31,8 @@
   --basil-soft: #dff1e4;
   --mustard: #f0b429;
   --mustard-soft: #fdf0cc;
+  --night: #2d2f66;
+  --night-deep: #1b1c45;
   --wood: #c88a4e;
   --wood-dark: #8e5a2c;
   --brick: #9c3b25;
@@ -46,6 +48,7 @@
     --cloth: #1b1310; --check: rgba(230, 80, 60, 0.11); --panel: #281d18; --line: #46342a;
     --ink: #f7ede3; --muted: #bba693; --tomato: #ff6a58; --tomato-deep: #b8402f; --tomato-ink: #2a0d08;
     --tomato-soft: #4a2320; --basil: #5fc487; --basil-soft: #1f3a29; --mustard: #f6c453; --mustard-soft: #3d3216;
+    --night: #4a4fa0; --night-deep: #2c2f6b;
     --wood: #a8713f; --wood-dark: #6e4320; --brick: #7a2c1b; --oven: #120b08; --flame: #ff9a52;
     --shadow: rgba(0, 0, 0, 0.5); --scrim: rgba(0, 0, 0, 0.62);
     color-scheme: dark;
@@ -55,6 +58,7 @@
   --cloth: #1b1310; --check: rgba(230, 80, 60, 0.11); --panel: #281d18; --line: #46342a;
   --ink: #f7ede3; --muted: #bba693; --tomato: #ff6a58; --tomato-deep: #b8402f; --tomato-ink: #2a0d08;
   --tomato-soft: #4a2320; --basil: #5fc487; --basil-soft: #1f3a29; --mustard: #f6c453; --mustard-soft: #3d3216;
+  --night: #4a4fa0; --night-deep: #2c2f6b;
   --wood: #a8713f; --wood-dark: #6e4320; --brick: #7a2c1b; --oven: #120b08; --flame: #ff9a52;
   --shadow: rgba(0, 0, 0, 0.5); --scrim: rgba(0, 0, 0, 0.62);
   color-scheme: dark;
@@ -80,28 +84,44 @@ body {
 button { font: inherit; color: inherit; touch-action: manipulation; }
 :focus-visible { outline: 3px solid var(--mustard); outline-offset: 2px; }
 
-.app { max-width: 480px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+.app { max-width: 480px; margin: 0 auto; display: flex; flex-direction: column; gap: 10px; }
 
-/* Header */
-.bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
-.brand { display: flex; align-items: center; gap: 8px; font-family: var(--f-display); font-size: 24px; color: var(--tomato); letter-spacing: 0.5px; }
-.brand svg { width: 30px; height: 30px; flex: none; }
+/* Header + status */
+.bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.brand { display: flex; align-items: center; gap: 8px; font-family: var(--f-display); font-size: 23px; color: var(--tomato); letter-spacing: 0.5px; min-width: 0; }
+.brand svg { width: 28px; height: 28px; flex: none; }
+.day { font-size: 14px; color: var(--ink); background: var(--mustard-soft); border-radius: 999px; padding: 2px 9px; letter-spacing: 0; white-space: nowrap; }
 .stats { display: flex; align-items: center; gap: 6px; }
 .stat {
-  font-family: var(--f-display); font-size: 14px; padding: 5px 11px; border-radius: 999px;
+  font-family: var(--f-display); font-size: 15px; padding: 5px 11px; border-radius: 999px;
   background: var(--panel); border: 1.5px solid var(--line); font-variant-numeric: tabular-nums; white-space: nowrap;
 }
 .stat b { font-weight: normal; color: var(--tomato); }
+.stat.bump { animation: bump 0.4s; }
+@keyframes bump { 40% { transform: scale(1.12); } }
 .icon-btn {
   width: 34px; height: 34px; border-radius: 50%; border: 1.5px solid var(--line); background: var(--panel);
-  display: grid; place-items: center; cursor: pointer; padding: 0;
+  display: grid; place-items: center; cursor: pointer; padding: 0; flex: none;
 }
 .icon-btn svg { width: 18px; height: 18px; }
 .icon-btn .off { display: none; }
 .icon-btn[aria-pressed="true"] .on { display: none; }
 .icon-btn[aria-pressed="true"] .off { display: block; }
+.status {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; font-size: 12.5px; color: var(--muted);
+  background: var(--panel); border: 1.5px solid var(--line); border-radius: 12px; padding: 6px 10px;
+}
+.meter { display: inline-flex; align-items: center; gap: 5px; font-variant-numeric: tabular-nums; }
+.meter i { width: 44px; height: 7px; border-radius: 4px; background: var(--line); overflow: hidden; display: inline-block; }
+.meter b { display: block; height: 100%; border-radius: inherit; background: var(--basil); transition: width 0.4s; }
+.meter.mood b { background: var(--mustard); }
+.meter.low b { background: var(--tomato); }
+.meter span { color: var(--ink); min-width: 2ch; }
+.skill-stars { color: var(--mustard); letter-spacing: 1px; }
+.ctx { margin-left: auto; font-family: var(--f-display); color: var(--ink); font-size: 13.5px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.ctx.tired { color: var(--tomato); }
 
-.play { display: flex; flex-direction: column; gap: 12px; }
+.view { display: flex; flex-direction: column; gap: 12px; }
 
 /* Order ticket */
 .ticket {
@@ -150,7 +170,7 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
 
 /* Stage: board + oven */
 .stage {
-  position: relative; width: min(100%, 370px, 48vh); aspect-ratio: 1; max-width: 100%;
+  position: relative; width: min(100%, 350px, 42vh); aspect-ratio: 1; max-width: 100%;
   display: grid; place-items: center;
 }
 .oven {
@@ -168,12 +188,11 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
 @keyframes flicker { from { opacity: 0.35; } to { opacity: 0.85; } }
 .stage.baking .oven { opacity: 1; transform: none; }
 #pizza {
-  position: relative; width: 94%; height: auto; display: block; touch-action: manipulation;
+  position: relative; width: 94%; height: auto; display: block; touch-action: manipulation; border-radius: 50%;
   filter: drop-shadow(0 8px 12px var(--shadow)); transition: transform 0.35s;
 }
-#pizza.aim { cursor: crosshair; }
-#pizza { border-radius: 50%; }
 #pizza:focus:not(:focus-visible) { outline: none; }
+#pizza.aim { cursor: crosshair; }
 .stage.baking #pizza { transform: scale(0.84); }
 #pizza.shake { animation: shake 0.3s; }
 @keyframes shake { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
@@ -192,27 +211,37 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
 
 /* Tray */
 .controls { display: flex; flex-direction: column; gap: 10px; }
-.tray { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 7px; }
-.ing {
-  position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px;
-  padding: 8px 2px 6px; border-radius: 14px; background: var(--panel); border: 2px solid var(--line);
-  cursor: pointer; box-shadow: 0 3px 0 var(--line); transition: transform 0.08s, box-shadow 0.08s;
+.tray { display: flex; flex-direction: column; gap: 8px; }
+.tabs { display: flex; gap: 6px; }
+.tab {
+  flex: 1; padding: 6px 8px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--panel);
+  font-family: var(--f-display); font-size: 14.5px; cursor: pointer; color: var(--muted);
 }
-.ing svg { width: 32px; height: 32px; }
-.ing span { font-size: 12.5px; white-space: nowrap; }
+.tab[aria-selected="true"] { background: var(--ink); color: var(--panel); border-color: var(--ink); }
+.tab small { font-family: var(--f-body); font-size: 12px; opacity: 0.8; }
+.tray-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(46px, 1fr)); gap: 6px; }
+#trayBase { grid-template-columns: repeat(auto-fill, minmax(62px, 1fr)); }
+.ing {
+  position: relative; display: flex; flex-direction: column; align-items: center; gap: 1px;
+  padding: 6px 1px 5px; border-radius: 12px; background: var(--panel); border: 2px solid var(--line);
+  cursor: pointer; box-shadow: 0 3px 0 var(--line); transition: transform 0.08s, box-shadow 0.08s; min-width: 0;
+}
+.ing svg { width: 28px; height: 28px; }
+.ing span { font-size: 11px; white-space: nowrap; letter-spacing: -0.3px; }
+#trayBase .ing span { font-size: 12.5px; }
 .ing:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 1px 0 var(--line); }
 .ing:disabled { opacity: 0.35; cursor: not-allowed; }
 .ing.done { opacity: 0.55; }
 .ing.done::after {
-  content: "✓"; position: absolute; top: 3px; right: 6px; font-family: var(--f-display); color: var(--basil); font-size: 13px;
+  content: "✓"; position: absolute; top: 2px; right: 5px; font-family: var(--f-display); color: var(--basil); font-size: 13px;
 }
 .ing.on { border-color: var(--tomato); background: var(--tomato-soft); box-shadow: 0 3px 0 var(--tomato); }
 .ing.next { animation: nudge 1.2s ease-in-out infinite; }
 @keyframes nudge { 50% { transform: translateY(-3px); } }
 .ing .cnt {
-  position: absolute; top: -7px; right: -5px; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 10px;
+  position: absolute; top: -7px; right: -4px; min-width: 19px; height: 19px; padding: 0 5px; border-radius: 10px;
   background: var(--tomato); color: var(--tomato-ink); font-style: normal; font-family: var(--f-display);
-  font-size: 12px; line-height: 20px; text-align: center; font-variant-numeric: tabular-nums;
+  font-size: 11.5px; line-height: 19px; text-align: center; font-variant-numeric: tabular-nums;
 }
 .ing .cnt:empty { display: none; }
 
@@ -223,20 +252,20 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
 }
 .btn.primary { background: var(--tomato); color: var(--tomato-ink); box-shadow: 0 4px 0 var(--tomato-deep); }
 .btn.ghost { background: var(--panel); border-color: var(--line); color: var(--ink); box-shadow: 0 4px 0 var(--line); font-size: 15px; }
+.btn.night { background: var(--night); color: #ffffff; box-shadow: 0 4px 0 var(--night-deep); }
 .btn:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 1px 0 var(--tomato-deep); }
 .btn.ghost:active:not(:disabled) { box-shadow: 0 1px 0 var(--line); }
+.btn.night:active:not(:disabled) { box-shadow: 0 1px 0 var(--night-deep); }
 .btn:disabled { opacity: 0.4; cursor: not-allowed; }
 .btn.big { width: 100%; font-size: 20px; padding: 13px; }
+.btn.small { font-size: 15px; padding: 8px; border-radius: 12px; }
 .btn.ready { animation: nudge 1.2s ease-in-out infinite; }
 
 /* Bake panel */
 .bake-panel { display: flex; flex-direction: column; gap: 10px; }
 .bake-status { margin: 0; text-align: center; font-family: var(--f-display); font-size: 18px; }
 .gauge-wrap { position: relative; padding-top: 6px; }
-.gauge {
-  position: relative; height: 22px; border-radius: 11px; border: 2px solid var(--line);
-  background: linear-gradient(90deg, var(--line) 0 40%, var(--mustard-soft) 40% 58%, var(--basil) 58% 76%, var(--mustard) 76% 90%, var(--tomato) 90% 100%);
-}
+.gauge { position: relative; height: 22px; border-radius: 11px; border: 2px solid var(--line); background: var(--line); }
 .needle {
   position: absolute; top: -8px; bottom: -8px; width: 6px; margin-left: -3px; left: 0;
   background: var(--ink); border-radius: 3px; box-shadow: 0 0 0 2px var(--panel);
@@ -244,6 +273,143 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
 .gauge-labels { position: relative; height: 18px; margin-top: 8px; font-size: 12.5px; color: var(--muted); }
 .gauge-labels span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
 .gauge-labels .perfect { color: var(--basil); font-family: var(--f-display); }
+
+/* Evening */
+.sky {
+  position: relative; overflow: hidden; border-radius: 20px; padding: 16px 18px 14px; color: #ffffff;
+  display: flex; flex-direction: column; gap: 10px; box-shadow: 0 4px 0 var(--line); transition: background 0.8s;
+}
+.twinkle {
+  position: absolute; inset: 0; pointer-events: none; opacity: 0; transition: opacity 0.8s;
+  background-image: radial-gradient(#ffffff 1px, transparent 1.6px), radial-gradient(#ffffff 0.8px, transparent 1.4px);
+  background-size: 46px 38px, 71px 53px; background-position: 0 0, 23px 17px;
+}
+.orb { position: absolute; width: 50px; height: 50px; border-radius: 50%; transition: right 0.8s, top 0.8s, background 0.8s, box-shadow 0.8s; }
+.orb.sun { background: #ffe08a; box-shadow: 0 0 30px 10px rgba(255, 214, 120, 0.55); }
+.orb.moon { background: transparent; box-shadow: inset -13px 3px 0 0 #f6f1dc, 0 0 24px 2px rgba(246, 241, 220, 0.2); }
+.sky-top { position: relative; display: flex; flex-direction: column; gap: 2px; }
+.eyebrow { font-size: 13px; letter-spacing: 1px; opacity: 0.92; }
+.clock { font-family: var(--f-display); font-size: 46px; line-height: 1.05; font-variant-numeric: tabular-nums; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25); }
+.left { font-size: 14px; opacity: 0.95; }
+.hours { position: relative; display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; }
+.hours i { height: 8px; border-radius: 4px; background: rgba(255, 255, 255, 0.88); }
+.hours i.used { background: rgba(255, 255, 255, 0.22); }
+.hour-labels { position: relative; display: flex; justify-content: space-between; font-size: 11px; opacity: 0.9; font-variant-numeric: tabular-nums; }
+.sec-title { margin: 4px 0 0; font-family: var(--f-display); font-weight: normal; font-size: 18px; }
+.sec-sub { margin: -8px 0 0; color: var(--muted); font-size: 13px; }
+.cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.act {
+  text-align: left; display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 10px; align-items: center;
+  padding: 10px 12px; background: var(--panel); border: 2px solid var(--line); border-radius: 14px;
+  box-shadow: 0 3px 0 var(--line); cursor: pointer; transition: transform 0.08s, box-shadow 0.08s;
+}
+.act-e { grid-row: span 2; font-size: 26px; line-height: 1; }
+.act-t { font-family: var(--f-display); font-size: 15.5px; }
+.act-m { font-size: 12px; color: var(--muted); line-height: 1.3; }
+.act:disabled { opacity: 0.45; cursor: not-allowed; }
+.act:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 1px 0 var(--line); }
+.act.place { background: var(--mustard-soft); border-color: transparent; }
+.goal { margin: 0; padding: 10px 14px; border-radius: 14px; background: var(--panel); border: 1.5px dashed var(--line); font-size: 14px; }
+.goal b { font-family: var(--f-display); font-weight: normal; color: var(--tomato); }
+.effects { margin: 0; padding: 0 0 0 18px; color: var(--muted); font-size: 13px; display: flex; flex-direction: column; gap: 2px; }
+
+/* Store views */
+.view-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.back {
+  border: 1.5px solid var(--line); background: var(--panel); border-radius: 999px; padding: 6px 12px;
+  font-family: var(--f-display); font-size: 14px; cursor: pointer;
+}
+.view-head h2 { margin: 0; font-family: var(--f-display); font-weight: normal; font-size: 21px; }
+.view-sub { margin: -4px 0 0; color: var(--muted); font-size: 14px; }
+.shop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
+.item {
+  background: var(--panel); border: 1.5px solid var(--line); border-radius: 14px; padding: 12px 10px;
+  display: flex; flex-direction: column; align-items: center; text-align: center; gap: 3px;
+}
+.item svg { width: 44px; height: 44px; }
+.item .emo { font-size: 38px; line-height: 1.15; }
+.item-name { font-family: var(--f-display); font-size: 16px; }
+.item-meta { font-size: 12px; color: var(--muted); line-height: 1.35; }
+.item .btn, .item .owned-tag { width: 100%; }
+.item .spacer { flex: 1; min-height: 4px; }
+.owned-tag {
+  padding: 8px; border-radius: 12px; background: var(--basil-soft); color: var(--basil);
+  font-family: var(--f-display); font-size: 14px; text-align: center;
+}
+.houses { display: flex; flex-direction: column; gap: 8px; }
+.house {
+  display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 12px; align-items: center;
+  background: var(--panel); border: 1.5px solid var(--line); border-radius: 14px; padding: 10px;
+}
+.house.here { border-color: var(--basil); }
+.thumb { aspect-ratio: 4 / 3; border-radius: 8px; border: 4px solid #fff8ee; box-shadow: 0 0 0 1.5px var(--line); position: relative; overflow: hidden; }
+.house-body { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; min-width: 0; }
+.house-body .btn, .house-body .owned-tag { padding-inline: 14px; margin-top: 2px; }
+
+/* Room */
+.home-grid { display: grid; gap: 12px; }
+.room {
+  container-type: inline-size; width: 100%; border-radius: 18px; overflow: hidden; position: relative;
+  border: 6px solid var(--wood-dark); box-shadow: 0 6px 0 var(--line), 0 10px 24px var(--shadow);
+}
+.wall { padding: 16px 8px 4px; position: relative; }
+.wall::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 7px; background: rgba(60, 30, 10, 0.18); }
+.floor { padding: 6px 8px 10px; position: relative; }
+.floor::before { content: ""; position: absolute; inset: 0; background: linear-gradient(rgba(40, 20, 5, 0.16), transparent 40%); pointer-events: none; }
+.wall-row, .floor-grid { display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); position: relative; align-items: center; }
+.rcell {
+  aspect-ratio: 1; display: grid; place-items: center; border: 0; background: transparent; padding: 0; margin: 0;
+  font-size: 30px; font-size: calc(56cqw / var(--cols)); line-height: 1; cursor: pointer; border-radius: 10px; position: relative;
+  outline: 1px dashed rgba(60, 30, 10, 0.16); outline-offset: -3px; color: #000000;
+}
+.floor .rcell.has { filter: drop-shadow(0 4px 0 rgba(40, 20, 5, 0.16)); }
+.rcell.target { background: rgba(255, 255, 255, 0.5); outline: 2px dashed var(--tomato); }
+.rcell.pop { animation: drop 0.3s cubic-bezier(.3, 1.6, .5, 1); }
+.rcell:focus-visible { outline: 3px solid var(--mustard); }
+.win {
+  margin: 9%; aspect-ratio: 1; border-radius: 4px; border: 3px solid #fff8ee; position: relative; overflow: hidden;
+  box-shadow: 0 0 0 2px rgba(60, 30, 10, 0.15), inset 0 0 8px rgba(0, 0, 0, 0.15);
+}
+.win::before, .win::after { content: ""; position: absolute; background: #fff8ee; }
+.win::before { left: 50%; top: 0; bottom: 0; width: 3px; margin-left: -1.5px; }
+.win::after { top: 50%; left: 0; right: 0; height: 3px; margin-top: -1.5px; }
+.cozy { margin: 0; text-align: center; font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.cozy b { font-family: var(--f-display); font-weight: normal; color: var(--tomato); font-size: 18px; }
+.inv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); gap: 7px; }
+.inv {
+  display: flex; flex-direction: column; align-items: center; gap: 1px; padding: 8px 4px; border-radius: 12px;
+  border: 2px solid var(--line); background: var(--panel); cursor: pointer; font-size: 12.5px; min-width: 0;
+}
+.inv-e { font-size: 26px; line-height: 1.15; }
+.inv em { font-style: normal; color: var(--muted); font-size: 11.5px; font-variant-numeric: tabular-nums; }
+.inv.on { border-color: var(--tomato); background: var(--tomato-soft); }
+.inv:disabled { opacity: 0.4; cursor: not-allowed; }
+.swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); gap: 7px; }
+.swatch {
+  height: 66px; border-radius: 12px; border: 3px solid var(--line); cursor: pointer; display: flex;
+  align-items: flex-end; padding: 0; overflow: hidden;
+}
+.swatch span { width: 100%; background: var(--panel); color: var(--ink); font-size: 12px; padding: 3px 0; }
+.swatch.on { border-color: var(--tomato); }
+.empty { margin: 0; padding: 14px; text-align: center; color: var(--muted); background: var(--panel); border: 1.5px dashed var(--line); border-radius: 14px; display: flex; flex-direction: column; gap: 8px; align-items: center; }
+
+/* Room illustration colors (the same picture in both themes) */
+.wp-cream { background: #f6ead8; } .wp-mint { background: #d4ecdf; } .wp-sky { background: #d7e7f6; }
+.wp-pink { background: #f7dbe1; } .wp-lav { background: #e3dcf2; }
+.wp-stripe { background: repeating-linear-gradient(90deg, #f4e4d0 0 12px, #ead2b6 12px 24px); }
+.wp-dots { background: radial-gradient(#e7a99a 2px, transparent 2.6px) 0 0 / 16px 16px, #fbeee7; }
+.wp-pizza { background: repeating-linear-gradient(0deg, rgba(209, 57, 46, 0.16) 0 10px, transparent 10px 20px), repeating-linear-gradient(90deg, rgba(209, 57, 46, 0.16) 0 10px, transparent 10px 20px), #fffaf3; }
+.fl-wood { background: repeating-linear-gradient(90deg, #c98f57 0 38px, #b98049 38px 40px); }
+.fl-dark { background: repeating-linear-gradient(90deg, #7d4f2e 0 38px, #6c4326 38px 40px); }
+.fl-tile { background: conic-gradient(#ece6dc 25%, #d6cdbf 0 50%, #ece6dc 0 75%, #d6cdbf 0) 0 0 / 36px 36px; }
+.fl-green { background: radial-gradient(rgba(255, 255, 255, 0.18) 1.5px, transparent 2px) 0 0 / 12px 12px, #9fbf8f; }
+.fl-pink { background: radial-gradient(rgba(255, 255, 255, 0.25) 1.5px, transparent 2px) 0 0 / 12px 12px, #e7b4c0; }
+.view-city { background: radial-gradient(#ffd76a 1.2px, transparent 1.8px) 3px 6px / 9px 11px, linear-gradient(#1d2547, #3a4580); }
+.view-sunset { background: radial-gradient(circle at 30% 70%, #fff1b8 0 12%, transparent 13%), linear-gradient(#ff9e6b, #ffcf8a 62%, #e8806f); }
+.view-sky { background: radial-gradient(ellipse 34% 16% at 32% 38%, #ffffff 60%, transparent 63%), radial-gradient(ellipse 26% 12% at 72% 62%, #ffffff 60%, transparent 63%), linear-gradient(#78c1f0, #cfeaff); }
+.view-skyline { background: linear-gradient(90deg, #2c335e 0 14%, transparent 14% 20%, #353d6c 20% 38%, transparent 38% 44%, #2c335e 44% 62%, transparent 62% 70%, #353d6c 70% 100%) bottom / 100% 48% no-repeat, radial-gradient(#ffd76a 1px, transparent 1.6px) 2px 2px / 7px 9px, linear-gradient(#141936, #4b3f7a); }
+.view-garden { background: radial-gradient(circle at 34% 58%, #3f8f3f 0 18%, transparent 19%), radial-gradient(circle at 70% 64%, #4c9a44 0 14%, transparent 15%), linear-gradient(#a9dcf5 0 62%, #7cc46a 62%); }
+.view-sea { background: radial-gradient(circle at 74% 26%, #fff4c2 0 10%, transparent 11%), linear-gradient(#8fd3f5 0 48%, #2f8fd0 48% 72%, #f4dc9c 72%); }
 
 /* Overlays */
 .overlay {
@@ -253,59 +419,79 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
 }
 .overlay.center { align-items: center; padding-block: 16px; }
 .sheet {
-  width: 100%; max-width: 440px; max-height: 90%; overflow: auto; background: var(--panel); color: var(--ink);
+  width: 100%; max-width: 440px; max-height: 92%; overflow: auto; background: var(--panel); color: var(--ink);
   border-radius: 22px 22px 0 0; padding: 20px 20px calc(20px + env(safe-area-inset-bottom, 0px));
   box-shadow: 0 -6px 30px var(--shadow); animation: sheet-up 0.35s cubic-bezier(.2, 1.2, .4, 1);
+  display: flex; flex-direction: column; gap: 10px;
 }
 .overlay.center .sheet { border-radius: 22px; padding-bottom: 22px; }
 @keyframes sheet-up { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
 .sheet h2 { margin: 0; font-family: var(--f-display); font-weight: normal; font-size: 26px; text-align: center; text-wrap: balance; }
-.res-who { margin: 0 0 2px; text-align: center; color: var(--muted); font-size: 14px; }
-.stars { display: flex; justify-content: center; gap: 6px; margin: 6px 0 10px; font-size: 38px; line-height: 1; }
+.sheet p { margin: 0; }
+.res-who { text-align: center; color: var(--muted); font-size: 14px; }
+.stars { display: flex; justify-content: center; gap: 6px; font-size: 38px; line-height: 1; }
 .stars span { color: var(--line); }
 .stars span.lit { color: var(--mustard); animation: star-pop 0.4s cubic-bezier(.2, 1.8, .4, 1) both; }
 .stars span.lit:nth-child(2) { animation-delay: 0.12s; }
 .stars span.lit:nth-child(3) { animation-delay: 0.24s; }
 @keyframes star-pop { from { transform: scale(0.2); } to { transform: none; } }
-.lines { list-style: none; margin: 0 0 12px; padding: 0; }
+.lines { list-style: none; margin: 0; padding: 0; }
 .lines li { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-bottom: 1.5px dashed var(--line); font-variant-numeric: tabular-nums; }
 .lines li span:first-child { color: var(--muted); flex: none; }
 .lines li span:last-child { text-align: right; }
 .lines li.sum { border-bottom: none; font-family: var(--f-display); font-size: 17px; }
 .lines .good { color: var(--basil); }
 .lines .bad { color: var(--tomato); }
-.earn { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.earn { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .earn div { background: var(--mustard-soft); border-radius: 12px; padding: 8px 12px; display: flex; flex-direction: column; }
 .earn small { color: var(--muted); font-size: 12.5px; }
 .earn b { font-family: var(--f-display); font-weight: normal; font-size: 20px; font-variant-numeric: tabular-nums; }
-.quote { margin: 0 0 14px; text-align: center; font-size: 15px; }
-
-.start-art { display: block; width: 132px; height: 132px; margin: 0 auto 8px; animation: spin-in 0.8s cubic-bezier(.2, 1.2, .4, 1); }
+.quote { text-align: center; font-size: 15px; }
+.start-art { display: block; width: 120px; height: 120px; margin: 0 auto; animation: spin-in 0.8s cubic-bezier(.2, 1.2, .4, 1); }
 @keyframes spin-in { from { transform: rotate(-120deg) scale(0.5); opacity: 0; } to { transform: none; opacity: 1; } }
 .start-title { font-size: 40px !important; color: var(--tomato); letter-spacing: 1px; }
-.lede { margin: 4px 0 14px; text-align: center; color: var(--muted); }
-.howto { margin: 0 0 14px; padding: 12px 14px 12px 34px; background: var(--cloth); border-radius: 14px; display: flex; flex-direction: column; gap: 4px; }
+.lede { text-align: center; color: var(--muted); }
+.howto { margin: 0; padding: 12px 14px 12px 32px; background: var(--cloth); border-radius: 14px; display: flex; flex-direction: column; gap: 4px; font-size: 14px; }
 .howto li::marker { font-family: var(--f-display); color: var(--tomato); }
-.best { margin: 0 0 12px; text-align: center; font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
-.best b { color: var(--ink); font-weight: normal; font-family: var(--f-display); }
-.total { text-align: center; margin: 6px 0 2px; font-family: var(--f-display); font-size: 40px; color: var(--tomato); font-variant-numeric: tabular-nums; }
+.save-info { text-align: center; font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.save-info b { color: var(--ink); font-weight: normal; font-family: var(--f-display); }
+.total { text-align: center; font-family: var(--f-display); font-size: 40px; color: var(--tomato); font-variant-numeric: tabular-nums; line-height: 1.1; }
+.center-note { text-align: center; color: var(--muted); font-size: 14px; font-variant-numeric: tabular-nums; }
+.center-note b { color: var(--ink); font-weight: normal; font-family: var(--f-display); }
 .badge { display: inline-block; margin-left: 6px; padding: 1px 8px; border-radius: 999px; background: var(--mustard); color: var(--oven); font-size: 12px; font-family: var(--f-display); vertical-align: middle; }
+.text-btn { background: none; border: 0; color: var(--muted); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; font-size: 14px; padding: 4px; align-self: center; }
+.text-btn.armed { color: var(--tomato); }
+
+.toast {
+  position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); z-index: 40;
+  transform: translate(-50%, 20px); opacity: 0; pointer-events: none;
+  background: var(--ink); color: var(--panel); padding: 10px 16px; border-radius: 14px; font-size: 14.5px;
+  width: max-content; max-width: calc(100vw - 32px); text-align: center; transition: opacity 0.25s, transform 0.25s;
+  box-shadow: 0 6px 20px var(--shadow);
+}
+.toast.show { opacity: 1; transform: translate(-50%, 0); }
 
 /* Wide screens */
 @media (min-width: 860px) {
-  .app { max-width: 920px; }
-  .play { display: grid; grid-template-columns: 1fr 380px; grid-template-rows: auto 1fr; grid-template-areas: "board ticket" "board controls"; align-items: start; gap: 16px 28px; }
+  .app { max-width: 940px; }
+  .play { display: grid; grid-template-columns: 1fr 390px; grid-template-rows: auto 1fr; grid-template-areas: "board ticket" "board controls"; align-items: start; gap: 16px 28px; }
   .ticket { grid-area: ticket; }
   .board-area { grid-area: board; }
   .controls { grid-area: controls; }
-  .stage { width: min(100%, 480px, 70vh); }
+  .stage { width: min(100%, 480px, 66vh); }
+  .cards { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .home-grid { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); align-items: start; gap: 20px; }
   .overlay { align-items: center; }
   .sheet { border-radius: 22px; padding-bottom: 22px; }
 }
+@media (max-width: 440px) {
+  .meter span { display: none; }
+  .status { gap: 6px 10px; }
+}
 @media (max-width: 360px) {
-  .ing span { font-size: 11px; }
   .btn { font-size: 15px; }
-  .brand { font-size: 21px; }
+  .brand { font-size: 20px; }
+  .meter i { width: 34px; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
@@ -314,7 +500,7 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
 </head>
 <body>
 
-<!-- Ingredient drawings, shared by the pizza, the tray and the start card -->
+<!-- Ingredient drawings, shared by the pizza, the tray, the market and the title card -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <defs>
     <g id="t-pepperoni">
@@ -347,23 +533,74 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
       <path d="M-12 5 A12.5 12.5 0 0 1 12 5" fill="none" stroke="#a5679e" stroke-width="3.2" stroke-linecap="round"/>
       <path d="M-7.5 5 A8 8 0 0 1 7.5 5" fill="none" stroke="#e2c4df" stroke-width="2.4" stroke-linecap="round"/>
     </g>
+    <g id="t-ham">
+      <rect x="-9.5" y="-8" width="19" height="16" rx="3" fill="#f2a5a0" stroke="#d9746f" stroke-width="1.6"/>
+      <path d="M-5.5 -3 h11 M-5.5 2.5 h7" stroke="#f9d2cd" stroke-width="1.6" stroke-linecap="round"/>
+    </g>
+    <g id="t-bacon">
+      <path d="M-12 -5 Q-8 -10 -4 -5 T4 -5 T12 -5 L12 4 Q8 -1 4 4 T-4 4 T-12 4 Z" fill="#b9473a"/>
+      <path d="M-12 -0.5 Q-8 -5.5 -4 -0.5 T4 -0.5 T12 -0.5" fill="none" stroke="#f3c9b5" stroke-width="2.2"/>
+    </g>
+    <g id="t-sausage">
+      <circle r="9.5" fill="#8e3f22"/><circle r="7.4" fill="#c0643a"/>
+      <circle cx="-2.5" cy="-2" r="1.3" fill="#f0c9a0"/><circle cx="2.8" cy="1.5" r="1.1" fill="#f0c9a0"/><circle cx="-0.5" cy="3.8" r="1" fill="#f0c9a0"/>
+    </g>
+    <g id="t-shrimp">
+      <path d="M8 -6 A9 9 0 1 0 6 8" fill="none" stroke="#f28c5e" stroke-width="6.5" stroke-linecap="round"/>
+      <path d="M8 -6 A9 9 0 1 0 6 8" fill="none" stroke="#fbd0b5" stroke-width="1.2" stroke-dasharray="2.5 3.5"/>
+      <path d="M6 8 L12.5 11 L11 4.5 Z" fill="#e0603a"/>
+    </g>
+    <g id="t-bulgogi">
+      <path d="M-10 -3 C-8 -9 1 -10 6 -7 C11 -4 11 3 7 6 C2 10 -6 9 -9 5 C-12 2 -11 0 -10 -3 Z" fill="#6e3b20"/>
+      <path d="M-6 -3 Q0 -6 5 -2 M-5 3 Q1 0 6 4" fill="none" stroke="#a0603a" stroke-width="1.7" stroke-linecap="round"/>
+    </g>
+    <g id="t-pineapple">
+      <path d="M-10.5 8 L0 -10.5 L10.5 8 Z" fill="#f9d64a" stroke="#dca21c" stroke-width="1.7" stroke-linejoin="round"/>
+      <path d="M-5 4 L0 -4 L5 4" fill="none" stroke="#fdeaa0" stroke-width="1.5"/>
+    </g>
+    <g id="t-freshtomato">
+      <circle r="10.5" fill="#d9362b"/><circle r="8" fill="#ef5a45"/>
+      <path d="M0 -8 V8 M-7 -4 L7 4 M-7 4 L7 -4" stroke="#d9362b" stroke-width="1.6"/>
+      <circle r="2.2" fill="#f7a08a"/>
+      <ellipse cx="0" cy="-5" rx="1" ry="1.5" fill="#f4d58a"/><ellipse cx="4.3" cy="2.5" rx="1" ry="1.5" fill="#f4d58a" transform="rotate(60 4.3 2.5)"/><ellipse cx="-4.3" cy="2.5" rx="1" ry="1.5" fill="#f4d58a" transform="rotate(-60 -4.3 2.5)"/>
+    </g>
+    <g id="t-jalapeno">
+      <circle r="8" fill="#a9d66e" stroke="#2f7d32" stroke-width="3"/>
+      <circle cx="-2" cy="-1.5" r="1.3" fill="#f3f0d8"/><circle cx="2.2" cy="1" r="1.3" fill="#f3f0d8"/><circle cx="-0.3" cy="2.8" r="1.1" fill="#f3f0d8"/>
+    </g>
+    <g id="t-potato">
+      <path d="M-11 5 C-9 -6 4 -11 11 -4 C6 1 -2 5 -11 5 Z" fill="#efcb72" stroke="#a8722f" stroke-width="2.4" stroke-linejoin="round"/>
+      <circle cx="-2" cy="-1" r="0.9" fill="#c99a4a"/><circle cx="3" cy="-3.5" r="0.8" fill="#c99a4a"/>
+    </g>
+    <g id="t-sweetpotato">
+      <circle r="9.5" fill="#f6b23f" stroke="#7d3466" stroke-width="2.6"/>
+      <circle cx="-2.5" cy="-2.5" r="2.6" fill="#fbd27a"/>
+    </g>
+    <g id="t-broccoli">
+      <path d="M-2 2 L-3 11 L3 11 L2 2 Z" fill="#9ccc65"/>
+      <circle cx="-5" cy="-1" r="5" fill="#3b8a3b"/><circle cx="5" cy="-1" r="5" fill="#3b8a3b"/><circle cx="0" cy="-6" r="5.5" fill="#2f7a32"/>
+      <circle cx="-1.5" cy="-7" r="1.6" fill="#5aa84f"/><circle cx="4.5" cy="-2" r="1.3" fill="#5aa84f"/>
+    </g>
+    <g id="t-basil">
+      <path d="M-11 4 C-6 -8 6 -10 11 -4 C6 6 -4 9 -11 4 Z" fill="#3d8f3a"/>
+      <path d="M-9 3.5 C-3 -1 3 -3 9 -4" fill="none" stroke="#6cbf5a" stroke-width="1.2"/>
+    </g>
+    <g id="t-chicken">
+      <path d="M-10 -5 C-6 -10 7 -10 10 -4 C12 2 8 9 0 9 C-8 9 -12 2 -10 -5 Z" fill="#e7bf84" stroke="#c48e4c" stroke-width="1.4"/>
+      <path d="M-6 -3 l9 -3 M-6 2 l11 -3 M-3 6 l8 -2" stroke="#9c6430" stroke-width="1.8" stroke-linecap="round"/>
+    </g>
     <g id="i-dough">
       <ellipse cx="0" cy="3" rx="13" ry="9" fill="#f3dcae" stroke="#cf9f5c" stroke-width="1.4"/>
       <ellipse cx="-4" cy="-0.5" rx="5" ry="2.2" fill="#fbecd0"/>
     </g>
-    <g id="i-tomato">
+    <g id="i-bowl">
       <path d="M-13 -2 A13 12 0 0 0 13 -2 Z" fill="#f1ede6" stroke="#b9ab9a" stroke-width="1.3"/>
-      <ellipse cx="0" cy="-2" rx="13" ry="4.2" fill="#c63a2c" stroke="#b9ab9a" stroke-width="1.3"/>
-      <ellipse cx="-4" cy="-3" rx="3" ry="1.2" fill="#e5705c"/>
-    </g>
-    <g id="i-cream">
-      <path d="M-13 -2 A13 12 0 0 0 13 -2 Z" fill="#f1ede6" stroke="#b9ab9a" stroke-width="1.3"/>
-      <ellipse cx="0" cy="-2" rx="13" ry="4.2" fill="#f6edd6" stroke="#b9ab9a" stroke-width="1.3"/>
-      <ellipse cx="-4" cy="-3" rx="3" ry="1.2" fill="#fffaf0"/>
+      <ellipse cx="0" cy="-2" rx="13" ry="4.2" fill="currentColor" stroke="#b9ab9a" stroke-width="1.3"/>
+      <ellipse cx="-4" cy="-3" rx="3" ry="1.2" fill="#ffffff" opacity="0.4"/>
     </g>
     <g id="i-cheese">
-      <path d="M-13 9 L13 9 L13 -3 L-13 -9 Z" fill="#f7cf4a" stroke="#d29b16" stroke-width="1.3" stroke-linejoin="round"/>
-      <circle cx="-4" cy="2.5" r="2.4" fill="#e0b02a"/><circle cx="6" cy="4" r="1.8" fill="#e0b02a"/><circle cx="3" cy="-2" r="1.3" fill="#e0b02a"/>
+      <path d="M-13 9 L13 9 L13 -3 L-13 -9 Z" fill="currentColor" stroke="#c48a14" stroke-width="1.3" stroke-linejoin="round"/>
+      <g fill="#000000" opacity="0.13"><circle cx="-4" cy="2.5" r="2.4"/><circle cx="6" cy="4" r="1.8"/><circle cx="3" cy="-2" r="1.3"/></g>
     </g>
   </defs>
 </svg>
@@ -377,18 +614,25 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
         <circle cx="-2" cy="-3" r="2.6" fill="#c83c2e"/><circle cx="3" cy="2" r="2.2" fill="#c83c2e"/>
       </svg>
       <span>피자 공방</span>
+      <span class="day" id="dayLbl">1일째</span>
     </div>
     <div class="stats">
-      <span class="stat">손님 <b id="custNo">1</b>/5</span>
-      <span class="stat"><b id="revenue">0</b>원</span>
+      <span class="stat" id="moneyStat" title="지갑"><b id="money">0</b>원</span>
       <button class="icon-btn" id="muteBtn" type="button" aria-pressed="false" aria-label="소리 끄기">
         <svg class="on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/><path d="M19 6a8.5 8.5 0 0 1 0 12"/></svg>
         <svg class="off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>
       </button>
     </div>
   </header>
+  <div class="status" id="status">
+    <span class="meter" id="energyMeter" title="체력">체력 <i><b id="energyBar"></b></i><span id="energyNum">80</span></span>
+    <span class="meter mood" id="moodMeter" title="기분">기분 <i><b id="moodBar"></b></i><span id="moodNum">60</span></span>
+    <span title="요리 실력">실력 <span class="skill-stars" id="skillStars">☆☆☆☆☆</span></span>
+    <span class="ctx" id="ctx">손님 1/5</span>
+  </div>
 
-  <main class="play">
+  <!-- Work: the pizza counter -->
+  <main class="play view" id="v-shop">
     <section class="ticket" id="ticket" aria-live="polite">
       <div class="who">
         <div class="face" id="face" aria-hidden="true">🧒</div>
@@ -397,7 +641,7 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
       <div class="order">
         <div class="order-head">
           <h2><span id="custName">민준</span> 손님<span class="order-no" id="orderNo">#001</span></h2>
-          <span class="price" id="price">10,500원</span>
+          <span class="price" id="price">9,500원</span>
         </div>
         <p class="say" id="say">“페퍼로니 피자 하나 주세요!”</p>
         <ul class="chips" id="chips"></ul>
@@ -438,7 +682,14 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
     </section>
 
     <section class="controls">
-      <div class="tray" id="tray"></div>
+      <div class="tray" id="tray">
+        <div class="tabs" role="tablist" aria-label="재료 쟁반">
+          <button class="tab" type="button" role="tab" id="tabBase" aria-selected="true">기본 재료</button>
+          <button class="tab" type="button" role="tab" id="tabTop" aria-selected="false">토핑 <small id="topCount">6</small></button>
+        </div>
+        <div class="tray-grid" id="trayBase" role="tabpanel" aria-labelledby="tabBase"></div>
+        <div class="tray-grid" id="trayTop" role="tabpanel" aria-labelledby="tabTop" hidden></div>
+      </div>
       <div class="actions" id="actions">
         <button class="btn ghost" id="undoBtn" type="button">되돌리기</button>
         <button class="btn ghost" id="clearBtn" type="button">처음부터</button>
@@ -460,6 +711,63 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
       </div>
     </section>
   </main>
+
+  <!-- After work -->
+  <section class="view" id="v-evening" hidden>
+    <div class="sky" id="sky">
+      <div class="twinkle" id="twinkle"></div>
+      <div class="orb sun" id="orb"></div>
+      <div class="sky-top">
+        <span class="eyebrow">퇴근 후 일과</span>
+        <span class="clock" id="clock">18:00</span>
+        <span class="left" id="hoursLeft">자정까지 6시간</span>
+      </div>
+      <div class="hours" id="hours" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="hour-labels" aria-hidden="true"><span>18시</span><span>21시</span><span>24시</span></div>
+    </div>
+    <p class="goal" id="goal"></p>
+    <h3 class="sec-title">무엇을 할까요?</h3>
+    <p class="sec-sub">시간을 쓰는 일과예요. 체력과 기분, 실력이 바뀌어요.</p>
+    <div class="cards" id="acts"></div>
+    <h3 class="sec-title">쇼핑과 우리 집</h3>
+    <p class="sec-sub">가게는 22시에 문을 닫아요. 둘러보는 데는 시간이 들지 않아요.</p>
+    <div class="cards" id="places"></div>
+    <ul class="effects" id="effects"></ul>
+    <button class="btn night big" id="sleepBtn" type="button">잠자고 내일 영업하기</button>
+  </section>
+
+  <!-- Shops: market, furniture, realty -->
+  <section class="view" id="v-store" hidden>
+    <div class="view-head">
+      <button class="back" type="button" data-back="evening">← 저녁 일과</button>
+      <h2 id="storeTitle">마트</h2>
+    </div>
+    <p class="view-sub" id="storeSub"></p>
+    <div id="storeList"></div>
+  </section>
+
+  <!-- Home decorating -->
+  <section class="view" id="v-home" hidden>
+    <div class="view-head">
+      <button class="back" type="button" data-back="evening">← 저녁 일과</button>
+      <h2 id="homeTitle">우리 집</h2>
+    </div>
+    <div class="home-grid">
+      <div class="view">
+        <div class="room" id="room"></div>
+        <p class="cozy" id="cozy"></p>
+      </div>
+      <div class="view">
+        <div class="tabs" role="tablist" aria-label="꾸미기">
+          <button class="tab" type="button" role="tab" data-htab="furn" aria-selected="true">가구</button>
+          <button class="tab" type="button" role="tab" data-htab="wall" aria-selected="false">벽지</button>
+          <button class="tab" type="button" role="tab" data-htab="floor" aria-selected="false">바닥</button>
+        </div>
+        <div id="homePanel"></div>
+        <p class="hint" id="homeHint">가구를 고르고 빈 칸을 눌러 놓아요. 놓인 가구를 누르면 치워요.</p>
+      </div>
+    </div>
+  </section>
 </div>
 
 <div class="overlay center" id="startOv">
@@ -474,18 +782,20 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
       <use href="#t-mushroom" transform="translate(66 34) scale(.7) rotate(20)"/>
       <use href="#t-pepper" transform="translate(36 70) scale(.7)"/>
       <use href="#t-olive" transform="translate(80 76) scale(.8)"/>
-      <use href="#t-olive" transform="translate(60 60) scale(.8)"/>
+      <use href="#t-shrimp" transform="translate(60 60) scale(.7)"/>
       <use href="#t-corn" transform="translate(85 32) scale(.6)"/>
     </svg>
     <h2 class="start-title" id="startTitle">피자 공방</h2>
-    <p class="lede">손님 다섯 명이 기다려요. 주문서대로 만들어 주세요.</p>
+    <p class="lede">피자를 팔아 돈을 모으고, 퇴근하면 내 집을 사서 꾸며요.</p>
     <ol class="howto">
-      <li>도우를 펴고 소스와 치즈를 올려요.</li>
-      <li>토핑을 고른 뒤 피자를 눌러 개수만큼 올려요.</li>
-      <li>오븐에서 바늘이 초록색일 때 꺼내요.</li>
+      <li>주문서대로 도우·소스·치즈·토핑을 올리고, 바늘이 초록색일 때 오븐에서 꺼내요.</li>
+      <li>손님 다섯 명을 받으면 퇴근해요.</li>
+      <li>퇴근 후엔 쉬거나 놀거나 요리 연습을 해요. 체력과 기분이 다음 날 장사에 영향을 줘요.</li>
+      <li>모은 돈으로 마트에서 새 재료를, 가구점과 부동산에서 가구와 집을 사요.</li>
     </ol>
-    <p class="best" id="startBest" hidden></p>
+    <p class="save-info" id="saveInfo" hidden></p>
     <button class="btn primary big" id="startBtn" type="button">가게 문 열기</button>
+    <button class="text-btn" id="resetBtn" type="button" hidden>처음부터 새로 하기</button>
   </div>
 </div>
 
@@ -497,23 +807,34 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
     <ul class="lines" id="resLines"></ul>
     <div class="earn">
       <div><small>피자값</small><b id="resEarn">0원</b></div>
-      <div><small>빨리 만든 팁</small><b id="resTip">0원</b></div>
+      <div><small>팁</small><b id="resTip">0원</b></div>
     </div>
     <p class="quote" id="resQuote"></p>
     <button class="btn primary big" id="nextBtn" type="button">다음 손님</button>
   </div>
 </div>
 
-<div class="overlay center" id="endOv" hidden>
-  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="endTitle">
-    <h2 id="endTitle">오늘 영업 끝!</h2>
-    <p class="total" id="endTotal">0원</p>
-    <p class="best" id="endStars"></p>
-    <ul class="lines" id="endLines"></ul>
-    <p class="best" id="endBest"></p>
-    <button class="btn primary big" id="againBtn" type="button">다시 영업하기</button>
+<div class="overlay center" id="dayOv" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="dayTitle">
+    <h2 id="dayTitle">퇴근 시간이에요!</h2>
+    <p class="center-note" id="dayStars"></p>
+    <p class="total" id="dayTotal">0원</p>
+    <ul class="lines" id="dayLines"></ul>
+    <p class="center-note" id="dayWallet"></p>
+    <button class="btn primary big" id="offBtn" type="button">퇴근하기</button>
   </div>
 </div>
+
+<div class="overlay center" id="sleepOv" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sleepTitle">
+    <h2 id="sleepTitle">잘 자요</h2>
+    <p class="center-note" id="sleepWhere"></p>
+    <ul class="lines" id="sleepLines"></ul>
+    <button class="btn primary big" id="wakeBtn" type="button">아침이에요, 가게 문 열기</button>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
 (() => {
@@ -521,48 +842,133 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
   const $ = id => document.getElementById(id);
   const NS = 'http://www.w3.org/2000/svg';
   const DAY_LEN = 5;
-  const BEST_KEY = 'pizza-gongbang-best';
+  const SAVE_KEY = 'pizza-gongbang-save-v2';
 
-  const TOPS = [
-    { id: 'pepperoni', name: '페퍼로니' },
-    { id: 'mushroom', name: '버섯' },
-    { id: 'pepper', name: '피망' },
-    { id: 'olive', name: '올리브' },
-    { id: 'corn', name: '옥수수' },
-    { id: 'onion', name: '양파' },
+  // ---------- catalog ----------
+  // add: how much the ingredient raises a pizza's price. cost: market price to unlock (0 = from day one).
+  const ING = [
+    { id: 'tomato', name: '토마토', kind: 'sauce', color: '#c63a2c', add: 0, cost: 0 },
+    { id: 'cream', name: '크림', kind: 'sauce', color: '#f3e9d2', add: 1000, cost: 0 },
+    { id: 'bbq', name: '바비큐', kind: 'sauce', color: '#6e2a17', add: 1000, cost: 12000 },
+    { id: 'pesto', name: '바질 페스토', short: '페스토', kind: 'sauce', color: '#5f8f2e', add: 1500, cost: 15000 },
+    { id: 'mozza', name: '모차렐라', kind: 'cheese', color: '#f6e2a0', add: 0, cost: 0 },
+    { id: 'cheddar', name: '체다', kind: 'cheese', color: '#f2a23a', add: 1000, cost: 12000 },
+    { id: 'pepperoni', name: '페퍼로니', kind: 'top', add: 1500, cost: 0 },
+    { id: 'mushroom', name: '버섯', kind: 'top', add: 1500, cost: 0 },
+    { id: 'pepper', name: '피망', kind: 'top', add: 1000, cost: 0 },
+    { id: 'olive', name: '올리브', kind: 'top', add: 1000, cost: 0 },
+    { id: 'corn', name: '옥수수', kind: 'top', add: 1000, cost: 0 },
+    { id: 'onion', name: '양파', kind: 'top', add: 1000, cost: 0 },
+    { id: 'freshtomato', name: '생토마토', kind: 'top', add: 1000, cost: 6000 },
+    { id: 'potato', name: '감자', kind: 'top', add: 1500, cost: 7000 },
+    { id: 'ham', name: '햄', kind: 'top', add: 1500, cost: 8000 },
+    { id: 'pineapple', name: '파인애플', kind: 'top', add: 1500, cost: 8000 },
+    { id: 'broccoli', name: '브로콜리', kind: 'top', add: 1500, cost: 8000 },
+    { id: 'jalapeno', name: '할라피뇨', kind: 'top', add: 1500, cost: 9000 },
+    { id: 'basil', name: '바질', kind: 'top', add: 1500, cost: 9000 },
+    { id: 'bacon', name: '베이컨', kind: 'top', add: 2000, cost: 10000 },
+    { id: 'sausage', name: '소시지', kind: 'top', add: 2000, cost: 10000 },
+    { id: 'sweetpotato', name: '고구마', kind: 'top', add: 2000, cost: 12000 },
+    { id: 'chicken', name: '치킨', kind: 'top', add: 2500, cost: 18000 },
+    { id: 'shrimp', name: '새우', kind: 'top', add: 3000, cost: 20000 },
+    { id: 'bulgogi', name: '불고기', kind: 'top', add: 3000, cost: 22000 },
   ];
-  const TOP = Object.fromEntries(TOPS.map(t => [t.id, t]));
-  const SAUCE = { tomato: { name: '토마토', color: '#c63a2c' }, cream: { name: '크림', color: '#f3e9d2' } };
-  const TRAY = [
-    { id: 'dough', name: '도우', kind: 'dough', icon: 'i-dough' },
-    { id: 'tomato', name: '토마토', kind: 'sauce', icon: 'i-tomato' },
-    { id: 'cream', name: '크림', kind: 'sauce', icon: 'i-cream' },
-    { id: 'cheese', name: '치즈', kind: 'cheese', icon: 'i-cheese' },
-    ...TOPS.map(t => ({ id: t.id, name: t.name, kind: 'top', icon: 't-' + t.id })),
+  const ING_BY = Object.fromEntries(ING.map(i => [i.id, i]));
+  const iconOf = i => i.kind === 'sauce' ? 'i-bowl' : i.kind === 'cheese' ? 'i-cheese' : 't-' + i.id;
+  const shortName = i => i.short || i.name;
+  const kindName = { sauce: '소스', cheese: '치즈', top: '토핑' };
+  function ingIcon(i) {
+    return `<svg viewBox="-16 -16 32 32" aria-hidden="true"${i.color ? ` style="color:${i.color}"` : ''}><use href="#${iconOf(i)}"/></svg>`;
+  }
+
+  const FURN = [
+    { id: 'calendar', e: '📅', name: '달력', at: 'wall', cozy: 1, price: 1500 },
+    { id: 'cactus', e: '🌵', name: '선인장', at: 'floor', cozy: 2, price: 2000 },
+    { id: 'plant', e: '🪴', name: '화분', at: 'floor', cozy: 3, price: 3000 },
+    { id: 'chair', e: '🪑', name: '의자', at: 'floor', cozy: 2, price: 4000 },
+    { id: 'frame', e: '🖼️', name: '그림 액자', at: 'wall', cozy: 4, price: 5000 },
+    { id: 'teddy', e: '🧸', name: '곰인형', at: 'floor', cozy: 5, price: 6000 },
+    { id: 'mirror', e: '🪞', name: '거울', at: 'wall', cozy: 3, price: 6000 },
+    { id: 'clock', e: '🕰️', name: '벽시계', at: 'wall', cozy: 3, price: 7000 },
+    { id: 'lantern', e: '🏮', name: '종이 등', at: 'wall', cozy: 4, price: 8000 },
+    { id: 'books', e: '📚', name: '책 더미', at: 'floor', cozy: 4, price: 8000 },
+    { id: 'bed', e: '🛏️', name: '침대', at: 'floor', cozy: 10, price: 15000 },
+    { id: 'tree', e: '🎄', name: '트리', at: 'floor', cozy: 7, price: 15000 },
+    { id: 'guitar', e: '🎸', name: '기타', at: 'floor', cozy: 6, price: 18000 },
+    { id: 'game', e: '🎮', name: '게임기', at: 'floor', cozy: 6, price: 20000 },
+    { id: 'sofa', e: '🛋️', name: '소파', at: 'floor', cozy: 12, price: 25000 },
+    { id: 'fish', e: '🐠', name: '어항', at: 'floor', cozy: 8, price: 25000 },
+    { id: 'tv', e: '📺', name: 'TV', at: 'floor', cozy: 7, price: 30000 },
+    { id: 'bath', e: '🛁', name: '욕조', at: 'floor', cozy: 10, price: 40000 },
+    { id: 'cat', e: '🐈', name: '고양이', at: 'floor', cozy: 15, price: 50000 },
+    { id: 'dog', e: '🐕', name: '강아지', at: 'floor', cozy: 15, price: 50000 },
+    { id: 'piano', e: '🎹', name: '피아노', at: 'floor', cozy: 12, price: 60000 },
+    { id: 'trophy', e: '🏆', name: '피자 트로피', at: 'floor', cozy: 20, price: 100000 },
   ];
+  const FURN_BY = Object.fromEntries(FURN.map(f => [f.id, f]));
+
+  // cols × rows = floor slots; the wall has one row of cols slots, some of them windows.
+  const HOUSES = [
+    { id: 'gosiwon', name: '고시원', price: 0, cols: 4, rows: 2, win: [1], view: 'city', base: 0, desc: '창문 하나 있는 작은 방' },
+    { id: 'rooftop', name: '옥탑방', price: 30000, cols: 5, rows: 2, win: [3], view: 'sunset', base: 4, desc: '노을이 보이는 옥상 방' },
+    { id: 'oneroom', name: '원룸', price: 90000, cols: 5, rows: 3, win: [1], view: 'sky', base: 8, desc: '햇빛 잘 드는 깔끔한 방' },
+    { id: 'apt', name: '아파트', price: 220000, cols: 6, rows: 3, win: [1, 4], view: 'skyline', base: 14, desc: '도시 야경이 보이는 높은 층' },
+    { id: 'house', name: '마당 있는 주택', price: 450000, cols: 6, rows: 4, win: [2, 3], view: 'garden', base: 22, desc: '창밖으로 나무와 꽃이 보여요' },
+    { id: 'villa', name: '바닷가 별장', price: 900000, cols: 7, rows: 4, win: [1, 3, 5], view: 'sea', base: 35, desc: '창밖으로 바다가 펼쳐져요' },
+  ];
+  const HOUSE_BY = Object.fromEntries(HOUSES.map(h => [h.id, h]));
+  const WALLS = [['cream', '크림'], ['mint', '민트'], ['sky', '하늘'], ['pink', '분홍'], ['lav', '라벤더'], ['stripe', '줄무늬'], ['dots', '물방울'], ['pizza', '체크']];
+  const FLOORS = [['wood', '원목'], ['dark', '진한 나무'], ['tile', '타일'], ['green', '초록 카펫'], ['pink', '분홍 카펫']];
+
+  const ACTS = [
+    { id: 'rest', e: '🛋️', name: '집에서 쉬기', h: 1, energy: 15, mood: 5, bonus: ['tv', 'sofa'], bonusMood: 5,
+      lines: ['이불 속에서 뒹굴뒹굴했어요.', '좋아하는 드라마를 한 편 봤어요.'] },
+    { id: 'walk', e: '🌳', name: '공원 산책', h: 1, energy: -3, mood: 12,
+      lines: ['공원 노을이 정말 예뻤어요.', '강아지랑 산책하는 사람들을 구경했어요.'] },
+    { id: 'gym', e: '🏋️', name: '헬스장 운동', h: 2, energy: -10, mood: 8, sleep: 25,
+      lines: ['땀을 흘리니 개운해요. 오늘 밤엔 푹 잘 것 같아요.'] },
+    { id: 'friend', e: '👫', name: '친구 만나기', h: 2, money: 10000, mood: 25,
+      lines: ['친구랑 떡볶이를 먹으며 수다를 떨었어요.', '노래방에서 신나게 불렀어요.'] },
+    { id: 'practice', e: '👩‍🍳', name: '요리 연습', h: 2, energy: -12, skill: 1,
+      lines: ['반죽을 더 얇게 펴는 법을 익혔어요.', '오븐 불 조절하는 감이 늘었어요.'] },
+    { id: 'gaming', e: '🕹️', name: '게임하기', h: 1, energy: -2, mood: 8, bonus: ['game'], bonusMood: 6,
+      lines: ['한 판만 하려다 세 판 했어요.', '드디어 어려운 판을 깼어요!'] },
+    { id: 'read', e: '📖', name: '책 읽기', h: 1, energy: 3, mood: 6, bonus: ['books'], bonusMood: 4,
+      lines: ['요리책을 읽다가 새 레시피가 떠올랐어요.', '재미있는 소설을 읽었어요.'] },
+    { id: 'snack', e: '🍜', name: '야식 먹기', h: 1, money: 5000, energy: 12, mood: 8,
+      lines: ['뜨끈한 라면 한 그릇!', '편의점 김밥이 이렇게 맛있다니.'] },
+  ];
+  const PLACES = [
+    { id: 'market', e: '🛒', name: '마트', sub: '새 재료 사기', shop: true },
+    { id: 'furniture', e: '🪑', name: '가구점', sub: '가구 사기', shop: true },
+    { id: 'realty', e: '🏠', name: '부동산', sub: '집 사기', shop: true },
+    { id: 'home', e: '🏡', name: '우리 집 꾸미기', sub: '' },
+  ];
+
   const PEOPLE = [
     { name: '민준', face: '🧒' }, { name: '서연', face: '👧' }, { name: '김 할머니', face: '👵' },
     { name: '박 사장님', face: '🧔' }, { name: '지우', face: '👩' }, { name: '도윤', face: '👦' },
     { name: '최 선생님', face: '🧑‍🏫' }, { name: '하린', face: '👱‍♀️' }, { name: '이 할아버지', face: '👴' },
     { name: '배달 기사님', face: '🧑‍🔧' }, { name: '수아', face: '👩‍🦱' }, { name: '건우', face: '🧑' },
+    { name: '소방관 아저씨', face: '🧑‍🚒' }, { name: '간호사 언니', face: '🧑‍⚕️' }, { name: '예린', face: '👩‍🦰' },
+    { name: '윤 교수님', face: '👨‍🦳' },
   ];
-  // Bake zones on the 0–100 gauge
-  const ZONES = [
-    { to: 40, label: '반죽이 날것이에요', short: '날것', pts: 0, cls: 'bad' },
-    { to: 58, label: '조금 덜 익었어요', short: '덜 익음', pts: 15, cls: '' },
-    { to: 76, label: '딱 좋게 구워졌어요', short: '딱 좋아요', pts: 30, cls: 'good' },
-    { to: 90, label: '조금 탔어요', short: '조금 탐', pts: 15, cls: '' },
-    { to: 101, label: '새까맣게 탔어요', short: '탔어요', pts: 0, cls: 'bad' },
-  ];
-  const zoneOf = v => ZONES.find(z => v < z.to);
 
   // ---------- helpers ----------
   const rand = Math.random;
   const randInt = (a, b) => a + Math.floor(rand() * (b - a + 1));
   const pick = arr => arr[Math.floor(rand() * arr.length)];
   const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
-  const won = n => n.toLocaleString('ko-KR');
+  const won = n => Math.round(n).toLocaleString('ko-KR');
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const signed = n => (n > 0 ? '+' : '−') + Math.abs(n);
+  const round100 = n => Math.round(n / 100) * 100;
+  function weighted(ids, wf) {
+    const ws = ids.map(wf), total = ws.reduce((s, w) => s + w, 0);
+    let r = rand() * total;
+    for (let i = 0; i < ids.length; i++) { r -= ws[i]; if (r <= 0) return ids[i]; }
+    return ids[ids.length - 1];
+  }
   function josa(word, withBatchim, without) {
     const c = word.charCodeAt(word.length - 1);
     if (c < 0xac00 || c > 0xd7a3) return word + without;
@@ -583,6 +989,7 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
     return d + 'Z';
   }
   function mix(stops, t) {
+    if (t <= stops[0][0]) return `rgb(${stops[0][1].join(',')})`;
     for (let i = 1; i < stops.length; i++) {
       if (t <= stops[i][0]) {
         const [t0, c0] = stops[i - 1], [t1, c1] = stops[i], k = (t - t0) / (t1 - t0);
@@ -593,7 +1000,12 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
   }
   const CRUST = [[0, [236, 210, 160]], [0.5, [226, 172, 100]], [0.67, [207, 136, 64]], [0.85, [146, 86, 40]], [1, [64, 36, 18]]];
   const DOUGH = [[0, [246, 228, 188]], [0.5, [240, 210, 150]], [0.67, [232, 190, 120]], [0.85, [176, 118, 62]], [1, [86, 52, 26]]];
-  const CHEESE = [[0, [252, 236, 168]], [0.5, [250, 214, 112]], [0.67, [244, 188, 72]], [0.85, [200, 132, 50]], [1, [104, 62, 26]]];
+  const CHEESE = {
+    mozza: [[0, [252, 236, 168]], [0.5, [250, 214, 112]], [0.67, [244, 188, 72]], [0.85, [200, 132, 50]], [1, [104, 62, 26]]],
+    cheddar: [[0, [250, 192, 92]], [0.5, [246, 168, 62]], [0.67, [234, 142, 42]], [0.85, [182, 102, 36]], [1, [96, 52, 20]]],
+  };
+  const SKY_TOP = [[18, [255, 150, 96]], [20, [130, 86, 168]], [22, [40, 46, 108]], [24, [14, 19, 50]]];
+  const SKY_BOT = [[18, [255, 210, 150]], [20, [238, 134, 108]], [22, [98, 72, 140]], [24, [40, 46, 92]]];
 
   // ---------- sound ----------
   let ac = null, muted = false;
@@ -620,53 +1032,150 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
     ding: () => { tone(1046, 0.3, 'sine', 0.18); tone(1318, 0.45, 'sine', 0.14, 0.12); },
     coin: () => { tone(988, 0.08, 'square', 0.06); tone(1319, 0.25, 'square', 0.06, 0.08); },
     fanfare: () => [523, 659, 784, 1046].forEach((f, i) => tone(f, 0.25, 'triangle', 0.14, i * 0.11)),
+    night: () => [784, 659, 523].forEach((f, i) => tone(f, 0.4, 'sine', 0.1, i * 0.18)),
   };
 
+  // ---------- save ----------
+  function defaultSave() {
+    return {
+      v: 2, day: 1, money: 0, energy: 80, mood: 60, skill: 0,
+      unlocked: ING.filter(i => !i.cost).map(i => i.id),
+      houses: ['gosiwon'], home: 'gosiwon', furn: { bed: 1 },
+      layouts: { gosiwon: { wall: 'cream', floor: 'wood', cells: { f4: 'bed' } } },
+      stage: 'work', hour: 18, sleepBonus: 0,
+      today: { idx: 0, revenue: 0, results: [] },
+      bestDay: 0, orderSeq: 0, totalPizzas: 0,
+    };
+  }
+  function normalize(s) {
+    const d = defaultSave();
+    if (!s || s.v !== 2) return d;
+    const out = Object.assign(d, s);
+    out.today = Object.assign({ idx: 0, revenue: 0, results: [] }, s.today || {});
+    out.unlocked = (s.unlocked || d.unlocked).filter(id => ING_BY[id]);
+    out.houses = (s.houses || ['gosiwon']).filter(id => HOUSE_BY[id]);
+    if (!out.houses.length) out.houses = ['gosiwon'];
+    if (!HOUSE_BY[out.home] || !out.houses.includes(out.home)) out.home = out.houses[0];
+    out.furn = s.furn || {};
+    out.layouts = s.layouts || {};
+    return out;
+  }
+  function loadSave() {
+    try { const raw = localStorage.getItem(SAVE_KEY); return raw ? normalize(JSON.parse(raw)) : null; }
+    catch (e) { return null; }
+  }
+  function persist() {
+    try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); } catch (e) { /* storage unavailable: the game still runs */ }
+  }
+  function layout(id) {
+    if (!S.layouts[id]) S.layouts[id] = { wall: 'cream', floor: 'wood', cells: {} };
+    if (!S.layouts[id].cells) S.layouts[id].cells = {};
+    return S.layouts[id];
+  }
+
   // ---------- state ----------
-  let phase = 'start';       // start | make | bake | result | end
-  let idx = 0;               // customer index within the day
-  let orderSeq = 0;
-  let revenue = 0;
-  let results = [];
+  let S = defaultSave();
+  let view = 'shop';
+  let phase = 'idle';        // idle | make | bake | result | dayend
   let order = null, person = null;
   let patience = 1, patienceSec = 50, moodLevel = 'high';
-  let bake = 0, bakeMs = 6200;
-  let tool = null;           // selected topping id
-  let pizza, hist;
-  let clearArmed = 0;
-  let people = shuffle(PEOPLE);
+  let bake = 0, bakeMs = 6200, zones = [];
+  let tool = null, pizza = null, hist = [], clearArmed = 0, trayPage = 'base';
+  let homeSel = null, homeTab = 'furn', storeKind = 'market';
+  const people = shuffle(PEOPLE);
 
   const el = {
     face: $('face'), custName: $('custName'), orderNo: $('orderNo'), price: $('price'), say: $('say'), chips: $('chips'),
     patience: $('patience'), patienceBar: $('patienceBar'), steps: $('steps').children, stage: $('stage'), svg: $('pizza'),
-    hint: $('hint'), tray: $('tray'), actions: $('actions'), undo: $('undoBtn'), clear: $('clearBtn'), bakeBtn: $('bakeBtn'),
+    hint: $('hint'), tray: $('tray'), trayBase: $('trayBase'), trayTop: $('trayTop'), tabBase: $('tabBase'), tabTop: $('tabTop'),
+    actions: $('actions'), undo: $('undoBtn'), clear: $('clearBtn'), bakeBtn: $('bakeBtn'),
     bakePanel: $('bakePanel'), bakeStatus: $('bakeStatus'), needle: $('needle'), gauge: $('gauge'), pull: $('pullBtn'),
-    custNo: $('custNo'), revenue: $('revenue'), ticket: $('ticket'),
+    ticket: $('ticket'), ctx: $('ctx'),
     lDough: $('lDough'), lSauce: $('lSauce'), lCheese: $('lCheese'), lTops: $('lTops'), ghost: $('ghost'),
     crust: $('crust'), doughIn: $('doughIn'), sauce: $('sauce'), cheese: $('cheese'), melt: $('melt'), spots: $('spots'), char: $('char'),
   };
 
+  // ---------- views + status ----------
+  function showView(v) {
+    view = v;
+    for (const id of ['shop', 'evening', 'store', 'home']) $('v-' + id).hidden = id !== v;
+    if (v === 'evening') renderEvening();
+    if (v === 'home') renderHome();
+    renderStatus();
+    window.scrollTo({ top: 0 });
+  }
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-back]');
+    if (b) { sfx.click(); showView(b.dataset.back); }
+  });
+  let lastMoney = 0;
+  function renderStatus() {
+    $('money').textContent = won(S.money);
+    if (S.money !== lastMoney) { const m = $('moneyStat'); m.classList.remove('bump'); void m.offsetWidth; m.classList.add('bump'); lastMoney = S.money; }
+    $('dayLbl').textContent = S.day + '일째';
+    for (const k of ['energy', 'mood']) {
+      $(k + 'Bar').style.width = S[k] + '%';
+      $(k + 'Num').textContent = Math.round(S[k]);
+      $(k + 'Meter').classList.toggle('low', S[k] < 25);
+    }
+    $('skillStars').textContent = '★'.repeat(S.skill) + '☆'.repeat(5 - S.skill);
+    const tired = S.energy < 25;
+    if (view === 'shop') {
+      const n = Math.min(DAY_LEN, S.today.idx + (phase === 'result' || phase === 'dayend' ? 0 : 1));
+      el.ctx.textContent = (tired ? '피곤해요 · ' : '') + `손님 ${n}/${DAY_LEN}`;
+      el.ctx.classList.toggle('tired', tired);
+    } else {
+      el.ctx.textContent = S.hour >= 24 ? '자정' : `${S.hour}:00`;
+      el.ctx.classList.remove('tired');
+    }
+  }
+  let toastTimer = 0;
+  function toast(msg, ms = 2600) {
+    const t = $('toast'); t.textContent = msg; t.classList.add('show');
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), ms);
+  }
+
   // ---------- tray ----------
-  el.tray.innerHTML = TRAY.map(t =>
-    `<button class="ing" type="button" data-id="${t.id}" aria-label="${t.name}">` +
-    `<svg viewBox="-16 -16 32 32" aria-hidden="true"><use href="#${t.icon}"/></svg>` +
-    `<span>${t.name}</span><em class="cnt"></em></button>`).join('');
-  const trayBtns = Object.fromEntries([...el.tray.children].map(b => [b.dataset.id, b]));
+  function buildTray() {
+    const base = ['dough', ...S.unlocked.filter(id => ING_BY[id].kind === 'sauce'), ...S.unlocked.filter(id => ING_BY[id].kind === 'cheese')];
+    const tops = ING.filter(i => i.kind === 'top' && S.unlocked.includes(i.id)).map(i => i.id);
+    const btn = id => {
+      const i = id === 'dough' ? { id: 'dough', name: '도우', kind: 'dough' } : ING_BY[id];
+      const icon = id === 'dough' ? '<svg viewBox="-16 -16 32 32" aria-hidden="true"><use href="#i-dough"/></svg>' : ingIcon(i);
+      const label = i.kind === 'sauce' || i.kind === 'cheese' ? `${i.name} ${kindName[i.kind]}` : i.name;
+      return `<button class="ing" type="button" data-id="${id}" aria-label="${label}">${icon}<span>${shortName(i)}</span><em class="cnt"></em></button>`;
+    };
+    el.trayBase.innerHTML = base.map(btn).join('');
+    el.trayTop.innerHTML = tops.map(btn).join('');
+    $('topCount').textContent = tops.length;
+  }
+  const trayBtn = id => el.tray.querySelector(`.ing[data-id="${id}"]`);
+  function setTrayPage(p) {
+    trayPage = p;
+    el.trayBase.hidden = p !== 'base'; el.trayTop.hidden = p !== 'top';
+    el.tabBase.setAttribute('aria-selected', String(p === 'base'));
+    el.tabTop.setAttribute('aria-selected', String(p === 'top'));
+  }
+  el.tabBase.addEventListener('click', () => { setTrayPage('base'); sfx.click(); });
+  el.tabTop.addEventListener('click', () => { setTrayPage('top'); sfx.click(); });
 
   el.tray.addEventListener('click', e => {
     const b = e.target.closest('.ing'); if (!b || b.disabled || phase !== 'make') return;
-    const item = TRAY.find(t => t.id === b.dataset.id);
-    if (item.kind === 'dough' && !pizza.dough) { pizza.dough = true; hist.push('dough'); sfx.pop(); }
-    else if (item.kind === 'sauce' && pizza.dough && !pizza.sauce) { pizza.sauce = item.id; hist.push('sauce'); sfx.splat(); }
-    else if (item.kind === 'cheese' && pizza.sauce && !pizza.cheese) { pizza.cheese = true; hist.push('cheese'); sfx.pop(); }
-    else if (item.kind === 'top' && pizza.cheese) { tool = tool === item.id ? null : item.id; sfx.click(); }
+    const id = b.dataset.id, kind = id === 'dough' ? 'dough' : ING_BY[id].kind;
+    if (kind === 'dough' && !pizza.dough) { pizza.dough = true; hist.push('dough'); sfx.pop(); }
+    else if (kind === 'sauce' && pizza.dough && !pizza.sauce) { pizza.sauce = id; hist.push('sauce'); sfx.splat(); }
+    else if (kind === 'cheese' && pizza.sauce && !pizza.cheese) {
+      pizza.cheese = id; hist.push('cheese'); sfx.pop();
+      setTimeout(() => { if (pizza.cheese) { setTrayPage('top'); render(); } }, 350);
+    }
+    else if (kind === 'top' && pizza.cheese) { tool = tool === id ? null : id; sfx.click(); }
     setHintWarn(false);
     render();
   });
 
   // ---------- pizza ----------
   function freshPizza() {
-    pizza = { dough: false, sauce: null, cheese: false, tops: [] };
+    pizza = { dough: false, sauce: null, cheese: null, tops: [] };
     hist = []; tool = null; bake = 0;
     el.lTops.textContent = '';
     el.sauce.setAttribute('d', blobPath(111, 3.2, 26));
@@ -674,16 +1183,17 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
     el.melt.textContent = ''; el.spots.textContent = '';
     for (let i = 0; i < 9; i++) el.melt.appendChild(ellipseAt(80, 5, 12, 2, 4));
     for (let i = 0; i < 16; i++) el.spots.appendChild(ellipseAt(90, 3, 8, 2, 6));
+    setTrayPage('base');
     paintBake();
   }
   function ellipseAt(maxR, rx0, rx1, ry0, ry1) {
     const a = rand() * Math.PI * 2, d = Math.sqrt(rand()) * maxR;
     const e = document.createElementNS(NS, 'ellipse');
-    e.setAttribute('cx', (150 + Math.cos(a) * d).toFixed(1));
-    e.setAttribute('cy', (150 + Math.sin(a) * d).toFixed(1));
+    const cx = (150 + Math.cos(a) * d).toFixed(1), cy = (150 + Math.sin(a) * d).toFixed(1);
+    e.setAttribute('cx', cx); e.setAttribute('cy', cy);
     e.setAttribute('rx', (rx0 + rand() * (rx1 - rx0)).toFixed(1));
     e.setAttribute('ry', (ry0 + rand() * (ry1 - ry0)).toFixed(1));
-    e.setAttribute('transform', `rotate(${Math.round(rand() * 180)} ${e.getAttribute('cx')} ${e.getAttribute('cy')})`);
+    e.setAttribute('transform', `rotate(${Math.round(rand() * 180)} ${cx} ${cy})`);
     return e;
   }
   function addPiece(type, x, y) {
@@ -706,8 +1216,8 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
     const t = bake / 100;
     el.crust.style.fill = mix(CRUST, t);
     el.doughIn.style.fill = mix(DOUGH, t);
-    el.cheese.style.fill = mix(CHEESE, t);
-    el.sauce.style.fill = pizza.sauce ? SAUCE[pizza.sauce].color : 'transparent';
+    el.cheese.style.fill = mix(CHEESE[pizza.cheese || 'mozza'], t);
+    el.sauce.style.fill = pizza.sauce ? ING_BY[pizza.sauce].color : 'transparent';
     el.melt.setAttribute('opacity', (0.55 * clamp(1 - t * 1.6, 0, 1)).toFixed(2));
     el.spots.setAttribute('opacity', (0.75 * clamp((t - 0.45) / 0.35, 0, 1)).toFixed(2));
     el.char.setAttribute('opacity', (0.6 * clamp((t - 0.8) / 0.2, 0, 1)).toFixed(2));
@@ -715,11 +1225,10 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
 
   function placeAt(x, y) {
     if (phase !== 'make') return;
-    if (!pizza.dough) { trayBtns.dough.click(); return; }
-    if (!pizza.cheese) { warn(!pizza.sauce ? '먼저 소스를 골라 발라요' : '먼저 치즈를 뿌려요'); return; }
-    if (!tool) { warn('아래 쟁반에서 토핑을 먼저 골라요'); return; }
-    const dx = x - 150, dy = y - 150;
-    if (Math.hypot(dx, dy) > 108) { warn('치즈 위에 올려 주세요'); return; }
+    if (!pizza.dough) { trayBtn('dough').click(); return; }
+    if (!pizza.cheese) { warn(!pizza.sauce ? '먼저 소스를 골라 발라요' : '먼저 치즈를 골라 뿌려요'); return; }
+    if (!tool) { warn('아래 쟁반에서 토핑을 먼저 골라요'); if (trayPage !== 'top') setTrayPage('top'); return; }
+    if (Math.hypot(x - 150, y - 150) > 108) { warn('치즈 위에 올려 주세요'); return; }
     if (pizza.tops.length >= 60) { warn('토핑이 너무 많아요'); return; }
     addPiece(tool, x, y); sfx.pop(); setHintWarn(false); render();
   }
@@ -748,7 +1257,7 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
     if (phase !== 'make' || !hist.length) return;
     const last = hist.pop();
     if (last === 'top') pizza.tops.pop().node.remove();
-    else if (last === 'cheese') pizza.cheese = false;
+    else if (last === 'cheese') { pizza.cheese = null; setTrayPage('base'); }
     else if (last === 'sauce') pizza.sauce = null;
     else if (last === 'dough') pizza.dough = false;
     if (!pizza.cheese) tool = null;
@@ -767,6 +1276,9 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
   el.bakeBtn.addEventListener('click', () => {
     if (phase !== 'make' || !pizza.cheese) return;
     phase = 'bake'; bake = 0; tool = null;
+    el.needle.style.left = '0%';
+    const a = zones[1].to, b = zones[2].to;
+    el.gauge.style.background = `linear-gradient(90deg, var(--line) 0 40%, var(--mustard-soft) 40% ${a}%, var(--basil) ${a}% ${b}%, var(--mustard) ${b}% 90%, var(--tomato) 90% 100%)`;
     el.stage.classList.add('baking');
     el.tray.hidden = true; el.actions.hidden = true; el.bakePanel.hidden = false;
     sfx.whoosh(); render(); el.pull.focus({ preventScroll: true });
@@ -777,32 +1289,51 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
     if (phase !== 'bake') return;
     phase = 'result';
     el.stage.classList.remove('baking');
-    const res = scorePizza();
-    results.push(res);
-    revenue += res.earn + res.tip;
-    el.revenue.textContent = won(revenue);
-    sfx.ding(); if (res.earn > 0) setTimeout(sfx.coin, 380);
-    showResult(res);
-    render();
+    const r = scorePizza();
+    S.money += r.earn + r.tip;
+    S.today.revenue += r.earn + r.tip;
+    S.today.results.push({ name: r.person.name, face: r.person.face, stars: r.stars, earn: r.earn, tip: r.tip });
+    S.today.idx++;
+    S.totalPizzas++;
+    S.energy = clamp(S.energy - 6, 0, 100);
+    S.mood = clamp(S.mood + [-5, -2, 1, 3][r.stars], 0, 100);
+    persist();
+    sfx.ding(); if (r.earn > 0) setTimeout(sfx.coin, 380);
+    showResult(r);
+    render(); renderStatus();
   }
 
   // ---------- scoring ----------
+  function makeZones() {
+    const w = 1.5 * S.skill;
+    zones = [
+      { to: 40, label: '반죽이 날것이에요', short: '날것', pts: 0, cls: 'bad' },
+      { to: 58 - w, label: '조금 덜 익었어요', short: '덜 익음', pts: 15, cls: '' },
+      { to: 76 + w, label: '딱 좋게 구워졌어요', short: '딱 좋아요', pts: 30, cls: 'good' },
+      { to: 90, label: '조금 탔어요', short: '조금 탐', pts: 15, cls: '' },
+      { to: 101, label: '새까맣게 탔어요', short: '탔어요', pts: 0, cls: 'bad' },
+    ];
+  }
+  const zoneOf = v => zones.find(z => v < z.to);
+  const tipMult = () => 0.5 + S.mood / 100;
+  const priceNow = () => round100(order.price * (1 + 0.04 * S.skill));
+
   function scorePizza() {
     const c = counts();
-    const sauceOk = pizza.sauce === order.sauce;
+    const sauceOk = pizza.sauce === order.sauce, cheeseOk = pizza.cheese === order.cheese;
     const want = Object.entries(order.toppings);
     let acc = 0;
     for (const [id, w] of want) acc += Math.max(0, 1 - Math.abs((c[id] || 0) - w) / w);
     acc /= want.length;
     const extras = Object.entries(c).filter(([id]) => !(id in order.toppings));
     const extraN = extras.reduce((s, [, n]) => s + n, 0);
-    const topPts = Math.max(0, Math.round(acc * 40) - extraN * 4);
+    const topPts = Math.max(0, Math.round(acc * 45) - extraN * 4);
     const zone = zoneOf(bake);
-    const total = (sauceOk ? 20 : 0) + 10 + topPts + zone.pts;
+    const total = (sauceOk ? 15 : 0) + (cheeseOk ? 10 : 0) + topPts + zone.pts;
     const stars = total >= 90 ? 3 : total >= 70 ? 2 : total >= 45 ? 1 : 0;
-    const earn = Math.round((order.price * total) / 100 / 100) * 100;
-    const tip = stars >= 2 ? Math.round((3000 * patience) / 500) * 500 : 0;
-    return { person, order, counts: c, sauce: pizza.sauce, sauceOk, acc, extras, zone, total, stars, earn, tip };
+    const earn = round100(priceNow() * total / 100);
+    const tip = stars >= 2 ? Math.round((3000 * patience * tipMult()) / 500) * 500 : 0;
+    return { person, order, counts: c, sauce: pizza.sauce, cheese: pizza.cheese, sauceOk, cheeseOk, extras, zone, total, stars, earn, tip };
   }
 
   const TITLES = ['이건 제 피자가 아니에요…', '음, 먹을 만해요', '맛있어요!', '완벽한 피자예요!'];
@@ -819,10 +1350,11 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
     [...$('resStars').children].forEach((s, i) => s.classList.toggle('lit', i < r.stars));
     const topLine = Object.entries(r.order.toppings).map(([id, w]) => {
       const n = r.counts[id] || 0;
-      return `<span class="${n === w ? 'good' : 'bad'}">${TOP[id].name} ${n}/${w}</span>`;
-    }).join(' · ') + (r.extras.length ? ' · ' + r.extras.map(([id, n]) => `<span class="bad">${TOP[id].name} ${n} 더 올림</span>`).join(' · ') : '');
+      return `<span class="${n === w ? 'good' : 'bad'}">${ING_BY[id].name} ${n}/${w}</span>`;
+    }).join(' · ') + (r.extras.length ? ' · ' + r.extras.map(([id, n]) => `<span class="bad">${ING_BY[id].name} ${n} 더 올림</span>`).join(' · ') : '');
     $('resLines').innerHTML = [
-      `<li><span>소스</span><span class="${r.sauceOk ? 'good' : 'bad'}">${r.sauceOk ? SAUCE[r.sauce].name + ' 소스 ✓' : SAUCE[r.order.sauce].name + ' 소스를 원했어요'}</span></li>`,
+      `<li><span>소스</span><span class="${r.sauceOk ? 'good' : 'bad'}">${r.sauceOk ? ING_BY[r.sauce].name + ' ✓' : ING_BY[r.order.sauce].name + ' 소스를 원했어요'}</span></li>`,
+      `<li><span>치즈</span><span class="${r.cheeseOk ? 'good' : 'bad'}">${r.cheeseOk ? ING_BY[r.cheese].name + ' ✓' : ING_BY[r.order.cheese].name + ' 치즈를 원했어요'}</span></li>`,
       `<li><span>토핑</span><span>${topLine}</span></li>`,
       `<li><span>굽기</span><span class="${r.zone.cls}">${r.zone.label}</span></li>`,
       `<li class="sum"><span>점수</span><span>${r.total}점</span></li>`,
@@ -830,122 +1362,141 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
     $('resEarn').textContent = won(r.earn) + '원';
     $('resTip').textContent = won(r.tip) + '원';
     $('resQuote').textContent = `“${pick(QUOTES[r.stars])}”`;
-    $('nextBtn').textContent = idx + 1 >= DAY_LEN ? '영업 마감하기' : '다음 손님 받기';
+    $('nextBtn').textContent = S.today.idx >= DAY_LEN ? '오늘 장사 마감' : '다음 손님 받기';
     openOv('resultOv');
   }
   $('nextBtn').addEventListener('click', () => {
     closeOv('resultOv');
-    idx++;
-    if (idx >= DAY_LEN) showEnd(); else { setupCustomer(); phase = 'make'; render(); }
+    if (S.today.idx >= DAY_LEN) showDayEnd(); else { setupCustomer(); phase = 'make'; render(); renderStatus(); }
   });
 
-  function readBest() { try { return JSON.parse(localStorage.getItem(BEST_KEY) || 'null'); } catch (e) { return null; } }
-  function writeBest(v) { try { localStorage.setItem(BEST_KEY, JSON.stringify(v)); } catch (e) { /* storage unavailable */ } }
-
-  function showEnd() {
-    phase = 'end';
-    const starSum = results.reduce((s, r) => s + r.stars, 0);
-    $('endTotal').textContent = won(revenue) + '원';
-    $('endStars').innerHTML = `별 <b>${starSum}</b> / ${DAY_LEN * 3}개`;
-    $('endLines').innerHTML = results.map(r =>
-      `<li><span>${r.person.face} ${r.person.name}</span><span>${'★'.repeat(r.stars)}${'☆'.repeat(3 - r.stars)} · ${won(r.earn + r.tip)}원</span></li>`).join('');
-    const best = readBest();
-    const isNew = !best || revenue > best.revenue;
-    if (isNew) writeBest({ revenue, stars: starSum });
-    $('endBest').innerHTML = isNew
-      ? `최고 기록 <b>${won(revenue)}원</b><span class="badge">새 기록</span>`
-      : `최고 기록 <b>${won(best.revenue)}원</b>`;
-    sfx.fanfare();
-    openOv('endOv');
+  function nextGoal() {
+    const next = HOUSES.find(h => !S.houses.includes(h.id));
+    if (!next) return '모든 집을 샀어요! 가구로 마음껏 꾸며 보세요.';
+    if (S.money >= next.price) return `지금 돈으로 <b>${josa(next.name, '을', '를')}</b> 살 수 있어요. 부동산에 가 보세요!`;
+    return `다음 집 <b>${next.name}</b>까지 <b>${won(next.price - S.money)}원</b> 남았어요.`;
   }
-  $('againBtn').addEventListener('click', () => { closeOv('endOv'); newDay(); phase = 'make'; render(); });
+
+  function showDayEnd() {
+    phase = 'dayend';
+    const res = S.today.results;
+    const starSum = res.reduce((s, r) => s + r.stars, 0);
+    const isBest = S.today.revenue > S.bestDay;
+    if (isBest) S.bestDay = S.today.revenue;
+    persist();
+    $('dayTitle').textContent = `${S.day}일째 장사 끝, 퇴근이에요!`;
+    $('dayStars').innerHTML = `별 <b>${starSum}</b> / ${DAY_LEN * 3}개 · 오늘 번 돈` + (isBest && S.day > 1 ? '<span class="badge">최고 기록</span>' : '');
+    $('dayTotal').textContent = won(S.today.revenue) + '원';
+    $('dayLines').innerHTML = res.map(r =>
+      `<li><span>${r.face} ${r.name}</span><span>${'★'.repeat(r.stars)}${'☆'.repeat(3 - r.stars)} · ${won(r.earn + r.tip)}원</span></li>`).join('');
+    $('dayWallet').innerHTML = `지갑 <b>${won(S.money)}원</b><br>${nextGoal()}`;
+    sfx.fanfare();
+    openOv('dayOv');
+    renderStatus();
+  }
+  $('offBtn').addEventListener('click', () => {
+    closeOv('dayOv');
+    S.stage = 'evening'; S.hour = 18; S.sleepBonus = 0; phase = 'idle';
+    persist(); sfx.click();
+    showView('evening');
+  });
 
   // ---------- customers ----------
   function makeOrder(i) {
-    const nTypes = i === 0 ? 1 : i < 3 ? 2 : i === 3 ? randInt(2, 3) : 3;
-    const types = shuffle(TOPS.map(t => t.id)).slice(0, nTypes);
+    const tops = S.unlocked.filter(id => ING_BY[id].kind === 'top');
+    const nTypes = Math.min(tops.length, i === 0 ? 1 : i < 3 ? 2 : i === 3 ? randInt(2, 3) : 3);
+    const pool = tops.slice(), types = [];
+    while (types.length < nTypes) {
+      const id = weighted(pool, x => (ING_BY[x].cost ? 2.2 : 1));
+      types.push(id); pool.splice(pool.indexOf(id), 1);
+    }
     const toppings = {};
     for (const id of types) toppings[id] = randInt(2, types.length >= 3 ? 4 : 5);
-    const sauce = rand() < 0.3 ? 'cream' : 'tomato';
-    const price = 9000 + types.length * 1500 + (sauce === 'cream' ? 1000 : 0);
-    return { sauce, toppings, price };
+    const sauces = S.unlocked.filter(id => ING_BY[id].kind === 'sauce');
+    const sauce = weighted(sauces, x => (x === 'tomato' ? 3 : ING_BY[x].cost ? 2 : 1.4));
+    const cheese = S.unlocked.includes('cheddar') && rand() < 0.35 ? 'cheddar' : 'mozza';
+    const price = 8000 + types.reduce((s, id) => s + ING_BY[id].add, 0) + ING_BY[sauce].add + ING_BY[cheese].add;
+    return { sauce, cheese, toppings, price };
   }
   function pizzaName(o) {
-    const names = Object.keys(o.toppings).map(id => TOP[id].name);
-    return (o.sauce === 'cream' ? '크림 ' : '') + (names.length >= 3 ? '콤비네이션' : names.join(' ')) + ' 피자';
+    const ids = Object.keys(o.toppings);
+    let base;
+    if (ids.includes('pineapple') && ids.includes('ham')) base = '하와이안';
+    else if (ids.length >= 3) base = '콤비네이션';
+    else base = ids.map(id => (id === 'shrimp' ? '쉬림프' : ING_BY[id].name)).join(' ');
+    const pre = o.sauce === 'tomato' ? '' : shortName(ING_BY[o.sauce]) + ' ';
+    return pre + (o.cheese === 'cheddar' ? '체다 ' : '') + base + ' 피자';
   }
   function orderLine() {
     const n = pizzaName(order);
     return pick([`${n} 하나 주세요!`, `${josa(n, '으로', '로')} 부탁해요.`, `오늘은 ${n} 먹고 싶어요.`]);
   }
   function setupCustomer() {
-    person = people[idx % people.length];
+    const idx = S.today.idx;
+    person = people[(S.day * DAY_LEN + idx) % people.length];
     order = makeOrder(idx);
-    orderSeq++;
+    S.orderSeq++;
+    const tired = S.energy < 25;
     patience = 1; moodLevel = 'high';
-    patienceSec = 55 - idx * 3;
-    bakeMs = 6200 - idx * 250;
+    patienceSec = (55 - idx * 3) / (tired ? 1.25 : 1);
+    bakeMs = (6200 - idx * 250) * (tired ? 0.8 : 1);
+    makeZones();
     el.face.textContent = person.face;
     el.custName.textContent = person.name;
-    el.orderNo.textContent = '#' + String(orderSeq).padStart(3, '0');
-    el.price.textContent = won(order.price) + '원';
+    el.orderNo.textContent = '#' + String(S.orderSeq).padStart(3, '0');
+    el.price.textContent = won(priceNow()) + '원';
     el.say.textContent = `“${orderLine()}”`;
-    el.custNo.textContent = idx + 1;
+    el.patienceBar.style.width = '100%'; el.patience.dataset.level = 'high';
     el.ticket.classList.remove('arrive'); void el.ticket.offsetWidth; el.ticket.classList.add('arrive');
     el.tray.hidden = false; el.actions.hidden = false; el.bakePanel.hidden = true;
     el.clear.textContent = '처음부터'; clearArmed = 0;
+    buildTray();
     freshPizza();
   }
-  function newDay() {
-    idx = 0; revenue = 0; results = []; people = shuffle(PEOPLE);
-    el.revenue.textContent = '0';
-    setupCustomer();
-  }
 
-  // ---------- render ----------
+  // ---------- shop render ----------
   function render() {
+    if (!pizza || !order) return;
     el.lDough.classList.toggle('on', pizza.dough);
     el.lSauce.classList.toggle('on', !!pizza.sauce);
-    el.lCheese.classList.toggle('on', pizza.cheese);
+    el.lCheese.classList.toggle('on', !!pizza.cheese);
     el.ghost.style.display = pizza.dough ? 'none' : '';
     paintBake();
 
-    const step = phase === 'bake' || phase === 'result' ? 4 : !pizza.dough ? 0 : !pizza.sauce ? 1 : !pizza.cheese ? 2 : 3;
+    const step = phase === 'bake' || phase === 'result' || phase === 'dayend' ? 4 : !pizza.dough ? 0 : !pizza.sauce ? 1 : !pizza.cheese ? 2 : 3;
     [...el.steps].forEach((li, i) => { li.className = i < step ? 'done' : i === step ? 'now' : ''; });
 
     const c = counts();
-    for (const t of TRAY) {
-      const b = trayBtns[t.id];
+    for (const b of el.tray.querySelectorAll('.ing')) {
+      const id = b.dataset.id, kind = id === 'dough' ? 'dough' : ING_BY[id].kind;
       let enabled = false, done = false;
-      if (t.kind === 'dough') { enabled = !pizza.dough; done = pizza.dough; }
-      else if (t.kind === 'sauce') { enabled = pizza.dough && !pizza.sauce; done = pizza.sauce === t.id; }
-      else if (t.kind === 'cheese') { enabled = !!pizza.sauce && !pizza.cheese; done = pizza.cheese; }
-      else enabled = pizza.cheese;
+      if (kind === 'dough') { enabled = !pizza.dough; done = pizza.dough; }
+      else if (kind === 'sauce') { enabled = pizza.dough && !pizza.sauce; done = pizza.sauce === id; }
+      else if (kind === 'cheese') { enabled = !!pizza.sauce && !pizza.cheese; done = pizza.cheese === id; }
+      else enabled = !!pizza.cheese;
       b.disabled = phase !== 'make' || !enabled;
       b.classList.toggle('done', done);
-      b.classList.toggle('on', tool === t.id);
-      b.classList.toggle('next', phase === 'make' && enabled && t.kind !== 'top' && t.kind !== 'sauce');
-      b.setAttribute('aria-pressed', t.kind === 'top' ? String(tool === t.id) : 'false');
-      if (t.kind === 'top') b.querySelector('.cnt').textContent = c[t.id] ? c[t.id] : '';
+      b.classList.toggle('on', tool === id);
+      b.classList.toggle('next', phase === 'make' && enabled && kind === 'dough');
+      if (kind === 'top') { b.setAttribute('aria-pressed', String(tool === id)); b.querySelector('.cnt').textContent = c[id] || ''; }
     }
 
-    // order chips
     const chips = [];
-    chips.push(chip(`${SAUCE[order.sauce].name} 소스`, pizza.sauce ? (pizza.sauce === order.sauce ? 'ok' : 'bad') : ''));
-    chips.push(chip('치즈', pizza.cheese ? 'ok' : ''));
+    chips.push(chip(`${ING_BY[order.sauce].name} 소스`, pizza.sauce ? (pizza.sauce === order.sauce ? 'ok' : 'bad') : ''));
+    chips.push(chip(`${ING_BY[order.cheese].name} 치즈`, pizza.cheese ? (pizza.cheese === order.cheese ? 'ok' : 'bad') : ''));
     let allTops = true;
     for (const [id, w] of Object.entries(order.toppings)) {
       const n = c[id] || 0;
       if (n !== w) allTops = false;
-      chips.push(chip(`${TOP[id].name} <b>${n}/${w}</b>`, n === w ? 'ok' : n > w ? 'bad' : ''));
+      chips.push(chip(`${ING_BY[id].name} <b>${n}/${w}</b>`, n === w ? 'ok' : n > w ? 'bad' : ''));
     }
-    for (const [id, n] of Object.entries(c)) if (!(id in order.toppings)) { allTops = false; chips.push(chip(`${TOP[id].name} ${n} · 주문에 없음`, 'bad')); }
+    for (const [id, n] of Object.entries(c)) if (!(id in order.toppings)) { allTops = false; chips.push(chip(`${ING_BY[id].name} ${n} · 주문에 없음`, 'bad')); }
     el.chips.innerHTML = chips.join('');
 
     el.undo.disabled = phase !== 'make' || !hist.length;
     el.clear.disabled = phase !== 'make' || !hist.length;
     el.bakeBtn.disabled = phase !== 'make' || !pizza.cheese;
-    const perfectBuild = pizza.cheese && allTops && pizza.sauce === order.sauce;
+    const perfectBuild = !!pizza.cheese && allTops && pizza.sauce === order.sauce && pizza.cheese === order.cheese;
     el.bakeBtn.classList.toggle('ready', phase === 'make' && perfectBuild);
     el.svg.classList.toggle('aim', phase === 'make' && !!tool);
 
@@ -955,37 +1506,280 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
       else if (phase !== 'make') h = '';
       else if (!pizza.dough) h = '도우를 눌러 반죽을 펴세요';
       else if (!pizza.sauce) h = '주문서를 보고 소스를 골라요';
-      else if (!pizza.cheese) h = '치즈를 뿌려요';
+      else if (!pizza.cheese) h = '주문서를 보고 치즈를 골라요';
       else if (perfectBuild) h = '주문대로 다 올렸어요. 오븐에 구워요!';
       else if (!tool) h = '토핑을 고른 뒤 피자를 눌러 올려요';
-      else h = `피자를 눌러 ${josa(TOP[tool].name, '을', '를')} 올려요`;
+      else h = `피자를 눌러 ${josa(ING_BY[tool].name, '을', '를')} 올려요`;
       el.hint.textContent = h;
     }
   }
   const chip = (html, cls) => `<li class="chip ${cls}">${html}</li>`;
+
+  // ---------- evening ----------
+  const shopsOpen = () => S.hour < 22;
+  const placed = id => Object.values(layout(S.home).cells).includes(id);
+  function actBlock(a) {
+    if (S.hour + a.h > 24) return '시간이 모자라요';
+    if (a.money && S.money < a.money) return '돈이 모자라요';
+    if (a.energy < 0 && S.energy + a.energy < 0) return '너무 피곤해요';
+    if (a.skill && S.skill >= 5) return '실력이 최고예요';
+    return '';
+  }
+  function actMeta(a) {
+    const parts = [`${a.h}시간`];
+    if (a.money) parts.push(`${won(a.money)}원`);
+    if (a.energy) parts.push(`체력 ${signed(a.energy)}`);
+    if (a.mood) parts.push(`기분 ${signed(a.mood)}`);
+    if (a.skill) parts.push('실력 +1');
+    if (a.sleep) parts.push(`잘 때 체력 +${a.sleep}`);
+    return parts.join(' · ');
+  }
+  function renderEvening() {
+    const h = S.hour, k = (h - 18) / 6;
+    $('sky').style.background = `linear-gradient(${mix(SKY_TOP, h)}, ${mix(SKY_BOT, h)})`;
+    $('twinkle').style.opacity = clamp((h - 20) / 3, 0, 1);
+    const orb = $('orb');
+    orb.className = 'orb ' + (h < 20 ? 'sun' : 'moon');
+    orb.style.right = (10 + k * 40) + '%';
+    orb.style.top = h < 20 ? (16 + (h - 18) * 30) + 'px' : '18px';
+    $('clock').textContent = `${h}:00`;
+    $('hoursLeft').textContent = h >= 24 ? '이제 잘 시간이에요' : `자정까지 ${24 - h}시간 남았어요`;
+    [...$('hours').children].forEach((i, n) => i.classList.toggle('used', n < h - 18));
+    $('goal').innerHTML = nextGoal();
+
+    $('acts').innerHTML = ACTS.map(a => {
+      const why = actBlock(a);
+      const extra = a.bonus && a.bonus.some(placed) ? ` · 집에 있는 가구 덕분에 기분 +${a.bonusMood} 더` : '';
+      return `<button class="act" type="button" data-act="${a.id}" ${why ? 'disabled' : ''}>` +
+        `<span class="act-e" aria-hidden="true">${a.e}</span><span class="act-t">${a.name}</span>` +
+        `<span class="act-m">${why ? why + ' · ' : ''}${actMeta(a)}${extra}</span></button>`;
+    }).join('');
+    const home = HOUSE_BY[S.home];
+    $('places').innerHTML = PLACES.map(p => {
+      const closed = p.shop && !shopsOpen();
+      const sub = p.id === 'home' ? `${home.name} · 아늑함 ${cozyScore()}` : closed ? '문 닫았어요' : p.sub;
+      return `<button class="act place" type="button" data-place="${p.id}" ${closed ? 'disabled' : ''}>` +
+        `<span class="act-e" aria-hidden="true">${p.e}</span><span class="act-t">${p.name}</span><span class="act-m">${sub}</span></button>`;
+    }).join('');
+    $('effects').innerHTML = [
+      `기분 ${Math.round(S.mood)}: 팁 ×${tipMult().toFixed(2)}`,
+      S.energy < 25 ? `체력 ${Math.round(S.energy)}: 피곤해서 오븐 바늘이 빨라지고 손님이 빨리 지쳐요` : `체력 ${Math.round(S.energy)}: 25 아래로 떨어지면 장사가 힘들어져요`,
+      S.skill ? `실력 ★${S.skill}: 딱 좋은 굽기 구간이 넓어지고 피자값 +${S.skill * 4}%` : '요리 연습을 하면 굽기가 쉬워지고 피자값이 올라요',
+    ].map(t => `<li>${t}</li>`).join('');
+    $('sleepBtn').textContent = h >= 24 ? '자정이에요, 이제 자요' : '잠자고 내일 영업하기';
+  }
+  $('acts').addEventListener('click', e => {
+    const b = e.target.closest('[data-act]'); if (!b || b.disabled) return;
+    const a = ACTS.find(x => x.id === b.dataset.act);
+    if (actBlock(a)) return;
+    let mood = a.mood || 0;
+    if (a.bonus && a.bonus.some(placed)) mood += a.bonusMood;
+    if (a.money) S.money -= a.money;
+    if (a.energy) S.energy = clamp(S.energy + a.energy, 0, 100);
+    if (mood) S.mood = clamp(S.mood + mood, 0, 100);
+    if (a.skill) S.skill = Math.min(5, S.skill + a.skill);
+    if (a.sleep) S.sleepBonus += a.sleep;
+    S.hour += a.h;
+    persist();
+    if (a.skill) sfx.fanfare(); else if (a.money) sfx.coin(); else sfx.ding();
+    const fx = [a.energy ? `체력 ${signed(a.energy)}` : '', mood ? `기분 ${signed(mood)}` : '', a.skill ? `실력 ★${S.skill}` : ''].filter(Boolean).join(', ');
+    toast(`${a.e} ${pick(a.lines)}${fx ? ' (' + fx + ')' : ''}`, 3200);
+    renderEvening(); renderStatus();
+    if (S.hour >= 24) setTimeout(goSleep, 1400);
+  });
+  $('places').addEventListener('click', e => {
+    const b = e.target.closest('[data-place]'); if (!b || b.disabled) return;
+    sfx.click();
+    if (b.dataset.place === 'home') { homeSel = null; showView('home'); }
+    else { renderStore(b.dataset.place); showView('store'); }
+  });
+  $('sleepBtn').addEventListener('click', goSleep);
+
+  function cozyScore(id = S.home) {
+    const L = layout(id);
+    return HOUSE_BY[id].base + Object.values(L.cells).reduce((s, f) => s + (FURN_BY[f] ? FURN_BY[f].cozy : 0), 0);
+  }
+  const sleepEnergy = cozy => 45 + Math.round(cozy * 0.6);
+  const sleepMood = cozy => Math.round(cozy * 0.25) - 6;
+
+  function goSleep() {
+    if (S.stage !== 'evening' || !$('sleepOv').hidden) return;
+    const cozy = cozyScore();
+    const eGain = sleepEnergy(cozy) + S.sleepBonus, mGain = sleepMood(cozy);
+    const e0 = S.energy, m0 = S.mood;
+    S.energy = clamp(S.energy + eGain, 0, 100);
+    S.mood = clamp(S.mood + mGain, 0, 100);
+    const lines = [
+      `<li><span>집 아늑함</span><span>${cozy}</span></li>`,
+      `<li><span>체력</span><span class="good">${Math.round(e0)} → ${Math.round(S.energy)}</span></li>`,
+      `<li><span>기분</span><span class="${S.mood >= m0 ? 'good' : 'bad'}">${Math.round(m0)} → ${Math.round(S.mood)}</span></li>`,
+    ];
+    if (S.sleepBonus) lines.splice(1, 0, `<li><span>운동한 덕분에</span><span class="good">체력 +${S.sleepBonus}</span></li>`);
+    $('sleepTitle').textContent = `${S.day}일째 밤, 잘 자요`;
+    $('sleepWhere').innerHTML = `<b>${HOUSE_BY[S.home].name}</b>에서 푹 잤어요.` + (mGain < 0 ? '<br>집을 더 아늑하게 꾸미면 자고 나서 기분도 좋아져요.' : '');
+    $('sleepLines').innerHTML = lines.join('');
+    S.day++; S.stage = 'work'; S.hour = 18; S.sleepBonus = 0; S.today = { idx: 0, revenue: 0, results: [] };
+    persist();
+    sfx.night();
+    openOv('sleepOv');
+  }
+  $('wakeBtn').addEventListener('click', () => {
+    closeOv('sleepOv');
+    showView('shop'); setupCustomer(); phase = 'make'; render(); renderStatus(); sfx.ding();
+  });
+
+  // ---------- stores ----------
+  function renderStore(kind) {
+    storeKind = kind;
+    const list = $('storeList');
+    if (kind === 'market') {
+      $('storeTitle').textContent = '마트';
+      $('storeSub').textContent = '새 재료를 사면 내일부터 쟁반에 생기고, 손님들이 그 재료로 주문해요. 비싼 재료일수록 피자값이 올라요.';
+      list.className = 'shop-grid';
+      list.innerHTML = ING.filter(i => i.cost).sort((a, b) => a.cost - b.cost).map(i => {
+        const own = S.unlocked.includes(i.id);
+        return `<div class="item">${ingIcon(i)}<span class="item-name">${i.name}</span>` +
+          `<span class="item-meta">${kindName[i.kind]} · 피자값 +${won(i.add)}원</span><span class="spacer"></span>` +
+          (own ? '<span class="owned-tag">샀어요</span>' : `<button class="btn primary small" type="button" data-buy="${i.id}">${won(i.cost)}원</button>`) + '</div>';
+      }).join('');
+    } else if (kind === 'furniture') {
+      $('storeTitle').textContent = '가구점';
+      $('storeSub').textContent = '가구를 놓으면 집이 아늑해져요. 아늑할수록 자고 나서 체력과 기분이 더 많이 차요.';
+      list.className = 'shop-grid';
+      list.innerHTML = FURN.map(f => {
+        const n = S.furn[f.id] || 0;
+        return `<div class="item"><span class="emo" aria-hidden="true">${f.e}</span><span class="item-name">${f.name}</span>` +
+          `<span class="item-meta">아늑함 +${f.cozy} · ${f.at === 'wall' ? '벽에 걸어요' : '바닥에 놓아요'}${n ? `<br>${n}개 있어요` : ''}</span><span class="spacer"></span>` +
+          `<button class="btn primary small" type="button" data-buy="${f.id}">${won(f.price)}원</button></div>`;
+      }).join('');
+    } else {
+      $('storeTitle').textContent = '부동산';
+      $('storeSub').textContent = '큰 집일수록 가구 놓을 칸이 많고 기본 아늑함이 높아요. 이사하면 가구는 상자에 담겨 따라와요.';
+      list.className = 'houses';
+      list.innerHTML = HOUSES.map(h => {
+        const own = S.houses.includes(h.id), here = S.home === h.id;
+        const action = here ? '<span class="owned-tag">지금 사는 곳</span>'
+          : own ? `<button class="btn ghost small" type="button" data-move="${h.id}">이 집으로 이사하기</button>`
+          : `<button class="btn primary small" type="button" data-buy="${h.id}">${won(h.price)}원에 사기</button>`;
+        return `<div class="house${here ? ' here' : ''}"><div class="thumb view-${h.view}" aria-hidden="true"></div><div class="house-body">` +
+          `<span class="item-name">${h.name}</span><span class="item-meta">${h.desc}<br>바닥 ${h.cols}×${h.rows}칸 · 벽 ${h.cols - h.win.length}칸 · 기본 아늑함 +${h.base}</span>${action}</div></div>`;
+      }).join('');
+    }
+  }
+  $('storeList').addEventListener('click', e => {
+    const buy = e.target.closest('[data-buy]'), move = e.target.closest('[data-move]');
+    if (move) { const h = HOUSE_BY[move.dataset.move]; moveTo(h.id); sfx.ding(); toast(`${josa(h.name, '으로', '로')} 이사했어요.`); renderStore('realty'); return; }
+    if (!buy) return;
+    const id = buy.dataset.buy;
+    const price = storeKind === 'market' ? ING_BY[id].cost : storeKind === 'furniture' ? FURN_BY[id].price : HOUSE_BY[id].price;
+    if (S.money < price) { sfx.bad(); toast(`돈이 ${won(price - S.money)}원 모자라요.`); return; }
+    S.money -= price;
+    if (storeKind === 'market') {
+      S.unlocked.push(id); sfx.coin();
+      toast(`${josa(ING_BY[id].name, '을', '를')} 샀어요. 내일부터 쟁반에 있어요!`);
+    } else if (storeKind === 'furniture') {
+      S.furn[id] = (S.furn[id] || 0) + 1; sfx.coin();
+      toast(`${FURN_BY[id].e} ${josa(FURN_BY[id].name, '을', '를')} 샀어요. 우리 집에서 놓아 보세요.`);
+    } else {
+      S.houses.push(id); moveTo(id); sfx.fanfare();
+      toast(`🎉 ${josa(HOUSE_BY[id].name, '을', '를')} 샀어요! 바로 이사했어요.`, 3400);
+    }
+    persist(); renderStore(storeKind); renderStatus();
+  });
+  function moveTo(id) {
+    layout(S.home).cells = {};
+    S.home = id; layout(id);
+    homeSel = null;
+    persist();
+  }
+
+  // ---------- home ----------
+  const available = id => (S.furn[id] || 0) - Object.values(layout(S.home).cells).filter(x => x === id).length;
+  function renderHome(popKey) {
+    const h = HOUSE_BY[S.home], L = layout(S.home);
+    $('homeTitle').textContent = `우리 집 · ${h.name}`;
+    const room = $('room');
+    room.style.setProperty('--cols', h.cols);
+    const cell = (key, at) => {
+      const it = L.cells[key], f = it && FURN_BY[it];
+      const target = !it && homeSel && FURN_BY[homeSel].at === at;
+      const label = f ? `${f.name}, 눌러서 치우기` : at === 'wall' ? '빈 벽' : '빈 바닥';
+      return `<button class="rcell${target ? ' target' : ''}${f ? ' has' : ''}${key === popKey ? ' pop' : ''}" type="button" data-cell="${key}" data-at="${at}" aria-label="${label}">${f ? f.e : ''}</button>`;
+    };
+    let wall = '';
+    for (let i = 0; i < h.cols; i++) wall += h.win.includes(i) ? `<div class="win view-${h.view}" aria-hidden="true"></div>` : cell('w' + i, 'wall');
+    let floor = '';
+    for (let i = 0; i < h.cols * h.rows; i++) floor += cell('f' + i, 'floor');
+    room.innerHTML = `<div class="wall wp-${L.wall}"><div class="wall-row">${wall}</div></div><div class="floor fl-${L.floor}"><div class="floor-grid">${floor}</div></div>`;
+    const cozy = cozyScore();
+    $('cozy').innerHTML = `아늑함 <b>${cozy}</b> · 자고 나면 체력 +${sleepEnergy(cozy)}, 기분 ${signed(sleepMood(cozy))}`;
+
+    document.querySelectorAll('[data-htab]').forEach(t => t.setAttribute('aria-selected', String(t.dataset.htab === homeTab)));
+    const panel = $('homePanel');
+    if (homeTab === 'furn') {
+      const owned = FURN.filter(f => S.furn[f.id]);
+      if (!owned.length) {
+        panel.innerHTML = `<div class="empty">가구가 없어요. 가구점에서 사 오세요.${shopsOpen() ? '<button class="btn primary small" type="button" data-go="furniture">가구점 가기</button>' : '<span>가구점은 22시에 닫아요. 내일 퇴근하고 가 보세요.</span>'}</div>`;
+      } else {
+        panel.innerHTML = '<div class="inv-grid">' + owned.map(f => {
+          const a = available(f.id);
+          return `<button class="inv${homeSel === f.id ? ' on' : ''}" type="button" data-inv="${f.id}" ${a <= 0 && homeSel !== f.id ? 'disabled' : ''} aria-pressed="${homeSel === f.id}">` +
+            `<span class="inv-e" aria-hidden="true">${f.e}</span><span>${f.name}</span><em>${f.at === 'wall' ? '벽' : '바닥'} · ${a}/${S.furn[f.id]}</em></button>`;
+        }).join('') + '</div>' + (shopsOpen() ? '<button class="text-btn" type="button" data-go="furniture">가구점에서 더 사기</button>' : '');
+      }
+      $('homeHint').textContent = homeSel
+        ? `${FURN_BY[homeSel].at === 'wall' ? '벽' : '바닥'}의 빈 칸을 눌러 ${josa(FURN_BY[homeSel].name, '을', '를')} 놓아요.`
+        : '가구를 고르고 빈 칸을 눌러 놓아요. 놓인 가구를 누르면 치워요.';
+    } else {
+      const list = homeTab === 'wall' ? WALLS : FLOORS, cur = homeTab === 'wall' ? L.wall : L.floor, pre = homeTab === 'wall' ? 'wp' : 'fl';
+      panel.innerHTML = '<div class="swatches">' + list.map(([id, name]) =>
+        `<button class="swatch ${pre}-${id}${cur === id ? ' on' : ''}" type="button" data-sw="${id}" aria-pressed="${cur === id}"><span>${name}</span></button>`).join('') + '</div>';
+      $('homeHint').textContent = homeTab === 'wall' ? '벽지는 공짜로 바꿀 수 있어요.' : '바닥도 공짜로 바꿀 수 있어요.';
+    }
+  }
+  document.querySelectorAll('[data-htab]').forEach(t => t.addEventListener('click', () => { homeTab = t.dataset.htab; homeSel = null; sfx.click(); renderHome(); }));
+  $('room').addEventListener('click', e => {
+    const c = e.target.closest('[data-cell]'); if (!c) return;
+    const L = layout(S.home), key = c.dataset.cell, at = c.dataset.at, it = L.cells[key];
+    if (it) { delete L.cells[key]; sfx.click(); persist(); renderHome(); toast(`${FURN_BY[it].e} ${josa(FURN_BY[it].name, '을', '를')} 치웠어요.`, 1600); return; }
+    if (!homeSel) { homeTab = 'furn'; renderHome(); sfx.bad(); toast('아래에서 가구를 먼저 골라요.', 1800); return; }
+    const f = FURN_BY[homeSel];
+    if (f.at !== at) { sfx.bad(); toast(`${josa(f.name, '은', '는')} ${f.at === 'wall' ? '벽에 걸어요' : '바닥에 놓아요'}.`, 1800); return; }
+    if (available(homeSel) <= 0) { homeSel = null; renderHome(); return; }
+    L.cells[key] = homeSel; sfx.pop();
+    if (available(homeSel) <= 0) homeSel = null;
+    persist(); renderHome(key);
+  });
+  $('homePanel').addEventListener('click', e => {
+    const inv = e.target.closest('[data-inv]'), sw = e.target.closest('[data-sw]'), go = e.target.closest('[data-go]');
+    if (go) { sfx.click(); renderStore(go.dataset.go); showView('store'); return; }
+    if (inv) { homeSel = homeSel === inv.dataset.inv ? null : inv.dataset.inv; sfx.click(); renderHome(); return; }
+    if (sw) { const L = layout(S.home); if (homeTab === 'wall') L.wall = sw.dataset.sw; else L.floor = sw.dataset.sw; sfx.click(); persist(); renderHome(); }
+  });
 
   // ---------- main loop: patience + oven ----------
   let lastT = 0;
   function loop(t) {
     const dt = Math.min(0.1, (t - (lastT || t)) / 1000);
     lastT = t;
-    if (phase === 'make' || phase === 'bake') {
+    if (view === 'shop' && (phase === 'make' || phase === 'bake')) {
       patience = Math.max(0, patience - dt / patienceSec);
       el.patienceBar.style.width = (patience * 100).toFixed(1) + '%';
       const lvl = patience > 0.5 ? 'high' : patience > 0.2 ? 'mid' : 'low';
       el.patience.dataset.level = lvl;
       if (lvl !== moodLevel) {
         moodLevel = lvl;
-        el.say.textContent = lvl === 'mid' ? '“배가 고파지기 시작했어요…”' : lvl === 'low' ? '“아직이에요? 너무 배고파요!”' : el.say.textContent;
+        if (lvl === 'mid') el.say.textContent = '“배가 고파지기 시작했어요…”';
+        if (lvl === 'low') el.say.textContent = '“아직이에요? 너무 배고파요!”';
       }
     }
-    if (phase === 'bake') {
+    if (view === 'shop' && phase === 'bake') {
       bake = Math.min(100, bake + (dt * 1000 / bakeMs) * 100);
       el.needle.style.left = bake.toFixed(1) + '%';
       el.gauge.setAttribute('aria-valuenow', Math.round(bake));
       const z = zoneOf(bake);
-      el.bakeStatus.textContent = z.pts === 30 ? '지금이에요!' : bake < 58 ? '굽는 중… ' + z.short : z.short + '!';
-      el.bakeStatus.style.color = z.pts === 30 ? 'var(--basil)' : bake >= 76 ? 'var(--tomato)' : '';
+      el.bakeStatus.textContent = z.pts === 30 ? '지금이에요!' : bake < zones[1].to ? '굽는 중… ' + z.short : z.short + '!';
+      el.bakeStatus.style.color = z.pts === 30 ? 'var(--basil)' : bake >= zones[2].to ? 'var(--tomato)' : '';
       paintBake();
       if (bake >= 100) pull();
     }
@@ -1004,30 +1798,61 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
   });
   document.addEventListener('pointerdown', () => audio(), { once: true });
 
-  $('startBtn').addEventListener('click', () => { audio(); closeOv('startOv'); phase = 'make'; sfx.ding(); render(); });
+  // ---------- title + boot ----------
+  function resumeWork() {
+    showView('shop');
+    if (S.today.idx >= DAY_LEN) showDayEnd();
+    else { phase = 'make'; render(); renderStatus(); }
+  }
+  function prepareBehind() {
+    lastMoney = S.money;
+    if (S.stage === 'evening') { phase = 'idle'; showView('evening'); }
+    else { showView('shop'); setupCustomer(); phase = 'idle'; render(); renderStatus(); }
+  }
+  $('startBtn').addEventListener('click', () => {
+    audio(); sfx.ding(); closeOv('startOv');
+    if (S.stage === 'evening') showView('evening'); else resumeWork();
+  });
+  let resetArmed = 0;
+  $('resetBtn').addEventListener('click', () => {
+    const b = $('resetBtn');
+    if (Date.now() - resetArmed > 3000) {
+      resetArmed = Date.now(); b.textContent = '한 번 더 누르면 기록이 모두 지워져요'; b.classList.add('armed');
+      setTimeout(() => { if (Date.now() - resetArmed >= 3000) { b.textContent = '처음부터 새로 하기'; b.classList.remove('armed'); } }, 3100);
+      return;
+    }
+    S = defaultSave(); persist();
+    b.hidden = true; $('saveInfo').hidden = true; $('startBtn').textContent = '가게 문 열기';
+    prepareBehind(); toast('새 게임을 준비했어요.');
+  });
 
-  // ---------- boot ----------
   function start(data) {
     data = data || {};
-    if (data.phase === 'play' && data.idx < DAY_LEN) {
-      idx = data.idx; revenue = data.revenue || 0; results = data.results || []; orderSeq = data.orderSeq || idx;
-      muted = !!data.muted; $('muteBtn').setAttribute('aria-pressed', String(muted));
-      el.revenue.textContent = won(revenue);
-      setupCustomer(); closeOv('startOv'); phase = 'make';
+    if (data.save) {
+      S = normalize(data.save);
+      closeOv('startOv');
+      prepareBehind();
+      if (S.stage === 'work') resumeWork();
+      else if (data.view === 'home') showView('home');
+      else if (data.view === 'store') { renderStore(data.storeKind || 'market'); showView('store'); }
     } else {
-      newDay();
-      const best = readBest();
-      if (best) { $('startBest').hidden = false; $('startBest').innerHTML = `최고 기록 <b>${won(best.revenue)}원</b>`; }
+      const saved = loadSave();
+      if (saved) S = saved;
+      const fresh = !saved || (S.day === 1 && S.today.idx === 0 && S.stage === 'work' && S.money === 0);
+      if (!fresh) {
+        $('saveInfo').hidden = false;
+        $('saveInfo').innerHTML = `<b>${S.day}일째</b> · 지갑 <b>${won(S.money)}원</b> · <b>${HOUSE_BY[S.home].name}</b>에 살아요` +
+          `<br>${S.stage === 'evening' ? '퇴근 후 저녁 시간부터 이어서 해요' : `오늘 손님 ${S.today.idx}/${DAY_LEN}명까지 받았어요`}`;
+        $('startBtn').textContent = '이어서 하기';
+        $('resetBtn').hidden = false;
+      }
+      prepareBehind();
     }
-    render();
     requestAnimationFrame(loop);
   }
   const hot = window.claude && window.claude.hot;
   if (hot && typeof hot.snapshot === 'function') {
-    hot.snapshot(() => (phase === 'start' || phase === 'end' ? {} : {
-      phase: 'play', idx: phase === 'result' ? idx + 1 : idx, revenue, orderSeq, muted,
-      results: results.map(r => ({ person: r.person, stars: r.stars, earn: r.earn, tip: r.tip })),
-    }));
+    hot.snapshot(() => ($('startOv').hidden ? { save: JSON.parse(JSON.stringify(S)), view, storeKind } : {}));
   }
   if (hot && typeof hot.ready === 'function') hot.ready(start); else start(hot && hot.data ? hot.data : {});
 })();
