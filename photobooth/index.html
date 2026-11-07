@@ -399,7 +399,7 @@ input[type=range]::-moz-range-thumb{width:26px;height:26px;border:0;border-radiu
     <div id="pager" class="glass">
       <button id="pgPrev" aria-label="이전 페이지"><svg class="i"><use href="#i-left"/></svg></button>
       <span class="pname" id="pgName">색감 효과</span>
-      <span class="dots"><i class="on"></i><i></i></span>
+      <span class="dots"><i class="on"></i><i></i><i></i></span>
       <button id="pgNext" aria-label="다음 페이지"><svg class="i"><use href="#i-right"/></svg></button>
     </div>
     <div id="controls" class="glass">
@@ -495,15 +495,25 @@ const FILTERS = [
   { name: 'Mirror',         ko: '데칼코마니' },
   { name: 'Light Tunnel',   ko: '빛 터널' },
   { name: 'Stretch',        ko: '스트레치' },
-  { name: 'Fisheye',        ko: '어안 렌즈' }
+  { name: 'Fisheye',        ko: '어안 렌즈' },
+  { name: 'Lovestruck',     ko: '하트 뿅뿅' },
+  { name: 'Dizzy',          ko: '빙글빙글 새' },
+  { name: 'Starry',         ko: '반짝 별' },
+  { name: 'Butterflies',    ko: '나비' },
+  { name: 'Crown',          ko: '왕관' },
+  { name: 'Bunny Ears',     ko: '토끼 귀' },
+  { name: 'Halo',           ko: '천사 링' },
+  { name: 'Sunglasses',     ko: '선글라스' }
 ];
 // 3x3 pages — Normal always sits in the middle tile (index 4)
 const PAGES = [
   [1, 2, 3, 4, 0, 5, 6, 7, 8],
-  [9, 10, 11, 12, 0, 13, 14, 15, 16]
+  [9, 10, 11, 12, 0, 13, 14, 15, 16],
+  [17, 18, 19, 20, 0, 21, 22, 23, 24]
 ];
-const PAGE_NAMES = ['색감 효과', '왜곡 효과'];
-const isDistortion = f => f >= 9;
+const PAGE_NAMES = ['색감 효과', '왜곡 효과', '스티커 효과'];
+const isDistortion = f => f >= 9 && f <= 16;
+const isSticker = f => f >= 17;
 const BLUR_FILTERS = new Set([3, 6]); // filters that read the blurred texture
 
 const PREF_KEY = 'pb-prefs-v1';
@@ -1058,7 +1068,7 @@ void main(){
   float f = u_filter;
   float m = 1.0;
   vec2 tuv = v_uv;
-  if (f > 8.5) tuv = distort(tuv, f, m);
+  if (f > 8.5 && f < 16.5) tuv = distort(tuv, f, m);
   vec2 buv = (tuv - 0.5) * u_crop + 0.5;
   vec3 c = B(buv);
   vec3 bl = L(buv);
@@ -1266,7 +1276,37 @@ const Track = {
   subj: { x: 0.5, y: 0.42, s: 0.13 },
   target: { x: 0.5, y: 0.5, z: 1 },
   cs: { x: 0.5, y: 0.5, z: 1 },
-  needed() { return S.center || S.portrait || S.studio; },
+  face: { x: 0.5, y: 0.42, w: 0.2, h: 0.26, eyes: null, alpha: 0, init: false },
+  faceRaw: null,
+  needed() { return S.center || S.portrait || S.studio || Stickers.inUse(); },
+  // MediaPipe face detector results (video pixel space → video uv)
+  applyFace(dets, vw, vh, now) {
+    let best = null, area = 0;
+    for (const d of dets || []) {
+      const b = d.boundingBox;
+      if (b && b.width * b.height > area) { area = b.width * b.height; best = d; }
+    }
+    if (!best) {
+      if (!this.lostAt) this.lostAt = now;
+      if (now - this.lostAt > 700) this.found = false;
+      return;
+    }
+    const b = best.boundingBox, kp = best.keypoints || [];
+    const cx = (b.originX + b.width / 2) / vw, cy = (b.originY + b.height / 2) / vh;
+    const w = b.width / vw, h = b.height / vh;
+    this.found = true;
+    this.lostAt = 0;
+    this.raw = { x: cx, y: cy, s: clamp(h / 3.4, 0.03, 0.3) };
+    this.faceRaw = { x: cx, y: cy, w, h, eyes: kp.length >= 2 ? [kp[0].x, kp[0].y, kp[1].x, kp[1].y] : null };
+  },
+  // video uv (y-down, unmirrored) → displayed base uv (y-up)
+  toBase(vx, vy, cover) {
+    const cs = this.cs;
+    let x = (vx - cs.x) * cs.z / cover[0] + 0.5;
+    const y = (vy - cs.y) * cs.z / cover[1] + 0.5;
+    if (S.mirror) x = 1 - x;
+    return [x, 1 - y];
+  },
   analyze(now) {
     const v = E.video;
     if (!v.videoWidth || now - this.last < 110) return;
@@ -1307,6 +1347,8 @@ const Track = {
       this.found = true;
       this.lostAt = 0;
       this.raw = { x: mx, y: clamp(my - vy * 0.35, 0.05, 0.95), s: clamp(vy, 0.05, 0.3) };
+      const fh = this.raw.s * 3.4;
+      this.faceRaw = { x: mx, y: this.raw.y, w: fh * 0.8 * (v.videoHeight / v.videoWidth), h: fh, eyes: null };
     } else {
       if (!this.lostAt) this.lostAt = now;
       if (now - this.lostAt > 1500) this.found = false;
@@ -1315,6 +1357,16 @@ const Track = {
   step(dt, cover) {
     const R = this.found ? this.raw : { x: 0.5, y: 0.42, s: 0.13 };
     const ks = 1 - Math.exp(-dt * 6);
+    const fr = this.faceRaw, F = this.face;
+    if (fr) {
+      const kf = F.init ? 1 - Math.exp(-dt * 14) : 1;
+      F.x += (fr.x - F.x) * kf; F.y += (fr.y - F.y) * kf;
+      F.w += (fr.w - F.w) * kf; F.h += (fr.h - F.h) * kf;
+      if (fr.eyes && F.eyes && F.init) for (let i = 0; i < 4; i++) F.eyes[i] += (fr.eyes[i] - F.eyes[i]) * kf;
+      else F.eyes = fr.eyes ? fr.eyes.slice() : null;
+      F.init = true;
+    }
+    F.alpha += ((this.found && fr ? 1 : 0) - F.alpha) * (1 - Math.exp(-dt * 7));
     this.subj.x += (R.x - this.subj.x) * ks;
     this.subj.y += (R.y - this.subj.y) * ks;
     this.subj.s += (R.s - this.subj.s) * ks;
@@ -1422,7 +1474,8 @@ const Grid = {
   open() {
     if (S.grid || this.anim || S.busy || S.recording) return;
     closePanel();
-    if (isDistortion(S.filter)) S.page = 1;
+    if (isSticker(S.filter)) S.page = 2;
+    else if (isDistortion(S.filter)) S.page = 1;
     else if (S.filter !== 0) S.page = 0;
     S.grid = true;
     this.computeArea();
@@ -1481,6 +1534,9 @@ function lerpRect(a, b, t) {
   return { x: lerp(a.x, b.x, t), y: lerp(a.y, b.y, t), w: lerp(a.w, b.w, t), h: lerp(a.h, b.h, t) };
 }
 
+/* Last rendered layout — the sticker layer maps the face into these tiles */
+const Scene = { tiles: [], cover: [1, 1], scissor: null };
+
 /* Assemble the frame description for the renderer */
 function drawScene(now, dt) {
   const cover = coverOf();
@@ -1521,6 +1577,13 @@ function drawScene(now, dt) {
     }
   }
   const needBlur = S.portrait || tiles.some(t => BLUR_FILTERS.has(t.filter));
+  const ba = GLR.W / GLR.H;
+  Scene.cover = cover;
+  Scene.scissor = scissor;
+  Scene.tiles = tiles.map(t => {
+    const ta = t.w / t.h;
+    return { x: t.x, y: t.y, w: t.w, h: t.h, filter: t.filter, crop: ta > ba ? [1, ba / ta] : [ta / ba, 1] };
+  });
   GLR.render({
     scale, scissor, tiles, needBlur, subj,
     cover, cs: [Track.cs.x, Track.cs.y, Track.cs.z],
@@ -1587,15 +1650,24 @@ const FX = {
     this.effects.push(this.make[type].call(this));
     if (this.effects.length > 6) this.effects.shift();
   },
-  frame(dt) {
+  frame(dt, now) {
     const ctx = this.ctx;
-    if (!this.effects.length) {
+    const stickers = Stickers.active();
+    if (!this.effects.length && !stickers) {
       if (this.dirty) { ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.clearRect(0, 0, this.W, this.H); this.dirty = false; }
       return;
     }
     dt = Math.min(dt, 0.05);
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, this.W, this.H);
+    if (stickers) {
+      ctx.save();
+      Stickers.draw(ctx, now / 1000);
+      ctx.restore();
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.globalAlpha = 1;
+      ctx.globalCompositeOperation = 'source-over';
+    }
     this.effects = this.effects.filter(e => e.update(dt));
     for (const e of this.effects) {
       ctx.save();
@@ -1607,7 +1679,7 @@ const FX = {
     }
     this.dirty = true;
   },
-  active() { return this.effects.length > 0; },
+  active() { return this.effects.length > 0 || Stickers.active(); },
   make: {}
 };
 
@@ -1964,6 +2036,299 @@ FX.make.lasers = function () {
 };
 
 /* =====================================================================
+   7b. Face stickers (Photo Booth "Lovestruck" / "Dizzy" style)
+       MediaPipe face detector when online, skin-tone tracker otherwise
+   ===================================================================== */
+const MP_BASE = 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.21';
+const MP_MODEL = 'https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_short_range/float16/1/blaze_face_short_range.tflite';
+const FaceAI = {
+  state: 'idle',            // idle | loading | ready | failed
+  det: null, delegate: 'GPU', last: 0, lastTs: 0, mp: null, files: null,
+  async create(delegate) {
+    this.delegate = delegate;
+    return this.mp.FaceDetector.createFromOptions(this.files, {
+      baseOptions: { modelAssetPath: MP_MODEL, delegate },
+      runningMode: 'VIDEO',
+      minDetectionConfidence: 0.5
+    });
+  },
+  async load() {
+    if (this.state !== 'idle') return;
+    this.state = 'loading';
+    try {
+      this.mp = await import(MP_BASE + '/vision_bundle.mjs');
+      this.files = await this.mp.FilesetResolver.forVisionTasks(MP_BASE + '/wasm');
+      try { this.det = await this.create('GPU'); }
+      catch (e) { this.det = await this.create('CPU'); }
+      this.state = 'ready';
+    } catch (e) {
+      console.warn('[face] detector unavailable — using the skin-tone tracker', e);
+      this.state = 'failed';
+    }
+  },
+  detect(now) {
+    if (this.state !== 'ready' || now - this.last < 66) return;
+    const v = E.video;
+    if (!(v.readyState >= 2) || !v.videoWidth) return;
+    this.last = now;
+    this.lastTs = Math.max(Math.round(now), this.lastTs + 1);   // timestamps must increase
+    try {
+      const res = this.det.detectForVideo(v, this.lastTs);
+      Track.applyFace(res && res.detections, v.videoWidth, v.videoHeight, now);
+    } catch (e) {
+      console.warn('[face] detect failed', e);
+      if (this.delegate === 'GPU') {
+        this.state = 'loading';
+        try { this.det.close(); } catch (err) { /* ignore */ }
+        this.create('CPU').then(d => { this.det = d; this.state = 'ready'; }, () => { this.state = 'failed'; });
+      } else {
+        this.state = 'failed';
+      }
+    }
+  }
+};
+
+function heartPath(ctx, s) {
+  ctx.beginPath();
+  ctx.moveTo(0, s * 0.32);
+  ctx.bezierCurveTo(-s * 0.62, -s * 0.06, -s * 0.36, -s * 0.58, 0, -s * 0.22);
+  ctx.bezierCurveTo(s * 0.36, -s * 0.58, s * 0.62, -s * 0.06, 0, s * 0.32);
+  ctx.closePath();
+}
+function drawHeart(ctx, s, color) {
+  heartPath(ctx, s);
+  const g = ctx.createRadialGradient(-s * 0.16, -s * 0.22, s * 0.03, 0, 0, s * 0.62);
+  g.addColorStop(0, '#ffffff');
+  g.addColorStop(0.18, color[0]);
+  g.addColorStop(1, color[1]);
+  ctx.fillStyle = g;
+  ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,0.55)';
+  ctx.beginPath();
+  ctx.ellipse(-s * 0.2, -s * 0.2, s * 0.07, s * 0.11, -0.6, 0, Math.PI * 2);
+  ctx.fill();
+}
+// little blue bird facing +x; flap ∈ [-1, 1]
+function drawBird(ctx, s, flap) {
+  const g = ctx.createLinearGradient(0, -s * 0.35, 0, s * 0.3);
+  g.addColorStop(0, '#7cc4ff'); g.addColorStop(1, '#2a78e0');
+  ctx.fillStyle = '#1f5fbf';
+  ctx.beginPath(); ctx.moveTo(-s * 0.34, -s * 0.02); ctx.lineTo(-s * 0.64, -s * 0.2); ctx.lineTo(-s * 0.58, s * 0.08); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = g;
+  ctx.beginPath(); ctx.ellipse(0, 0, s * 0.42, s * 0.29, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.beginPath(); ctx.arc(s * 0.3, -s * 0.15, s * 0.2, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = 'rgba(235,246,255,0.95)';
+  ctx.beginPath(); ctx.ellipse(s * 0.06, s * 0.11, s * 0.27, s * 0.14, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#ffb02e';
+  ctx.beginPath(); ctx.moveTo(s * 0.47, -s * 0.19); ctx.lineTo(s * 0.64, -s * 0.12); ctx.lineTo(s * 0.47, -s * 0.07); ctx.closePath(); ctx.fill();
+  ctx.fillStyle = '#fff';
+  ctx.beginPath(); ctx.arc(s * 0.35, -s * 0.2, s * 0.065, 0, Math.PI * 2); ctx.fill();
+  ctx.fillStyle = '#111';
+  ctx.beginPath(); ctx.arc(s * 0.37, -s * 0.2, s * 0.035, 0, Math.PI * 2); ctx.fill();
+  ctx.save();
+  ctx.translate(-s * 0.04, -s * 0.06);
+  ctx.rotate(-0.25 - flap * 0.75);
+  ctx.fillStyle = '#3b8cf0';
+  ctx.beginPath(); ctx.ellipse(-s * 0.12, 0, s * 0.26, s * 0.12, 0, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+}
+function spriteAt(ctx, ch, size, sx = 1, sy = 1) {
+  const b = size <= 72 ? 72 : size <= 144 ? 144 : size <= 288 ? 288 : 512;
+  const img = FX.sprite(ch, b), d = size / b * img.width;
+  ctx.save();
+  ctx.scale(sx, sy);
+  ctx.drawImage(img, -d / 2, -d / 2, d, d);
+  ctx.restore();
+}
+function roundRectPath(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+const HEART_COLORS = [['#ff8cc6', '#e8317a'], ['#8cc8ff', '#2f6fe0'], ['#ffa3d6', '#ff4f9a'], ['#d6a8ff', '#8a4fe0'], ['#ff9cb8', '#ff3366']];
+const Stickers = {
+  hintFilter: -1, hintSince: 0, hinted: false,
+  inUse() {
+    return isSticker(S.filter) || (S.grid && (S.page === 2 || (Grid.anim && Grid.anim.type === 'page' && Grid.anim.from === 2)));
+  },
+  active() {
+    return Track.face.alpha > 0.02 && Scene.tiles.some(t => isSticker(t.filter));
+  },
+  // a gentle nudge when a sticker is on but no face has been found yet
+  hint(now) {
+    if (!isSticker(S.filter) || S.grid) { this.hintFilter = -1; return; }
+    if (this.hintFilter !== S.filter) { this.hintFilter = S.filter; this.hintSince = now; this.hinted = false; }
+    if (!this.hinted && !Track.found && now - this.hintSince > 2500) {
+      this.hinted = true;
+      toast('얼굴이 화면에 잘 보이게 맞춰 주세요');
+    }
+  },
+  draw(ctx, t) {
+    const F = Track.face, cover = Scene.cover, H = GLR.H;
+    const sc = Scene.scissor;
+    for (const tile of Scene.tiles) {
+      if (!isSticker(tile.filter)) continue;
+      const map = (vx, vy) => {
+        const b = Track.toBase(vx, vy, cover);
+        const tx = (b[0] - 0.5) / tile.crop[0] + 0.5, ty = (b[1] - 0.5) / tile.crop[1] + 0.5;
+        return [tile.x + tx * tile.w, H - (tile.y + ty * tile.h)];
+      };
+      const c = map(F.x, F.y);
+      const l = map(F.x - F.w / 2, F.y), r = map(F.x + F.w / 2, F.y), top = map(F.x, F.y - F.h / 2);
+      const fw = Math.hypot(r[0] - l[0], r[1] - l[1]);
+      const fh = Math.hypot(top[0] - c[0], top[1] - c[1]) * 2;
+      if (fw < 4) continue;
+      let ang = 0, eyeMid = null, eyeDist = fw * 0.42;
+      if (F.eyes) {
+        let a = map(F.eyes[0], F.eyes[1]), b = map(F.eyes[2], F.eyes[3]);
+        if (a[0] > b[0]) { const tmp = a; a = b; b = tmp; }
+        ang = Math.atan2(b[1] - a[1], b[0] - a[0]);
+        eyeMid = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+        eyeDist = Math.hypot(b[0] - a[0], b[1] - a[1]);
+      }
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(tile.x, H - tile.y - tile.h, tile.w, tile.h);
+      if (sc) { ctx.clip(); ctx.beginPath(); ctx.rect(sc[0], H - sc[1] - sc[3], sc[2], sc[3]); }
+      ctx.clip();
+      ctx.translate(c[0], c[1]);
+      ctx.rotate(ang);
+      ctx.globalAlpha = F.alpha;
+      // eye line in the face's local frame
+      let eyeY = -fh * 0.12;
+      if (eyeMid) {
+        const dx = eyeMid[0] - c[0], dy = eyeMid[1] - c[1];
+        eyeY = -dx * Math.sin(ang) + dy * Math.cos(ang);
+      }
+      this.kind(ctx, tile.filter, fw, fh, eyeY, eyeDist, t, F.alpha);
+      ctx.restore();
+    }
+  },
+  orbit(ctx, n, fw, fh, t, speed, alpha, drawItem, size = 0.36) {
+    const cy = -fh * 0.98, rx = fw * 0.95, ry = fw * 0.22;
+    const items = [];
+    for (let i = 0; i < n; i++) {
+      const th = t * speed + (i / n) * Math.PI * 2;
+      items.push({ i, th, z: Math.sin(th) });
+    }
+    items.sort((a, b) => a.z - b.z);                    // far side first
+    for (const it of items) {
+      const x = Math.cos(it.th) * rx;
+      const y = cy + Math.sin(it.th) * ry + Math.sin(t * 3 + it.i) * fh * 0.025;
+      const k = 0.72 + 0.28 * (it.z + 1) / 2;
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.globalAlpha = alpha * (0.6 + 0.4 * (it.z + 1) / 2);
+      drawItem(it, fw * size * k, -Math.sin(it.th) * speed >= 0 ? 1 : -1);
+      ctx.restore();
+    }
+  },
+  kind(ctx, f, fw, fh, eyeY, eyeDist, t, alpha) {
+    if (f === 17) {                                       // Lovestruck
+      this.orbit(ctx, 7, fw, fh, t, 1.15, alpha, (it, s) => {
+        const beat = 1 + 0.08 * Math.sin(t * 9 + it.i);
+        ctx.rotate(Math.sin(t * 2 + it.i) * 0.2);
+        drawHeart(ctx, s * beat, HEART_COLORS[it.i % HEART_COLORS.length]);
+      });
+    } else if (f === 18) {                                // Dizzy birds
+      this.orbit(ctx, 5, fw, fh, t, 1.7, alpha, (it, s, dir) => {
+        ctx.scale(dir, 1);
+        drawBird(ctx, s, Math.sin(t * 16 + it.i * 1.3));
+      }, 0.42);
+    } else if (f === 19) {                                // Starry
+      this.orbit(ctx, 7, fw, fh, t, 1.3, alpha, (it, s) => {
+        ctx.rotate(t * 2 + it.i);
+        const tw = 0.85 + 0.15 * Math.sin(t * 10 + it.i * 2);
+        spriteAt(ctx, it.i % 3 === 1 ? '✨' : it.i % 3 === 2 ? '💫' : '⭐', s * tw);
+      });
+    } else if (f === 20) {                                // Butterflies
+      this.orbit(ctx, 5, fw, fh, t, 0.9, alpha, (it, s, dir) => {
+        ctx.rotate(Math.sin(t * 2.5 + it.i) * 0.3);
+        spriteAt(ctx, '🦋', s, dir * (0.45 + 0.55 * Math.abs(Math.sin(t * 11 + it.i))), 1);
+      }, 0.4);
+    } else if (f === 21) {                                // Crown
+      ctx.translate(0, -fh * 0.98 + Math.sin(t * 2.2) * fh * 0.015);
+      ctx.rotate(Math.sin(t * 1.7) * 0.04);
+      spriteAt(ctx, '👑', fw * 0.78);
+      ctx.globalCompositeOperation = 'lighter';
+      for (let i = 0; i < 3; i++) {
+        const a = (Math.sin(t * 4 + i * 2.1) + 1) / 2;
+        ctx.globalAlpha = alpha * a * 0.9;
+        ctx.save();
+        ctx.translate((i - 1) * fw * 0.28, -fw * 0.2 - i % 2 * fw * 0.06);
+        spriteAt(ctx, '✨', fw * 0.16);
+        ctx.restore();
+      }
+    } else if (f === 22) {                                // Bunny ears
+      const len = fh * 0.95, wid = fw * 0.2;
+      [-1, 1].forEach(side => {
+        ctx.save();
+        ctx.translate(side * fw * 0.22, -fh * 0.78);
+        ctx.rotate(side * (0.2 + Math.sin(t * 3 + side) * 0.06));
+        const g = ctx.createLinearGradient(-wid, 0, wid, 0);
+        g.addColorStop(0, '#e9e1ea'); g.addColorStop(0.5, '#ffffff'); g.addColorStop(1, '#e2d8e4');
+        ctx.fillStyle = g;
+        ctx.beginPath(); ctx.ellipse(0, -len * 0.5, wid, len * 0.5, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#ffb3cf';
+        ctx.beginPath(); ctx.ellipse(0, -len * 0.48, wid * 0.52, len * 0.4, 0, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+      });
+      ctx.fillStyle = 'rgba(255,120,160,0.28)';
+      [-1, 1].forEach(side => { ctx.beginPath(); ctx.ellipse(side * fw * 0.3, fh * 0.12, fw * 0.11, fw * 0.06, 0, 0, Math.PI * 2); ctx.fill(); });
+    } else if (f === 23) {                                // Halo
+      const y = -fh * 1.05 + Math.sin(t * 2) * fh * 0.02, rx = fw * 0.46, ry = fw * 0.11;
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.strokeStyle = `rgba(255,214,110,${0.35 * alpha})`;
+      ctx.lineWidth = fw * 0.1;
+      ctx.beginPath(); ctx.ellipse(0, y, rx, ry, 0, 0, Math.PI * 2); ctx.stroke();
+      const g = ctx.createLinearGradient(-rx, 0, rx, 0);
+      g.addColorStop(0, '#ffd56a'); g.addColorStop(0.5, '#fff6cf'); g.addColorStop(1, '#ffc23d');
+      ctx.strokeStyle = g;
+      ctx.lineWidth = fw * 0.04;
+      ctx.beginPath(); ctx.ellipse(0, y, rx, ry, 0, 0, Math.PI * 2); ctx.stroke();
+      for (let i = 0; i < 4; i++) {
+        const th = t * 1.4 + i * Math.PI / 2;
+        ctx.save();
+        ctx.translate(Math.cos(th) * rx, y + Math.sin(th) * ry);
+        ctx.globalAlpha = alpha * (0.5 + 0.5 * Math.sin(t * 6 + i));
+        spriteAt(ctx, '✨', fw * 0.13);
+        ctx.restore();
+      }
+    } else if (f === 24) {                                // Sunglasses
+      const lw = eyeDist * 0.92, lh = eyeDist * 0.62, gap = eyeDist * 0.1;
+      ctx.translate(0, eyeY + Math.sin(t * 2) * fh * 0.004);
+      ctx.strokeStyle = '#111';
+      ctx.lineWidth = eyeDist * 0.07;
+      ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(-gap / 2 - lw * 0.05, -lh * 0.28); ctx.quadraticCurveTo(0, -lh * 0.5, gap / 2 + lw * 0.05, -lh * 0.28); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(-gap / 2 - lw, -lh * 0.3); ctx.lineTo(-gap / 2 - lw - eyeDist * 0.18, -lh * 0.2); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(gap / 2 + lw, -lh * 0.3); ctx.lineTo(gap / 2 + lw + eyeDist * 0.18, -lh * 0.2); ctx.stroke();
+      [-1, 1].forEach(side => {
+        const x0 = side < 0 ? -gap / 2 - lw : gap / 2;
+        roundRectPath(ctx, x0, -lh / 2, lw, lh, lh * 0.38);
+        const g = ctx.createLinearGradient(0, -lh / 2, 0, lh / 2);
+        g.addColorStop(0, '#3a3a48'); g.addColorStop(1, '#07070b');
+        ctx.fillStyle = g;
+        ctx.fill();
+        ctx.lineWidth = eyeDist * 0.06;
+        ctx.stroke();
+        ctx.save();
+        ctx.clip();
+        ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+        ctx.lineWidth = lw * 0.12;
+        ctx.beginPath(); ctx.moveTo(x0 + lw * 0.2, lh * 0.5); ctx.lineTo(x0 + lw * 0.65, -lh * 0.5); ctx.stroke();
+        ctx.restore();
+      });
+    }
+  }
+};
+
+/* =====================================================================
    8. Library (IndexedDB, falls back to memory) + filmstrip + viewer
    ===================================================================== */
 const Library = {
@@ -2241,13 +2606,14 @@ const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2
    ===================================================================== */
 // Composite the live WebGL frame + reaction layer into a 2D context.
 // The preview is mirrored for the front camera; when "결과물 좌우 반전 저장" is off
-// the saved file is un-mirrored back to true orientation (reactions stay readable).
+// the saved file is un-mirrored back to true orientation. Both layers flip together
+// so face stickers stay on the face.
 function composeTo(ctx, w, h) {
   ctx.save();
   if (S.mirror && !S.mirrorOut) { ctx.translate(w, 0); ctx.scale(-1, 1); }
   ctx.drawImage(E.gl, 0, 0, w, h);
-  ctx.restore();
   if (FX.dirty || FX.active()) ctx.drawImage(E.fx, 0, 0, w, h);
+  ctx.restore();
 }
 function captureCanvas() {
   const c = document.createElement('canvas');
@@ -2700,11 +3066,16 @@ function loop(now) {
   if (GLR.ok && !GLR.lost) {
     if (Cam.ready) {
       GLR.upload(E.video);
-      if (Track.needed()) Track.analyze(now);
+      if (Track.needed()) {
+        if (FaceAI.state === 'idle') FaceAI.load();
+        if (FaceAI.state === 'ready') FaceAI.detect(now);
+        else Track.analyze(now);
+      }
     }
     if (GLR.hasFrame) drawScene(now, dt);
   }
-  FX.frame(dt);
+  FX.frame(dt, now);
+  Stickers.hint(now);
   if (S.recording) Recorder.draw();
 }
 
@@ -2744,7 +3115,7 @@ async function boot() {
 }
 
 // test / debugging hook (read-only snapshot + a few actions)
-window.PhotoBooth = { S, FILTERS, PAGES, Grid, FX, Library, Recorder, Cam, onShutter, syncUI, GLR };
+window.PhotoBooth = { S, FILTERS, PAGES, Grid, FX, Library, Recorder, Cam, onShutter, syncUI, GLR, Track, FaceAI };
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
 else boot();
