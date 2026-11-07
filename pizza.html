@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style id="standalone">
+  :root { padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+  body { margin: 0; }
+  [hidden] { display: none !important; }
+</style>
+<title>피자 공방</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#d1392e">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Gowun+Dodum&display=swap" rel="stylesheet">
+<style>
+/* Layout: one counter column on a gingham tablecloth: the order ticket on top, the pizza on its wooden board in the middle, the ingredient tray below. Wide screens put the board left and ticket + tray right. */
+:root {
+  --cloth: #f8f4ef;
+  --check: rgba(206, 52, 44, 0.13);
+  --panel: #fffdfa;
+  --line: #ead9c8;
+  --ink: #2d1f16;
+  --muted: #7b6553;
+  --tomato: #d1392e;
+  --tomato-deep: #9e2920;
+  --tomato-ink: #ffffff;
+  --tomato-soft: #fde3df;
+  --basil: #2e7a49;
+  --basil-soft: #dff1e4;
+  --mustard: #f0b429;
+  --mustard-soft: #fdf0cc;
+  --wood: #c88a4e;
+  --wood-dark: #8e5a2c;
+  --brick: #9c3b25;
+  --oven: #2a1a14;
+  --flame: #ff8a3d;
+  --shadow: rgba(80, 40, 10, 0.22);
+  --scrim: rgba(45, 22, 10, 0.45);
+  --f-display: 'Jua', 'Gowun Dodum', 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, sans-serif;
+  --f-body: 'Gowun Dodum', 'Apple SD Gothic Neo', 'Malgun Gothic', system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --cloth: #1b1310; --check: rgba(230, 80, 60, 0.11); --panel: #281d18; --line: #46342a;
+    --ink: #f7ede3; --muted: #bba693; --tomato: #ff6a58; --tomato-deep: #b8402f; --tomato-ink: #2a0d08;
+    --tomato-soft: #4a2320; --basil: #5fc487; --basil-soft: #1f3a29; --mustard: #f6c453; --mustard-soft: #3d3216;
+    --wood: #a8713f; --wood-dark: #6e4320; --brick: #7a2c1b; --oven: #120b08; --flame: #ff9a52;
+    --shadow: rgba(0, 0, 0, 0.5); --scrim: rgba(0, 0, 0, 0.62);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --cloth: #1b1310; --check: rgba(230, 80, 60, 0.11); --panel: #281d18; --line: #46342a;
+  --ink: #f7ede3; --muted: #bba693; --tomato: #ff6a58; --tomato-deep: #b8402f; --tomato-ink: #2a0d08;
+  --tomato-soft: #4a2320; --basil: #5fc487; --basil-soft: #1f3a29; --mustard: #f6c453; --mustard-soft: #3d3216;
+  --wood: #a8713f; --wood-dark: #6e4320; --brick: #7a2c1b; --oven: #120b08; --flame: #ff9a52;
+  --shadow: rgba(0, 0, 0, 0.5); --scrim: rgba(0, 0, 0, 0.62);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { min-height: 100%; }
+body {
+  margin: 0;
+  background-color: var(--cloth);
+  background-image:
+    repeating-linear-gradient(0deg, var(--check) 0 22px, transparent 22px 44px),
+    repeating-linear-gradient(90deg, var(--check) 0 22px, transparent 22px 44px);
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: 15px;
+  line-height: 1.45;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 12px 28px;
+  -webkit-tap-highlight-color: transparent;
+}
+button { font: inherit; color: inherit; touch-action: manipulation; }
+:focus-visible { outline: 3px solid var(--mustard); outline-offset: 2px; }
+
+.app { max-width: 480px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+
+/* Header */
+.bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.brand { display: flex; align-items: center; gap: 8px; font-family: var(--f-display); font-size: 24px; color: var(--tomato); letter-spacing: 0.5px; }
+.brand svg { width: 30px; height: 30px; flex: none; }
+.stats { display: flex; align-items: center; gap: 6px; }
+.stat {
+  font-family: var(--f-display); font-size: 14px; padding: 5px 11px; border-radius: 999px;
+  background: var(--panel); border: 1.5px solid var(--line); font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.stat b { font-weight: normal; color: var(--tomato); }
+.icon-btn {
+  width: 34px; height: 34px; border-radius: 50%; border: 1.5px solid var(--line); background: var(--panel);
+  display: grid; place-items: center; cursor: pointer; padding: 0;
+}
+.icon-btn svg { width: 18px; height: 18px; }
+.icon-btn .off { display: none; }
+.icon-btn[aria-pressed="true"] .on { display: none; }
+.icon-btn[aria-pressed="true"] .off { display: block; }
+
+.play { display: flex; flex-direction: column; gap: 12px; }
+
+/* Order ticket */
+.ticket {
+  display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: start;
+  background: var(--panel); border: 1.5px solid var(--line); border-radius: 16px;
+  padding: 12px 14px; box-shadow: 0 3px 0 var(--line);
+}
+.ticket.arrive { animation: arrive 0.45s cubic-bezier(.2, 1.3, .4, 1); }
+@keyframes arrive { from { transform: translateX(28px); opacity: 0; } to { transform: none; opacity: 1; } }
+.who { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 58px; }
+.face {
+  font-size: 32px; line-height: 1; width: 56px; height: 56px; border-radius: 50%;
+  background: var(--mustard-soft); display: grid; place-items: center;
+}
+.patience { width: 52px; height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; }
+.patience i { display: block; height: 100%; width: 100%; background: var(--basil); border-radius: inherit; }
+.patience[data-level="mid"] i { background: var(--mustard); }
+.patience[data-level="low"] i { background: var(--tomato); }
+.order { min-width: 0; }
+.order-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.order-head h2 { margin: 0; font-family: var(--f-display); font-weight: normal; font-size: 16px; }
+.order-no { color: var(--muted); font-size: 12px; margin-left: 4px; font-variant-numeric: tabular-nums; }
+.price { font-family: var(--f-display); color: var(--tomato); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.say { margin: 1px 0 8px; color: var(--muted); font-size: 14px; }
+.chips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  font-size: 13px; padding: 3px 9px; border-radius: 8px; background: var(--cloth);
+  border: 1.5px dashed var(--line); font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.chip b { font-weight: normal; font-family: var(--f-display); }
+.chip.ok { background: var(--basil-soft); border: 1.5px solid transparent; color: var(--basil); }
+.chip.ok::before { content: "✓ "; }
+.chip.bad { background: var(--tomato-soft); border: 1.5px solid transparent; color: var(--tomato); }
+
+/* Steps */
+.board-area { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.steps { list-style: none; margin: 0; padding: 0; display: flex; gap: 5px; justify-content: center; flex-wrap: wrap; counter-reset: step; }
+.steps li {
+  counter-increment: step; font-family: var(--f-display); font-size: 13px; padding: 3px 10px; border-radius: 999px;
+  background: var(--panel); border: 1.5px solid var(--line); color: var(--muted);
+}
+.steps li::before { content: counter(step) " "; opacity: 0.7; }
+.steps li.done { color: var(--basil); background: var(--basil-soft); border-color: transparent; }
+.steps li.done::before { content: "✓ "; opacity: 1; }
+.steps li.now { background: var(--tomato); color: var(--tomato-ink); border-color: var(--tomato); }
+
+/* Stage: board + oven */
+.stage {
+  position: relative; width: min(100%, 370px, 48vh); aspect-ratio: 1; max-width: 100%;
+  display: grid; place-items: center;
+}
+.oven {
+  position: absolute; inset: -6px; border-radius: 50% 50% 22px 22px / 42% 42% 22px 22px;
+  background: radial-gradient(70% 45% at 50% 100%, var(--flame), transparent 72%), var(--oven);
+  box-shadow: inset 0 0 0 9px var(--brick), inset 0 0 50px rgba(0, 0, 0, 0.55);
+  opacity: 0; transform: scale(0.94); transition: opacity 0.35s, transform 0.35s;
+  pointer-events: none;
+}
+.oven::after {
+  content: ""; position: absolute; inset: 9px; border-radius: inherit;
+  background: radial-gradient(55% 30% at 50% 100%, var(--flame), transparent 75%);
+  opacity: 0.6; animation: flicker 0.9s ease-in-out infinite alternate;
+}
+@keyframes flicker { from { opacity: 0.35; } to { opacity: 0.85; } }
+.stage.baking .oven { opacity: 1; transform: none; }
+#pizza {
+  position: relative; width: 94%; height: auto; display: block; touch-action: manipulation;
+  filter: drop-shadow(0 8px 12px var(--shadow)); transition: transform 0.35s;
+}
+#pizza.aim { cursor: crosshair; }
+#pizza { border-radius: 50%; }
+#pizza:focus:not(:focus-visible) { outline: none; }
+.stage.baking #pizza { transform: scale(0.84); }
+#pizza.shake { animation: shake 0.3s; }
+@keyframes shake { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+
+.wood { fill: var(--wood); }
+.grain { stroke: var(--wood-dark); fill: none; opacity: 0.28; stroke-width: 1.4; }
+.board-rim { fill: none; stroke: var(--wood-dark); stroke-width: 3; opacity: 0.5; }
+.ghost { fill: none; stroke: var(--wood-dark); stroke-width: 2.5; stroke-dasharray: 9 9; opacity: 0.55; }
+.layer { opacity: 0; transform: scale(0.35); transform-origin: 150px 150px; transition: transform 0.4s cubic-bezier(.2, 1.4, .4, 1), opacity 0.2s; }
+.layer.on { opacity: 1; transform: none; }
+.drop { animation: drop 0.28s cubic-bezier(.3, 1.6, .5, 1); }
+@keyframes drop { from { transform: scale(1.9); opacity: 0; } to { transform: none; opacity: 1; } }
+
+.hint { margin: 0; min-height: 1.45em; text-align: center; color: var(--muted); font-size: 14px; }
+.hint.warn { color: var(--tomato); }
+
+/* Tray */
+.controls { display: flex; flex-direction: column; gap: 10px; }
+.tray { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 7px; }
+.ing {
+  position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px;
+  padding: 8px 2px 6px; border-radius: 14px; background: var(--panel); border: 2px solid var(--line);
+  cursor: pointer; box-shadow: 0 3px 0 var(--line); transition: transform 0.08s, box-shadow 0.08s;
+}
+.ing svg { width: 32px; height: 32px; }
+.ing span { font-size: 12.5px; white-space: nowrap; }
+.ing:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 1px 0 var(--line); }
+.ing:disabled { opacity: 0.35; cursor: not-allowed; }
+.ing.done { opacity: 0.55; }
+.ing.done::after {
+  content: "✓"; position: absolute; top: 3px; right: 6px; font-family: var(--f-display); color: var(--basil); font-size: 13px;
+}
+.ing.on { border-color: var(--tomato); background: var(--tomato-soft); box-shadow: 0 3px 0 var(--tomato); }
+.ing.next { animation: nudge 1.2s ease-in-out infinite; }
+@keyframes nudge { 50% { transform: translateY(-3px); } }
+.ing .cnt {
+  position: absolute; top: -7px; right: -5px; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 10px;
+  background: var(--tomato); color: var(--tomato-ink); font-style: normal; font-family: var(--f-display);
+  font-size: 12px; line-height: 20px; text-align: center; font-variant-numeric: tabular-nums;
+}
+.ing .cnt:empty { display: none; }
+
+.actions { display: grid; grid-template-columns: 1fr 1fr 1.6fr; gap: 8px; }
+.btn {
+  font-family: var(--f-display); font-size: 17px; border-radius: 14px; padding: 11px 10px;
+  border: 2px solid transparent; cursor: pointer; transition: transform 0.08s, box-shadow 0.08s; white-space: nowrap;
+}
+.btn.primary { background: var(--tomato); color: var(--tomato-ink); box-shadow: 0 4px 0 var(--tomato-deep); }
+.btn.ghost { background: var(--panel); border-color: var(--line); color: var(--ink); box-shadow: 0 4px 0 var(--line); font-size: 15px; }
+.btn:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 1px 0 var(--tomato-deep); }
+.btn.ghost:active:not(:disabled) { box-shadow: 0 1px 0 var(--line); }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn.big { width: 100%; font-size: 20px; padding: 13px; }
+.btn.ready { animation: nudge 1.2s ease-in-out infinite; }
+
+/* Bake panel */
+.bake-panel { display: flex; flex-direction: column; gap: 10px; }
+.bake-status { margin: 0; text-align: center; font-family: var(--f-display); font-size: 18px; }
+.gauge-wrap { position: relative; padding-top: 6px; }
+.gauge {
+  position: relative; height: 22px; border-radius: 11px; border: 2px solid var(--line);
+  background: linear-gradient(90deg, var(--line) 0 40%, var(--mustard-soft) 40% 58%, var(--basil) 58% 76%, var(--mustard) 76% 90%, var(--tomato) 90% 100%);
+}
+.needle {
+  position: absolute; top: -8px; bottom: -8px; width: 6px; margin-left: -3px; left: 0;
+  background: var(--ink); border-radius: 3px; box-shadow: 0 0 0 2px var(--panel);
+}
+.gauge-labels { position: relative; height: 18px; margin-top: 8px; font-size: 12.5px; color: var(--muted); }
+.gauge-labels span { position: absolute; transform: translateX(-50%); white-space: nowrap; }
+.gauge-labels .perfect { color: var(--basil); font-family: var(--f-display); }
+
+/* Overlays */
+.overlay {
+  position: fixed; inset: 0; z-index: 30; background: var(--scrim);
+  display: flex; align-items: flex-end; justify-content: center;
+  padding-left: max(10px, env(safe-area-inset-left, 0px)); padding-right: max(10px, env(safe-area-inset-right, 0px));
+}
+.overlay.center { align-items: center; padding-block: 16px; }
+.sheet {
+  width: 100%; max-width: 440px; max-height: 90%; overflow: auto; background: var(--panel); color: var(--ink);
+  border-radius: 22px 22px 0 0; padding: 20px 20px calc(20px + env(safe-area-inset-bottom, 0px));
+  box-shadow: 0 -6px 30px var(--shadow); animation: sheet-up 0.35s cubic-bezier(.2, 1.2, .4, 1);
+}
+.overlay.center .sheet { border-radius: 22px; padding-bottom: 22px; }
+@keyframes sheet-up { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+.sheet h2 { margin: 0; font-family: var(--f-display); font-weight: normal; font-size: 26px; text-align: center; text-wrap: balance; }
+.res-who { margin: 0 0 2px; text-align: center; color: var(--muted); font-size: 14px; }
+.stars { display: flex; justify-content: center; gap: 6px; margin: 6px 0 10px; font-size: 38px; line-height: 1; }
+.stars span { color: var(--line); }
+.stars span.lit { color: var(--mustard); animation: star-pop 0.4s cubic-bezier(.2, 1.8, .4, 1) both; }
+.stars span.lit:nth-child(2) { animation-delay: 0.12s; }
+.stars span.lit:nth-child(3) { animation-delay: 0.24s; }
+@keyframes star-pop { from { transform: scale(0.2); } to { transform: none; } }
+.lines { list-style: none; margin: 0 0 12px; padding: 0; }
+.lines li { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-bottom: 1.5px dashed var(--line); font-variant-numeric: tabular-nums; }
+.lines li span:first-child { color: var(--muted); flex: none; }
+.lines li span:last-child { text-align: right; }
+.lines li.sum { border-bottom: none; font-family: var(--f-display); font-size: 17px; }
+.lines .good { color: var(--basil); }
+.lines .bad { color: var(--tomato); }
+.earn { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+.earn div { background: var(--mustard-soft); border-radius: 12px; padding: 8px 12px; display: flex; flex-direction: column; }
+.earn small { color: var(--muted); font-size: 12.5px; }
+.earn b { font-family: var(--f-display); font-weight: normal; font-size: 20px; font-variant-numeric: tabular-nums; }
+.quote { margin: 0 0 14px; text-align: center; font-size: 15px; }
+
+.start-art { display: block; width: 132px; height: 132px; margin: 0 auto 8px; animation: spin-in 0.8s cubic-bezier(.2, 1.2, .4, 1); }
+@keyframes spin-in { from { transform: rotate(-120deg) scale(0.5); opacity: 0; } to { transform: none; opacity: 1; } }
+.start-title { font-size: 40px !important; color: var(--tomato); letter-spacing: 1px; }
+.lede { margin: 4px 0 14px; text-align: center; color: var(--muted); }
+.howto { margin: 0 0 14px; padding: 12px 14px 12px 34px; background: var(--cloth); border-radius: 14px; display: flex; flex-direction: column; gap: 4px; }
+.howto li::marker { font-family: var(--f-display); color: var(--tomato); }
+.best { margin: 0 0 12px; text-align: center; font-size: 14px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.best b { color: var(--ink); font-weight: normal; font-family: var(--f-display); }
+.total { text-align: center; margin: 6px 0 2px; font-family: var(--f-display); font-size: 40px; color: var(--tomato); font-variant-numeric: tabular-nums; }
+.badge { display: inline-block; margin-left: 6px; padding: 1px 8px; border-radius: 999px; background: var(--mustard); color: var(--oven); font-size: 12px; font-family: var(--f-display); vertical-align: middle; }
+
+/* Wide screens */
+@media (min-width: 860px) {
+  .app { max-width: 920px; }
+  .play { display: grid; grid-template-columns: 1fr 380px; grid-template-rows: auto 1fr; grid-template-areas: "board ticket" "board controls"; align-items: start; gap: 16px 28px; }
+  .ticket { grid-area: ticket; }
+  .board-area { grid-area: board; }
+  .controls { grid-area: controls; }
+  .stage { width: min(100%, 480px, 70vh); }
+  .overlay { align-items: center; }
+  .sheet { border-radius: 22px; padding-bottom: 22px; }
+}
+@media (max-width: 360px) {
+  .ing span { font-size: 11px; }
+  .btn { font-size: 15px; }
+  .brand { font-size: 21px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- Ingredient drawings, shared by the pizza, the tray and the start card -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <g id="t-pepperoni">
+      <circle r="12.5" fill="#a92a22"/><circle r="10.5" fill="#c83c2e"/>
+      <circle cx="-4" cy="-3.5" r="1.8" fill="#e8705a"/><circle cx="4.5" cy="1.5" r="1.5" fill="#8a1f19"/>
+      <circle cx="-1.5" cy="5" r="1.3" fill="#8a1f19"/><circle cx="3" cy="-5.5" r="1.1" fill="#8a1f19"/>
+    </g>
+    <g id="t-mushroom">
+      <g transform="translate(0 -2)">
+        <path d="M-12.5 2 C-12.5 -10 12.5 -10 12.5 2 Q0 4.5 -12.5 2 Z" fill="#e6d3b5" stroke="#8f6a45" stroke-width="1.6" stroke-linejoin="round"/>
+        <path d="M-4.2 2.6 C-4.6 6 -4.4 9 -3.6 11 L3.6 11 C4.4 9 4.6 6 4.2 2.6 Z" fill="#f1e6d2" stroke="#8f6a45" stroke-width="1.6" stroke-linejoin="round"/>
+        <path d="M-8 -2 Q0 -6 8 -2" fill="none" stroke="#c7ad88" stroke-width="1.2"/>
+      </g>
+    </g>
+    <g id="t-pepper">
+      <path d="M0 -11.5 C5 -12 8 -9 10.5 -5 C13 0 11 6 7 9.5 C4 12 -1 12 -4 10 C-9 8 -12 3 -11 -3 C-10 -8 -5 -11.5 0 -11.5 Z" fill="none" stroke="#2c8a3a" stroke-width="3.8" stroke-linejoin="round"/>
+      <path d="M0 -11.5 C5 -12 8 -9 10.5 -5 C13 0 11 6 7 9.5 C4 12 -1 12 -4 10 C-9 8 -12 3 -11 -3 C-10 -8 -5 -11.5 0 -11.5 Z" fill="none" stroke="#7ccc7c" stroke-width="1.1" transform="scale(.8)"/>
+    </g>
+    <g id="t-olive">
+      <circle r="9.9" fill="none" stroke="#7a6d62" stroke-width="0.9"/>
+      <circle r="7" fill="none" stroke="#2a2420" stroke-width="5"/>
+      <path d="M-5 -4 A6.5 6.5 0 0 1 3 -6.3" fill="none" stroke="#7a6d62" stroke-width="1.4" stroke-linecap="round"/>
+    </g>
+    <g id="t-corn">
+      <ellipse cx="-5.5" cy="-3" rx="4.3" ry="3.6" fill="#f7cb3d" stroke="#d29b16" stroke-width="1.1"/>
+      <ellipse cx="4" cy="-4.5" rx="4.3" ry="3.6" fill="#f7cb3d" stroke="#d29b16" stroke-width="1.1"/>
+      <ellipse cx="0" cy="4" rx="4.3" ry="3.6" fill="#f7cb3d" stroke="#d29b16" stroke-width="1.1"/>
+    </g>
+    <g id="t-onion">
+      <path d="M-12 5 A12.5 12.5 0 0 1 12 5" fill="none" stroke="#a5679e" stroke-width="3.2" stroke-linecap="round"/>
+      <path d="M-7.5 5 A8 8 0 0 1 7.5 5" fill="none" stroke="#e2c4df" stroke-width="2.4" stroke-linecap="round"/>
+    </g>
+    <g id="i-dough">
+      <ellipse cx="0" cy="3" rx="13" ry="9" fill="#f3dcae" stroke="#cf9f5c" stroke-width="1.4"/>
+      <ellipse cx="-4" cy="-0.5" rx="5" ry="2.2" fill="#fbecd0"/>
+    </g>
+    <g id="i-tomato">
+      <path d="M-13 -2 A13 12 0 0 0 13 -2 Z" fill="#f1ede6" stroke="#b9ab9a" stroke-width="1.3"/>
+      <ellipse cx="0" cy="-2" rx="13" ry="4.2" fill="#c63a2c" stroke="#b9ab9a" stroke-width="1.3"/>
+      <ellipse cx="-4" cy="-3" rx="3" ry="1.2" fill="#e5705c"/>
+    </g>
+    <g id="i-cream">
+      <path d="M-13 -2 A13 12 0 0 0 13 -2 Z" fill="#f1ede6" stroke="#b9ab9a" stroke-width="1.3"/>
+      <ellipse cx="0" cy="-2" rx="13" ry="4.2" fill="#f6edd6" stroke="#b9ab9a" stroke-width="1.3"/>
+      <ellipse cx="-4" cy="-3" rx="3" ry="1.2" fill="#fffaf0"/>
+    </g>
+    <g id="i-cheese">
+      <path d="M-13 9 L13 9 L13 -3 L-13 -9 Z" fill="#f7cf4a" stroke="#d29b16" stroke-width="1.3" stroke-linejoin="round"/>
+      <circle cx="-4" cy="2.5" r="2.4" fill="#e0b02a"/><circle cx="6" cy="4" r="1.8" fill="#e0b02a"/><circle cx="3" cy="-2" r="1.3" fill="#e0b02a"/>
+    </g>
+  </defs>
+</svg>
+
+<div class="app">
+  <header class="bar">
+    <div class="brand">
+      <svg viewBox="-16 -16 32 32" aria-hidden="true">
+        <path d="M0 14 L-12 -8 A14 9 0 0 1 12 -8 Z" fill="#e2b06a"/>
+        <path d="M0 11 L-9.5 -6 A12 7 0 0 1 9.5 -6 Z" fill="#f7cf4a"/>
+        <circle cx="-2" cy="-3" r="2.6" fill="#c83c2e"/><circle cx="3" cy="2" r="2.2" fill="#c83c2e"/>
+      </svg>
+      <span>피자 공방</span>
+    </div>
+    <div class="stats">
+      <span class="stat">손님 <b id="custNo">1</b>/5</span>
+      <span class="stat"><b id="revenue">0</b>원</span>
+      <button class="icon-btn" id="muteBtn" type="button" aria-pressed="false" aria-label="소리 끄기">
+        <svg class="on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/><path d="M19 6a8.5 8.5 0 0 1 0 12"/></svg>
+        <svg class="off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="play">
+    <section class="ticket" id="ticket" aria-live="polite">
+      <div class="who">
+        <div class="face" id="face" aria-hidden="true">🧒</div>
+        <div class="patience" id="patience" title="기다리는 중"><i id="patienceBar"></i></div>
+      </div>
+      <div class="order">
+        <div class="order-head">
+          <h2><span id="custName">민준</span> 손님<span class="order-no" id="orderNo">#001</span></h2>
+          <span class="price" id="price">10,500원</span>
+        </div>
+        <p class="say" id="say">“페퍼로니 피자 하나 주세요!”</p>
+        <ul class="chips" id="chips"></ul>
+      </div>
+    </section>
+
+    <section class="board-area">
+      <ol class="steps" id="steps">
+        <li>도우</li><li>소스</li><li>치즈</li><li>토핑</li><li>굽기</li>
+      </ol>
+      <div class="stage" id="stage">
+        <div class="oven" aria-hidden="true"></div>
+        <svg id="pizza" viewBox="0 0 300 300" tabindex="0" role="button" aria-label="피자 판. 고른 재료를 올려요">
+          <defs>
+            <pattern id="grain" width="300" height="14" patternUnits="userSpaceOnUse">
+              <rect class="wood" width="300" height="14"/>
+              <path class="grain" d="M0 7 Q40 3 80 7 T160 7 T240 7 T320 7"/>
+            </pattern>
+          </defs>
+          <circle cx="150" cy="150" r="148" fill="url(#grain)"/>
+          <circle class="board-rim" cx="150" cy="150" r="146"/>
+          <circle class="ghost" id="ghost" cx="150" cy="150" r="128"/>
+          <g class="layer" id="lDough">
+            <circle id="crust" cx="150" cy="150" r="132"/>
+            <circle id="doughIn" cx="150" cy="150" r="119"/>
+          </g>
+          <g class="layer" id="lSauce"><path id="sauce"/></g>
+          <g class="layer" id="lCheese">
+            <path id="cheese"/>
+            <g id="melt" fill="#fff4c4"></g>
+            <g id="spots" fill="#a8621f"></g>
+          </g>
+          <g id="lTops"></g>
+          <circle id="char" cx="150" cy="150" r="132" fill="#2b1408" opacity="0" pointer-events="none"/>
+        </svg>
+      </div>
+      <p class="hint" id="hint">도우를 눌러 반죽을 펴세요</p>
+    </section>
+
+    <section class="controls">
+      <div class="tray" id="tray"></div>
+      <div class="actions" id="actions">
+        <button class="btn ghost" id="undoBtn" type="button">되돌리기</button>
+        <button class="btn ghost" id="clearBtn" type="button">처음부터</button>
+        <button class="btn primary" id="bakeBtn" type="button">오븐에 굽기</button>
+      </div>
+      <div class="bake-panel" id="bakePanel" hidden>
+        <p class="bake-status" id="bakeStatus">굽는 중…</p>
+        <div class="gauge-wrap">
+          <div class="gauge" role="progressbar" aria-label="굽기 정도" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="gauge">
+            <i class="needle" id="needle"></i>
+          </div>
+          <div class="gauge-labels" aria-hidden="true">
+            <span style="left:20%">덜 익음</span>
+            <span class="perfect" style="left:67%">딱 좋아</span>
+            <span style="left:95%">탐</span>
+          </div>
+        </div>
+        <button class="btn primary big" id="pullBtn" type="button">꺼내기!</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="overlay center" id="startOv">
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="startTitle">
+    <svg class="start-art" viewBox="0 0 120 120" aria-hidden="true">
+      <circle cx="60" cy="60" r="56" fill="#d99a4e"/>
+      <circle cx="60" cy="60" r="49" fill="#c63a2c"/>
+      <circle cx="60" cy="60" r="44" fill="#f6c45a"/>
+      <use href="#t-pepperoni" transform="translate(42 42) scale(.85)"/>
+      <use href="#t-pepperoni" transform="translate(78 50) scale(.85)"/>
+      <use href="#t-pepperoni" transform="translate(55 82) scale(.85)"/>
+      <use href="#t-mushroom" transform="translate(66 34) scale(.7) rotate(20)"/>
+      <use href="#t-pepper" transform="translate(36 70) scale(.7)"/>
+      <use href="#t-olive" transform="translate(80 76) scale(.8)"/>
+      <use href="#t-olive" transform="translate(60 60) scale(.8)"/>
+      <use href="#t-corn" transform="translate(85 32) scale(.6)"/>
+    </svg>
+    <h2 class="start-title" id="startTitle">피자 공방</h2>
+    <p class="lede">손님 다섯 명이 기다려요. 주문서대로 만들어 주세요.</p>
+    <ol class="howto">
+      <li>도우를 펴고 소스와 치즈를 올려요.</li>
+      <li>토핑을 고른 뒤 피자를 눌러 개수만큼 올려요.</li>
+      <li>오븐에서 바늘이 초록색일 때 꺼내요.</li>
+    </ol>
+    <p class="best" id="startBest" hidden></p>
+    <button class="btn primary big" id="startBtn" type="button">가게 문 열기</button>
+  </div>
+</div>
+
+<div class="overlay" id="resultOv" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="resTitle">
+    <p class="res-who" id="resWho"></p>
+    <h2 id="resTitle"></h2>
+    <div class="stars" id="resStars" aria-hidden="true"><span>★</span><span>★</span><span>★</span></div>
+    <ul class="lines" id="resLines"></ul>
+    <div class="earn">
+      <div><small>피자값</small><b id="resEarn">0원</b></div>
+      <div><small>빨리 만든 팁</small><b id="resTip">0원</b></div>
+    </div>
+    <p class="quote" id="resQuote"></p>
+    <button class="btn primary big" id="nextBtn" type="button">다음 손님</button>
+  </div>
+</div>
+
+<div class="overlay center" id="endOv" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="endTitle">
+    <h2 id="endTitle">오늘 영업 끝!</h2>
+    <p class="total" id="endTotal">0원</p>
+    <p class="best" id="endStars"></p>
+    <ul class="lines" id="endLines"></ul>
+    <p class="best" id="endBest"></p>
+    <button class="btn primary big" id="againBtn" type="button">다시 영업하기</button>
+  </div>
+</div>
+
+<script>
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const NS = 'http://www.w3.org/2000/svg';
+  const DAY_LEN = 5;
+  const BEST_KEY = 'pizza-gongbang-best';
+
+  const TOPS = [
+    { id: 'pepperoni', name: '페퍼로니' },
+    { id: 'mushroom', name: '버섯' },
+    { id: 'pepper', name: '피망' },
+    { id: 'olive', name: '올리브' },
+    { id: 'corn', name: '옥수수' },
+    { id: 'onion', name: '양파' },
+  ];
+  const TOP = Object.fromEntries(TOPS.map(t => [t.id, t]));
+  const SAUCE = { tomato: { name: '토마토', color: '#c63a2c' }, cream: { name: '크림', color: '#f3e9d2' } };
+  const TRAY = [
+    { id: 'dough', name: '도우', kind: 'dough', icon: 'i-dough' },
+    { id: 'tomato', name: '토마토', kind: 'sauce', icon: 'i-tomato' },
+    { id: 'cream', name: '크림', kind: 'sauce', icon: 'i-cream' },
+    { id: 'cheese', name: '치즈', kind: 'cheese', icon: 'i-cheese' },
+    ...TOPS.map(t => ({ id: t.id, name: t.name, kind: 'top', icon: 't-' + t.id })),
+  ];
+  const PEOPLE = [
+    { name: '민준', face: '🧒' }, { name: '서연', face: '👧' }, { name: '김 할머니', face: '👵' },
+    { name: '박 사장님', face: '🧔' }, { name: '지우', face: '👩' }, { name: '도윤', face: '👦' },
+    { name: '최 선생님', face: '🧑‍🏫' }, { name: '하린', face: '👱‍♀️' }, { name: '이 할아버지', face: '👴' },
+    { name: '배달 기사님', face: '🧑‍🔧' }, { name: '수아', face: '👩‍🦱' }, { name: '건우', face: '🧑' },
+  ];
+  // Bake zones on the 0–100 gauge
+  const ZONES = [
+    { to: 40, label: '반죽이 날것이에요', short: '날것', pts: 0, cls: 'bad' },
+    { to: 58, label: '조금 덜 익었어요', short: '덜 익음', pts: 15, cls: '' },
+    { to: 76, label: '딱 좋게 구워졌어요', short: '딱 좋아요', pts: 30, cls: 'good' },
+    { to: 90, label: '조금 탔어요', short: '조금 탐', pts: 15, cls: '' },
+    { to: 101, label: '새까맣게 탔어요', short: '탔어요', pts: 0, cls: 'bad' },
+  ];
+  const zoneOf = v => ZONES.find(z => v < z.to);
+
+  // ---------- helpers ----------
+  const rand = Math.random;
+  const randInt = (a, b) => a + Math.floor(rand() * (b - a + 1));
+  const pick = arr => arr[Math.floor(rand() * arr.length)];
+  const shuffle = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+  const won = n => n.toLocaleString('ko-KR');
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  function josa(word, withBatchim, without) {
+    const c = word.charCodeAt(word.length - 1);
+    if (c < 0xac00 || c > 0xd7a3) return word + without;
+    return word + ((c - 0xac00) % 28 ? withBatchim : without);
+  }
+  function blobPath(r, amp, n) {
+    const pts = [];
+    for (let i = 0; i < n; i++) {
+      const a = (i / n) * Math.PI * 2, rr = r + (rand() * 2 - 1) * amp;
+      pts.push([150 + Math.cos(a) * rr, 150 + Math.sin(a) * rr]);
+    }
+    const mid = (p, q) => [((p[0] + q[0]) / 2).toFixed(1), ((q[1] + p[1]) / 2).toFixed(1)];
+    let d = 'M' + mid(pts[n - 1], pts[0]).join(' ');
+    for (let i = 0; i < n; i++) {
+      const p = pts[i], q = pts[(i + 1) % n];
+      d += ` Q${p[0].toFixed(1)} ${p[1].toFixed(1)} ${mid(p, q).join(' ')}`;
+    }
+    return d + 'Z';
+  }
+  function mix(stops, t) {
+    for (let i = 1; i < stops.length; i++) {
+      if (t <= stops[i][0]) {
+        const [t0, c0] = stops[i - 1], [t1, c1] = stops[i], k = (t - t0) / (t1 - t0);
+        return `rgb(${c0.map((v, j) => Math.round(v + (c1[j] - v) * k)).join(',')})`;
+      }
+    }
+    return `rgb(${stops[stops.length - 1][1].join(',')})`;
+  }
+  const CRUST = [[0, [236, 210, 160]], [0.5, [226, 172, 100]], [0.67, [207, 136, 64]], [0.85, [146, 86, 40]], [1, [64, 36, 18]]];
+  const DOUGH = [[0, [246, 228, 188]], [0.5, [240, 210, 150]], [0.67, [232, 190, 120]], [0.85, [176, 118, 62]], [1, [86, 52, 26]]];
+  const CHEESE = [[0, [252, 236, 168]], [0.5, [250, 214, 112]], [0.67, [244, 188, 72]], [0.85, [200, 132, 50]], [1, [104, 62, 26]]];
+
+  // ---------- sound ----------
+  let ac = null, muted = false;
+  function audio() {
+    if (!ac) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { ac = null; } }
+    if (ac && ac.state === 'suspended') ac.resume().catch(() => {});
+    return ac;
+  }
+  function tone(freq, dur, type, vol, delay = 0, slideTo) {
+    if (muted) return;
+    const ctx = audio(); if (!ctx) return;
+    const t = ctx.currentTime + delay, o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = type; o.frequency.setValueAtTime(freq, t);
+    if (slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, t + dur);
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g).connect(ctx.destination); o.start(t); o.stop(t + dur + 0.02);
+  }
+  const sfx = {
+    pop: () => tone(480 + rand() * 160, 0.08, 'triangle', 0.18, 0, 900),
+    splat: () => tone(200, 0.18, 'sawtooth', 0.05, 0, 80),
+    click: () => tone(760, 0.04, 'square', 0.04),
+    bad: () => tone(240, 0.22, 'sawtooth', 0.06, 0, 140),
+    whoosh: () => tone(120, 0.4, 'triangle', 0.12, 0, 60),
+    ding: () => { tone(1046, 0.3, 'sine', 0.18); tone(1318, 0.45, 'sine', 0.14, 0.12); },
+    coin: () => { tone(988, 0.08, 'square', 0.06); tone(1319, 0.25, 'square', 0.06, 0.08); },
+    fanfare: () => [523, 659, 784, 1046].forEach((f, i) => tone(f, 0.25, 'triangle', 0.14, i * 0.11)),
+  };
+
+  // ---------- state ----------
+  let phase = 'start';       // start | make | bake | result | end
+  let idx = 0;               // customer index within the day
+  let orderSeq = 0;
+  let revenue = 0;
+  let results = [];
+  let order = null, person = null;
+  let patience = 1, patienceSec = 50, moodLevel = 'high';
+  let bake = 0, bakeMs = 6200;
+  let tool = null;           // selected topping id
+  let pizza, hist;
+  let clearArmed = 0;
+  let people = shuffle(PEOPLE);
+
+  const el = {
+    face: $('face'), custName: $('custName'), orderNo: $('orderNo'), price: $('price'), say: $('say'), chips: $('chips'),
+    patience: $('patience'), patienceBar: $('patienceBar'), steps: $('steps').children, stage: $('stage'), svg: $('pizza'),
+    hint: $('hint'), tray: $('tray'), actions: $('actions'), undo: $('undoBtn'), clear: $('clearBtn'), bakeBtn: $('bakeBtn'),
+    bakePanel: $('bakePanel'), bakeStatus: $('bakeStatus'), needle: $('needle'), gauge: $('gauge'), pull: $('pullBtn'),
+    custNo: $('custNo'), revenue: $('revenue'), ticket: $('ticket'),
+    lDough: $('lDough'), lSauce: $('lSauce'), lCheese: $('lCheese'), lTops: $('lTops'), ghost: $('ghost'),
+    crust: $('crust'), doughIn: $('doughIn'), sauce: $('sauce'), cheese: $('cheese'), melt: $('melt'), spots: $('spots'), char: $('char'),
+  };
+
+  // ---------- tray ----------
+  el.tray.innerHTML = TRAY.map(t =>
+    `<button class="ing" type="button" data-id="${t.id}" aria-label="${t.name}">` +
+    `<svg viewBox="-16 -16 32 32" aria-hidden="true"><use href="#${t.icon}"/></svg>` +
+    `<span>${t.name}</span><em class="cnt"></em></button>`).join('');
+  const trayBtns = Object.fromEntries([...el.tray.children].map(b => [b.dataset.id, b]));
+
+  el.tray.addEventListener('click', e => {
+    const b = e.target.closest('.ing'); if (!b || b.disabled || phase !== 'make') return;
+    const item = TRAY.find(t => t.id === b.dataset.id);
+    if (item.kind === 'dough' && !pizza.dough) { pizza.dough = true; hist.push('dough'); sfx.pop(); }
+    else if (item.kind === 'sauce' && pizza.dough && !pizza.sauce) { pizza.sauce = item.id; hist.push('sauce'); sfx.splat(); }
+    else if (item.kind === 'cheese' && pizza.sauce && !pizza.cheese) { pizza.cheese = true; hist.push('cheese'); sfx.pop(); }
+    else if (item.kind === 'top' && pizza.cheese) { tool = tool === item.id ? null : item.id; sfx.click(); }
+    setHintWarn(false);
+    render();
+  });
+
+  // ---------- pizza ----------
+  function freshPizza() {
+    pizza = { dough: false, sauce: null, cheese: false, tops: [] };
+    hist = []; tool = null; bake = 0;
+    el.lTops.textContent = '';
+    el.sauce.setAttribute('d', blobPath(111, 3.2, 26));
+    el.cheese.setAttribute('d', blobPath(102, 6, 20));
+    el.melt.textContent = ''; el.spots.textContent = '';
+    for (let i = 0; i < 9; i++) el.melt.appendChild(ellipseAt(80, 5, 12, 2, 4));
+    for (let i = 0; i < 16; i++) el.spots.appendChild(ellipseAt(90, 3, 8, 2, 6));
+    paintBake();
+  }
+  function ellipseAt(maxR, rx0, rx1, ry0, ry1) {
+    const a = rand() * Math.PI * 2, d = Math.sqrt(rand()) * maxR;
+    const e = document.createElementNS(NS, 'ellipse');
+    e.setAttribute('cx', (150 + Math.cos(a) * d).toFixed(1));
+    e.setAttribute('cy', (150 + Math.sin(a) * d).toFixed(1));
+    e.setAttribute('rx', (rx0 + rand() * (rx1 - rx0)).toFixed(1));
+    e.setAttribute('ry', (ry0 + rand() * (ry1 - ry0)).toFixed(1));
+    e.setAttribute('transform', `rotate(${Math.round(rand() * 180)} ${e.getAttribute('cx')} ${e.getAttribute('cy')})`);
+    return e;
+  }
+  function addPiece(type, x, y) {
+    const g = document.createElementNS(NS, 'g');
+    g.setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${Math.round(rand() * 360)}) scale(1.3)`);
+    const inner = document.createElementNS(NS, 'g');
+    inner.setAttribute('class', 'drop');
+    const u = document.createElementNS(NS, 'use');
+    u.setAttribute('href', '#t-' + type);
+    inner.appendChild(u); g.appendChild(inner); el.lTops.appendChild(g);
+    pizza.tops.push({ type, node: g });
+    hist.push('top');
+  }
+  function counts() {
+    const c = {};
+    for (const p of pizza.tops) c[p.type] = (c[p.type] || 0) + 1;
+    return c;
+  }
+  function paintBake() {
+    const t = bake / 100;
+    el.crust.style.fill = mix(CRUST, t);
+    el.doughIn.style.fill = mix(DOUGH, t);
+    el.cheese.style.fill = mix(CHEESE, t);
+    el.sauce.style.fill = pizza.sauce ? SAUCE[pizza.sauce].color : 'transparent';
+    el.melt.setAttribute('opacity', (0.55 * clamp(1 - t * 1.6, 0, 1)).toFixed(2));
+    el.spots.setAttribute('opacity', (0.75 * clamp((t - 0.45) / 0.35, 0, 1)).toFixed(2));
+    el.char.setAttribute('opacity', (0.6 * clamp((t - 0.8) / 0.2, 0, 1)).toFixed(2));
+  }
+
+  function placeAt(x, y) {
+    if (phase !== 'make') return;
+    if (!pizza.dough) { trayBtns.dough.click(); return; }
+    if (!pizza.cheese) { warn(!pizza.sauce ? '먼저 소스를 골라 발라요' : '먼저 치즈를 뿌려요'); return; }
+    if (!tool) { warn('아래 쟁반에서 토핑을 먼저 골라요'); return; }
+    const dx = x - 150, dy = y - 150;
+    if (Math.hypot(dx, dy) > 108) { warn('치즈 위에 올려 주세요'); return; }
+    if (pizza.tops.length >= 60) { warn('토핑이 너무 많아요'); return; }
+    addPiece(tool, x, y); sfx.pop(); setHintWarn(false); render();
+  }
+  el.svg.addEventListener('pointerdown', e => {
+    if (e.button !== undefined && e.button > 0) return;
+    const r = el.svg.getBoundingClientRect();
+    placeAt(((e.clientX - r.left) / r.width) * 300, ((e.clientY - r.top) / r.height) * 300);
+  });
+  el.svg.addEventListener('keydown', e => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    e.preventDefault();
+    const a = rand() * Math.PI * 2, d = Math.sqrt(rand()) * 95;
+    placeAt(150 + Math.cos(a) * d, 150 + Math.sin(a) * d);
+  });
+
+  let warnTimer = 0;
+  function warn(msg) {
+    el.hint.textContent = msg; setHintWarn(true); sfx.bad();
+    el.svg.classList.remove('shake'); void el.svg.getBBox(); el.svg.classList.add('shake');
+    clearTimeout(warnTimer); warnTimer = setTimeout(() => { setHintWarn(false); render(); }, 1600);
+  }
+  function setHintWarn(on) { el.hint.classList.toggle('warn', on); if (!on) clearTimeout(warnTimer); }
+
+  // ---------- actions ----------
+  el.undo.addEventListener('click', () => {
+    if (phase !== 'make' || !hist.length) return;
+    const last = hist.pop();
+    if (last === 'top') pizza.tops.pop().node.remove();
+    else if (last === 'cheese') pizza.cheese = false;
+    else if (last === 'sauce') pizza.sauce = null;
+    else if (last === 'dough') pizza.dough = false;
+    if (!pizza.cheese) tool = null;
+    sfx.click(); render();
+  });
+  el.clear.addEventListener('click', () => {
+    if (phase !== 'make' || !hist.length) return;
+    if (Date.now() - clearArmed > 2500) {
+      clearArmed = Date.now(); el.clear.textContent = '한 번 더';
+      setTimeout(() => { if (Date.now() - clearArmed >= 2500) el.clear.textContent = '처음부터'; }, 2600);
+      return;
+    }
+    clearArmed = 0; el.clear.textContent = '처음부터';
+    freshPizza(); sfx.whoosh(); render();
+  });
+  el.bakeBtn.addEventListener('click', () => {
+    if (phase !== 'make' || !pizza.cheese) return;
+    phase = 'bake'; bake = 0; tool = null;
+    el.stage.classList.add('baking');
+    el.tray.hidden = true; el.actions.hidden = true; el.bakePanel.hidden = false;
+    sfx.whoosh(); render(); el.pull.focus({ preventScroll: true });
+  });
+  el.pull.addEventListener('click', () => pull());
+
+  function pull() {
+    if (phase !== 'bake') return;
+    phase = 'result';
+    el.stage.classList.remove('baking');
+    const res = scorePizza();
+    results.push(res);
+    revenue += res.earn + res.tip;
+    el.revenue.textContent = won(revenue);
+    sfx.ding(); if (res.earn > 0) setTimeout(sfx.coin, 380);
+    showResult(res);
+    render();
+  }
+
+  // ---------- scoring ----------
+  function scorePizza() {
+    const c = counts();
+    const sauceOk = pizza.sauce === order.sauce;
+    const want = Object.entries(order.toppings);
+    let acc = 0;
+    for (const [id, w] of want) acc += Math.max(0, 1 - Math.abs((c[id] || 0) - w) / w);
+    acc /= want.length;
+    const extras = Object.entries(c).filter(([id]) => !(id in order.toppings));
+    const extraN = extras.reduce((s, [, n]) => s + n, 0);
+    const topPts = Math.max(0, Math.round(acc * 40) - extraN * 4);
+    const zone = zoneOf(bake);
+    const total = (sauceOk ? 20 : 0) + 10 + topPts + zone.pts;
+    const stars = total >= 90 ? 3 : total >= 70 ? 2 : total >= 45 ? 1 : 0;
+    const earn = Math.round((order.price * total) / 100 / 100) * 100;
+    const tip = stars >= 2 ? Math.round((3000 * patience) / 500) * 500 : 0;
+    return { person, order, counts: c, sauce: pizza.sauce, sauceOk, acc, extras, zone, total, stars, earn, tip };
+  }
+
+  const TITLES = ['이건 제 피자가 아니에요…', '음, 먹을 만해요', '맛있어요!', '완벽한 피자예요!'];
+  const QUOTES = [
+    ['주문서를 다시 봐 주세요.', '다음엔 잘 부탁해요.'],
+    ['그래도 배는 부르네요.', '조금 아쉽지만 고마워요.'],
+    ['또 올게요!', '친구한테도 알려 줄게요.'],
+    ['이 동네 최고의 피자집이에요!', '사진부터 찍을래요!'],
+  ];
+
+  function showResult(r) {
+    $('resWho').textContent = `${r.person.face} ${r.person.name} 손님`;
+    $('resTitle').textContent = TITLES[r.stars];
+    [...$('resStars').children].forEach((s, i) => s.classList.toggle('lit', i < r.stars));
+    const topLine = Object.entries(r.order.toppings).map(([id, w]) => {
+      const n = r.counts[id] || 0;
+      return `<span class="${n === w ? 'good' : 'bad'}">${TOP[id].name} ${n}/${w}</span>`;
+    }).join(' · ') + (r.extras.length ? ' · ' + r.extras.map(([id, n]) => `<span class="bad">${TOP[id].name} ${n} 더 올림</span>`).join(' · ') : '');
+    $('resLines').innerHTML = [
+      `<li><span>소스</span><span class="${r.sauceOk ? 'good' : 'bad'}">${r.sauceOk ? SAUCE[r.sauce].name + ' 소스 ✓' : SAUCE[r.order.sauce].name + ' 소스를 원했어요'}</span></li>`,
+      `<li><span>토핑</span><span>${topLine}</span></li>`,
+      `<li><span>굽기</span><span class="${r.zone.cls}">${r.zone.label}</span></li>`,
+      `<li class="sum"><span>점수</span><span>${r.total}점</span></li>`,
+    ].join('');
+    $('resEarn').textContent = won(r.earn) + '원';
+    $('resTip').textContent = won(r.tip) + '원';
+    $('resQuote').textContent = `“${pick(QUOTES[r.stars])}”`;
+    $('nextBtn').textContent = idx + 1 >= DAY_LEN ? '영업 마감하기' : '다음 손님 받기';
+    openOv('resultOv');
+  }
+  $('nextBtn').addEventListener('click', () => {
+    closeOv('resultOv');
+    idx++;
+    if (idx >= DAY_LEN) showEnd(); else { setupCustomer(); phase = 'make'; render(); }
+  });
+
+  function readBest() { try { return JSON.parse(localStorage.getItem(BEST_KEY) || 'null'); } catch (e) { return null; } }
+  function writeBest(v) { try { localStorage.setItem(BEST_KEY, JSON.stringify(v)); } catch (e) { /* storage unavailable */ } }
+
+  function showEnd() {
+    phase = 'end';
+    const starSum = results.reduce((s, r) => s + r.stars, 0);
+    $('endTotal').textContent = won(revenue) + '원';
+    $('endStars').innerHTML = `별 <b>${starSum}</b> / ${DAY_LEN * 3}개`;
+    $('endLines').innerHTML = results.map(r =>
+      `<li><span>${r.person.face} ${r.person.name}</span><span>${'★'.repeat(r.stars)}${'☆'.repeat(3 - r.stars)} · ${won(r.earn + r.tip)}원</span></li>`).join('');
+    const best = readBest();
+    const isNew = !best || revenue > best.revenue;
+    if (isNew) writeBest({ revenue, stars: starSum });
+    $('endBest').innerHTML = isNew
+      ? `최고 기록 <b>${won(revenue)}원</b><span class="badge">새 기록</span>`
+      : `최고 기록 <b>${won(best.revenue)}원</b>`;
+    sfx.fanfare();
+    openOv('endOv');
+  }
+  $('againBtn').addEventListener('click', () => { closeOv('endOv'); newDay(); phase = 'make'; render(); });
+
+  // ---------- customers ----------
+  function makeOrder(i) {
+    const nTypes = i === 0 ? 1 : i < 3 ? 2 : i === 3 ? randInt(2, 3) : 3;
+    const types = shuffle(TOPS.map(t => t.id)).slice(0, nTypes);
+    const toppings = {};
+    for (const id of types) toppings[id] = randInt(2, types.length >= 3 ? 4 : 5);
+    const sauce = rand() < 0.3 ? 'cream' : 'tomato';
+    const price = 9000 + types.length * 1500 + (sauce === 'cream' ? 1000 : 0);
+    return { sauce, toppings, price };
+  }
+  function pizzaName(o) {
+    const names = Object.keys(o.toppings).map(id => TOP[id].name);
+    return (o.sauce === 'cream' ? '크림 ' : '') + (names.length >= 3 ? '콤비네이션' : names.join(' ')) + ' 피자';
+  }
+  function orderLine() {
+    const n = pizzaName(order);
+    return pick([`${n} 하나 주세요!`, `${josa(n, '으로', '로')} 부탁해요.`, `오늘은 ${n} 먹고 싶어요.`]);
+  }
+  function setupCustomer() {
+    person = people[idx % people.length];
+    order = makeOrder(idx);
+    orderSeq++;
+    patience = 1; moodLevel = 'high';
+    patienceSec = 55 - idx * 3;
+    bakeMs = 6200 - idx * 250;
+    el.face.textContent = person.face;
+    el.custName.textContent = person.name;
+    el.orderNo.textContent = '#' + String(orderSeq).padStart(3, '0');
+    el.price.textContent = won(order.price) + '원';
+    el.say.textContent = `“${orderLine()}”`;
+    el.custNo.textContent = idx + 1;
+    el.ticket.classList.remove('arrive'); void el.ticket.offsetWidth; el.ticket.classList.add('arrive');
+    el.tray.hidden = false; el.actions.hidden = false; el.bakePanel.hidden = true;
+    el.clear.textContent = '처음부터'; clearArmed = 0;
+    freshPizza();
+  }
+  function newDay() {
+    idx = 0; revenue = 0; results = []; people = shuffle(PEOPLE);
+    el.revenue.textContent = '0';
+    setupCustomer();
+  }
+
+  // ---------- render ----------
+  function render() {
+    el.lDough.classList.toggle('on', pizza.dough);
+    el.lSauce.classList.toggle('on', !!pizza.sauce);
+    el.lCheese.classList.toggle('on', pizza.cheese);
+    el.ghost.style.display = pizza.dough ? 'none' : '';
+    paintBake();
+
+    const step = phase === 'bake' || phase === 'result' ? 4 : !pizza.dough ? 0 : !pizza.sauce ? 1 : !pizza.cheese ? 2 : 3;
+    [...el.steps].forEach((li, i) => { li.className = i < step ? 'done' : i === step ? 'now' : ''; });
+
+    const c = counts();
+    for (const t of TRAY) {
+      const b = trayBtns[t.id];
+      let enabled = false, done = false;
+      if (t.kind === 'dough') { enabled = !pizza.dough; done = pizza.dough; }
+      else if (t.kind === 'sauce') { enabled = pizza.dough && !pizza.sauce; done = pizza.sauce === t.id; }
+      else if (t.kind === 'cheese') { enabled = !!pizza.sauce && !pizza.cheese; done = pizza.cheese; }
+      else enabled = pizza.cheese;
+      b.disabled = phase !== 'make' || !enabled;
+      b.classList.toggle('done', done);
+      b.classList.toggle('on', tool === t.id);
+      b.classList.toggle('next', phase === 'make' && enabled && t.kind !== 'top' && t.kind !== 'sauce');
+      b.setAttribute('aria-pressed', t.kind === 'top' ? String(tool === t.id) : 'false');
+      if (t.kind === 'top') b.querySelector('.cnt').textContent = c[t.id] ? c[t.id] : '';
+    }
+
+    // order chips
+    const chips = [];
+    chips.push(chip(`${SAUCE[order.sauce].name} 소스`, pizza.sauce ? (pizza.sauce === order.sauce ? 'ok' : 'bad') : ''));
+    chips.push(chip('치즈', pizza.cheese ? 'ok' : ''));
+    let allTops = true;
+    for (const [id, w] of Object.entries(order.toppings)) {
+      const n = c[id] || 0;
+      if (n !== w) allTops = false;
+      chips.push(chip(`${TOP[id].name} <b>${n}/${w}</b>`, n === w ? 'ok' : n > w ? 'bad' : ''));
+    }
+    for (const [id, n] of Object.entries(c)) if (!(id in order.toppings)) { allTops = false; chips.push(chip(`${TOP[id].name} ${n} · 주문에 없음`, 'bad')); }
+    el.chips.innerHTML = chips.join('');
+
+    el.undo.disabled = phase !== 'make' || !hist.length;
+    el.clear.disabled = phase !== 'make' || !hist.length;
+    el.bakeBtn.disabled = phase !== 'make' || !pizza.cheese;
+    const perfectBuild = pizza.cheese && allTops && pizza.sauce === order.sauce;
+    el.bakeBtn.classList.toggle('ready', phase === 'make' && perfectBuild);
+    el.svg.classList.toggle('aim', phase === 'make' && !!tool);
+
+    if (!el.hint.classList.contains('warn')) {
+      let h = '';
+      if (phase === 'bake') h = '바늘이 초록색에 오면 꺼내요!';
+      else if (phase !== 'make') h = '';
+      else if (!pizza.dough) h = '도우를 눌러 반죽을 펴세요';
+      else if (!pizza.sauce) h = '주문서를 보고 소스를 골라요';
+      else if (!pizza.cheese) h = '치즈를 뿌려요';
+      else if (perfectBuild) h = '주문대로 다 올렸어요. 오븐에 구워요!';
+      else if (!tool) h = '토핑을 고른 뒤 피자를 눌러 올려요';
+      else h = `피자를 눌러 ${josa(TOP[tool].name, '을', '를')} 올려요`;
+      el.hint.textContent = h;
+    }
+  }
+  const chip = (html, cls) => `<li class="chip ${cls}">${html}</li>`;
+
+  // ---------- main loop: patience + oven ----------
+  let lastT = 0;
+  function loop(t) {
+    const dt = Math.min(0.1, (t - (lastT || t)) / 1000);
+    lastT = t;
+    if (phase === 'make' || phase === 'bake') {
+      patience = Math.max(0, patience - dt / patienceSec);
+      el.patienceBar.style.width = (patience * 100).toFixed(1) + '%';
+      const lvl = patience > 0.5 ? 'high' : patience > 0.2 ? 'mid' : 'low';
+      el.patience.dataset.level = lvl;
+      if (lvl !== moodLevel) {
+        moodLevel = lvl;
+        el.say.textContent = lvl === 'mid' ? '“배가 고파지기 시작했어요…”' : lvl === 'low' ? '“아직이에요? 너무 배고파요!”' : el.say.textContent;
+      }
+    }
+    if (phase === 'bake') {
+      bake = Math.min(100, bake + (dt * 1000 / bakeMs) * 100);
+      el.needle.style.left = bake.toFixed(1) + '%';
+      el.gauge.setAttribute('aria-valuenow', Math.round(bake));
+      const z = zoneOf(bake);
+      el.bakeStatus.textContent = z.pts === 30 ? '지금이에요!' : bake < 58 ? '굽는 중… ' + z.short : z.short + '!';
+      el.bakeStatus.style.color = z.pts === 30 ? 'var(--basil)' : bake >= 76 ? 'var(--tomato)' : '';
+      paintBake();
+      if (bake >= 100) pull();
+    }
+    requestAnimationFrame(loop);
+  }
+
+  // ---------- overlays ----------
+  function openOv(id) { $(id).hidden = false; const b = $(id).querySelector('.btn.primary'); if (b) setTimeout(() => b.focus({ preventScroll: true }), 50); }
+  function closeOv(id) { $(id).hidden = true; }
+
+  $('muteBtn').addEventListener('click', () => {
+    muted = !muted;
+    $('muteBtn').setAttribute('aria-pressed', String(muted));
+    $('muteBtn').setAttribute('aria-label', muted ? '소리 켜기' : '소리 끄기');
+    if (!muted) sfx.click();
+  });
+  document.addEventListener('pointerdown', () => audio(), { once: true });
+
+  $('startBtn').addEventListener('click', () => { audio(); closeOv('startOv'); phase = 'make'; sfx.ding(); render(); });
+
+  // ---------- boot ----------
+  function start(data) {
+    data = data || {};
+    if (data.phase === 'play' && data.idx < DAY_LEN) {
+      idx = data.idx; revenue = data.revenue || 0; results = data.results || []; orderSeq = data.orderSeq || idx;
+      muted = !!data.muted; $('muteBtn').setAttribute('aria-pressed', String(muted));
+      el.revenue.textContent = won(revenue);
+      setupCustomer(); closeOv('startOv'); phase = 'make';
+    } else {
+      newDay();
+      const best = readBest();
+      if (best) { $('startBest').hidden = false; $('startBest').innerHTML = `최고 기록 <b>${won(best.revenue)}원</b>`; }
+    }
+    render();
+    requestAnimationFrame(loop);
+  }
+  const hot = window.claude && window.claude.hot;
+  if (hot && typeof hot.snapshot === 'function') {
+    hot.snapshot(() => (phase === 'start' || phase === 'end' ? {} : {
+      phase: 'play', idx: phase === 'result' ? idx + 1 : idx, revenue, orderSeq, muted,
+      results: results.map(r => ({ person: r.person, stars: r.stars, earn: r.earn, tip: r.tip })),
+    }));
+  }
+  if (hot && typeof hot.ready === 'function') hot.ready(start); else start(hot && hot.data ? hot.data : {});
+})();
+</script>
+</body>
+</html>
