@@ -200,7 +200,7 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
 .wood { fill: var(--wood); }
 .grain { stroke: var(--wood-dark); fill: none; opacity: 0.28; stroke-width: 1.4; }
 .board-rim { fill: none; stroke: var(--wood-dark); stroke-width: 3; opacity: 0.5; }
-.ghost { fill: none; stroke: var(--wood-dark); stroke-width: 2.5; stroke-dasharray: 9 9; opacity: 0.55; }
+circle.ghost { fill: none; stroke: var(--wood-dark); stroke-width: 2.5; stroke-dasharray: 9 9; opacity: 0.55; }
 .layer { opacity: 0; transform: scale(0.35); transform-origin: 150px 150px; transition: transform 0.4s cubic-bezier(.2, 1.4, .4, 1), opacity 0.2s; }
 .layer.on { opacity: 1; transform: none; }
 .drop { animation: drop 0.28s cubic-bezier(.3, 1.6, .5, 1); }
@@ -411,6 +411,71 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
 .view-garden { background: radial-gradient(circle at 34% 58%, #3f8f3f 0 18%, transparent 19%), radial-gradient(circle at 70% 64%, #4c9a44 0 14%, transparent 15%), linear-gradient(#a9dcf5 0 62%, #7cc46a 62%); }
 .view-sea { background: radial-gradient(circle at 74% 26%, #fff4c2 0 10%, transparent 11%), linear-gradient(#8fd3f5 0 48%, #2f8fd0 48% 72%, #f4dc9c 72%); }
 
+/* Crew strip: part-timers and friends working right now */
+.crew { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 2px; scrollbar-width: none; }
+.crew::-webkit-scrollbar { display: none; }
+.mate {
+  flex: none; display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px 4px 4px; border-radius: 999px;
+  background: var(--panel); border: 1.5px solid var(--line); font-size: 12.5px; white-space: nowrap;
+}
+button.mate { cursor: pointer; }
+button.mate:disabled { cursor: default; }
+.mf { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: var(--mustard-soft); font-size: 16px; overflow: hidden; flex: none; }
+.mf img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.act-e .mf { width: 34px; height: 34px; font-size: 21px; }
+.mate b { font-weight: normal; font-family: var(--f-display); font-size: 13px; }
+.mate small { color: var(--muted); font-size: 11.5px; }
+.mate.friend { border-color: var(--basil); }
+.mate.bonus { background: var(--basil-soft); color: var(--basil); border-color: transparent; padding-left: 10px; font-family: var(--f-display); }
+.mate .bar { width: 34px; height: 5px; border-radius: 3px; background: var(--line); overflow: hidden; display: inline-block; }
+.mate .bar i { display: block; height: 100%; background: var(--mustard); }
+.float-emo { position: fixed; z-index: 45; font-size: 46px; pointer-events: none; animation: float-up 1.6s ease-out forwards; }
+@keyframes float-up { from { transform: translateY(0) scale(0.6); opacity: 0; } 15% { transform: translateY(-10px) scale(1.2); opacity: 1; } to { transform: translateY(-150px) scale(1); opacity: 0; } }
+.act.wide { grid-column: 1 / -1; }
+.staff-face { display: grid; place-items: center; font-size: 40px; background: var(--mustard-soft); border-color: var(--panel); }
+
+/* Friends */
+.friends-btn { position: relative; }
+.friends-btn .dot {
+  position: absolute; top: -5px; right: -5px; min-width: 17px; height: 17px; border-radius: 9px; padding: 0 4px;
+  background: var(--basil); color: var(--panel); font-family: var(--f-display); font-size: 11px; line-height: 17px; text-align: center;
+}
+.friends-btn .dot:empty { display: none; }
+.panel-card { background: var(--panel); border: 1.5px solid var(--line); border-radius: 14px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
+.row-form { display: flex; gap: 8px; }
+.row-form input {
+  flex: 1; min-width: 0; font: inherit; padding: 9px 12px; border-radius: 12px; border: 1.5px solid var(--line);
+  background: var(--cloth); color: var(--ink);
+}
+.people { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.person {
+  display: grid; grid-template-columns: auto 40px minmax(0, 1fr); gap: 10px; align-items: start;
+  background: var(--panel); border: 1.5px solid var(--line); border-radius: 14px; padding: 10px 12px;
+}
+.person.me { border-color: var(--tomato); }
+.rank { font-family: var(--f-display); font-size: 18px; color: var(--muted); min-width: 1.4em; text-align: center; font-variant-numeric: tabular-nums; line-height: 40px; }
+.avatar { width: 40px; height: 40px; border-radius: 50%; position: relative; background: var(--mustard-soft); display: grid; place-items: center; font-size: 22px; }
+.avatar img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 50%; }
+.avatar .on { position: absolute; right: -1px; bottom: -1px; width: 12px; height: 12px; border-radius: 50%; background: var(--basil); box-shadow: 0 0 0 2px var(--panel); }
+.p-body { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.p-name { font-family: var(--f-display); font-size: 15.5px; overflow-wrap: anywhere; }
+.p-meta { font-size: 12.5px; color: var(--muted); }
+.p-actions { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+.p-actions .btn { font-size: 13.5px; padding: 6px 11px; border-radius: 10px; box-shadow: 0 3px 0 var(--line); }
+.p-actions .btn.primary { box-shadow: 0 3px 0 var(--tomato-deep); }
+.stickers { display: flex; flex-wrap: wrap; gap: 6px; }
+.sticker { padding: 6px 11px; border-radius: 999px; background: var(--panel); border: 1.5px solid var(--line); font-size: 13.5px; cursor: pointer; }
+.sticker:disabled { opacity: 0.45; cursor: not-allowed; }
+#cheerBar .sticker { font-size: 22px; padding: 4px 12px; }
+.guestbook { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; font-size: 13.5px; }
+.guestbook li { display: flex; justify-content: space-between; gap: 8px; padding: 6px 0; border-bottom: 1.5px dashed var(--line); }
+.guestbook li:last-child { border-bottom: 0; }
+.guestbook li span:last-child { color: var(--muted); white-space: nowrap; }
+.note { margin: 0; font-size: 13px; color: var(--muted); }
+.gift-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.room.ro .rcell { outline-color: transparent; cursor: default; }
+.sheet .label { font-family: var(--f-display); font-size: 15px; }
+
 /* Overlays */
 .overlay {
   position: fixed; inset: 0; z-index: 30; background: var(--scrim);
@@ -487,6 +552,7 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
 @media (max-width: 440px) {
   .meter span { display: none; }
   .status { gap: 6px 10px; }
+  .brand > span:not(.day) { display: none; }
 }
 @media (max-width: 360px) {
   .btn { font-size: 15px; }
@@ -618,6 +684,10 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
     </div>
     <div class="stats">
       <span class="stat" id="moneyStat" title="지갑"><b id="money">0</b>원</span>
+      <button class="icon-btn friends-btn" id="friendsBtn" type="button" aria-label="친구들" hidden>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><circle cx="17" cy="9" r="2.5"/><path d="M15.5 14.2c2.4.2 4.2 1.8 4.8 4.8"/></svg>
+        <span class="dot" id="onlineDot"></span>
+      </button>
       <button class="icon-btn" id="muteBtn" type="button" aria-pressed="false" aria-label="소리 끄기">
         <svg class="on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/><path d="M19 6a8.5 8.5 0 0 1 0 12"/></svg>
         <svg class="off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>
@@ -630,6 +700,8 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
     <span title="요리 실력">실력 <span class="skill-stars" id="skillStars">☆☆☆☆☆</span></span>
     <span class="ctx" id="ctx">손님 1/5</span>
   </div>
+  <div class="crew" id="crew" hidden></div>
+  <div class="stickers" id="cheerBar" hidden></div>
 
   <!-- Work: the pizza counter -->
   <main class="play view" id="v-shop">
@@ -726,6 +798,11 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
       <div class="hour-labels" aria-hidden="true"><span>18시</span><span>21시</span><span>24시</span></div>
     </div>
     <p class="goal" id="goal"></p>
+    <div class="view" id="eveFriends" hidden>
+      <h3 class="sec-title">지금 접속한 친구</h3>
+      <p class="sec-sub">같이 놀면 2시간이 지나고 둘 다 기분이 30 올라요. 친구도 퇴근한 뒤여야 해요.</p>
+      <div class="cards" id="eveFriendList"></div>
+    </div>
     <h3 class="sec-title">무엇을 할까요?</h3>
     <p class="sec-sub">시간을 쓰는 일과예요. 체력과 기분, 실력이 바뀌어요.</p>
     <div class="cards" id="acts"></div>
@@ -756,6 +833,10 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
       <div class="view">
         <div class="room" id="room"></div>
         <p class="cozy" id="cozy"></p>
+        <div class="panel-card" id="homeBook" hidden>
+          <span class="p-name">방명록</span>
+          <ul class="guestbook" id="homeBookList"></ul>
+        </div>
       </div>
       <div class="view">
         <div class="tabs" role="tablist" aria-label="꾸미기">
@@ -765,6 +846,59 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
         </div>
         <div id="homePanel"></div>
         <p class="hint" id="homeHint">가구를 고르고 빈 칸을 눌러 놓아요. 놓인 가구를 누르면 치워요.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Friends: everyone playing this game -->
+  <section class="view" id="v-friends" hidden>
+    <div class="view-head">
+      <button class="back" type="button" id="friendsBack">← 돌아가기</button>
+      <h2>친구들</h2>
+    </div>
+    <p class="view-sub">친구와 같은 시간에 장사하면 팁이 20% 더 나와요. 저녁엔 접속한 친구와 같이 놀 수 있어요.</p>
+    <div class="panel-card">
+      <label class="p-name" for="shopName">내 가게 이름</label>
+      <div class="row-form">
+        <input id="shopName" maxlength="14" placeholder="예: 서연이네 피자" autocomplete="off">
+        <button class="btn primary small" id="shopNameBtn" type="button">저장</button>
+      </div>
+      <p class="note" id="writeNote" hidden></p>
+    </div>
+    <h3 class="sec-title">총 번 돈 순위</h3>
+    <ul class="people" id="people"></ul>
+    <div class="panel-card">
+      <span class="p-name">친구를 부르려면</span>
+      <ol class="effects">
+        <li>이 게임 화면의 공유 메뉴에서 친구 이메일을 넣어 초대해요.</li>
+        <li>친구에게 편집 권한을 줘야 친구도 가게를 올리고 선물을 보낼 수 있어요.</li>
+        <li>친구가 claude.ai에 로그인해서 같은 링크를 열면 여기에 나타나요.</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- A friend's house -->
+  <section class="view" id="v-visit" hidden>
+    <div class="view-head">
+      <button class="back" type="button" data-back="friends">← 친구들</button>
+      <h2 id="visitTitle">친구네 집</h2>
+    </div>
+    <div class="home-grid">
+      <div class="view">
+        <div class="room ro" id="visitRoom"></div>
+        <p class="cozy" id="visitCozy"></p>
+      </div>
+      <div class="view">
+        <div class="panel-card">
+          <span class="p-name">스티커 남기기</span>
+          <div class="stickers" id="stickerBtns"></div>
+          <p class="note" id="stickerNote"></p>
+        </div>
+        <button class="btn ghost" id="visitGift" type="button">선물 보내기</button>
+        <div class="panel-card">
+          <span class="p-name">방명록</span>
+          <ul class="guestbook" id="visitBook"></ul>
+        </div>
       </div>
     </div>
   </section>
@@ -792,6 +926,7 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
       <li>손님 다섯 명을 받으면 퇴근해요.</li>
       <li>퇴근 후엔 쉬거나 놀거나 요리 연습을 해요. 체력과 기분이 다음 날 장사에 영향을 줘요.</li>
       <li>모은 돈으로 마트에서 새 재료를, 가구점과 부동산에서 가구와 집을 사요.</li>
+      <li>알바생을 뽑으면 장사를 도와줘요. 친구를 초대하면 같이 장사하고 놀 수 있어요.</li>
     </ol>
     <p class="save-info" id="saveInfo" hidden></p>
     <button class="btn primary big" id="startBtn" type="button">가게 문 열기</button>
@@ -807,7 +942,7 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
     <ul class="lines" id="resLines"></ul>
     <div class="earn">
       <div><small>피자값</small><b id="resEarn">0원</b></div>
-      <div><small>팁</small><b id="resTip">0원</b></div>
+      <div><small id="tipLabel">팁</small><b id="resTip">0원</b></div>
     </div>
     <p class="quote" id="resQuote"></p>
     <button class="btn primary big" id="nextBtn" type="button">다음 손님</button>
@@ -831,6 +966,27 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
     <p class="center-note" id="sleepWhere"></p>
     <ul class="lines" id="sleepLines"></ul>
     <button class="btn primary big" id="wakeBtn" type="button">아침이에요, 가게 문 열기</button>
+  </div>
+</div>
+
+<div class="overlay" id="giftOv" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="giftTitle">
+    <h2 id="giftTitle">선물 보내기</h2>
+    <p class="center-note" id="giftTo"></p>
+    <span class="label">돈</span>
+    <div class="gift-grid" id="giftMoney"></div>
+    <span class="label">가구 (집에 안 놓은 것)</span>
+    <div class="inv-grid" id="giftFurn"></div>
+    <button class="btn ghost big" id="giftClose" type="button">닫기</button>
+  </div>
+</div>
+
+<div class="overlay center" id="inviteOv" hidden>
+  <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="inviteTitle">
+    <h2 id="inviteTitle">같이 놀자!</h2>
+    <p class="center-note" id="inviteText"></p>
+    <button class="btn primary big" id="inviteYes" type="button">좋아, 같이 놀자</button>
+    <button class="btn ghost big" id="inviteNo" type="button">다음에 놀자</button>
   </div>
 </div>
 
@@ -942,8 +1098,27 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
     { id: 'market', e: '🛒', name: '마트', sub: '새 재료 사기', shop: true },
     { id: 'furniture', e: '🪑', name: '가구점', sub: '가구 사기', shop: true },
     { id: 'realty', e: '🏠', name: '부동산', sub: '집 사기', shop: true },
+    { id: 'staff', e: '🧑‍💼', name: '알바 구하기', sub: '알바생 뽑기', shop: true },
     { id: 'home', e: '🏡', name: '우리 집 꾸미기', sub: '' },
+    { id: 'friends', e: '👫', name: '친구들', sub: '집 구경 · 선물', social: true },
   ];
+
+  // Part-timers. base = daily wage at ★1; each star adds 2,500원. Three days of work earn a star (max ★3).
+  const ROLES = {
+    prep: { name: '반죽 담당', base: 7000, desc: ['손님이 오면 도우를 펴 둬요', '도우를 펴고 주문한 소스까지 발라 둬요', '도우·소스·치즈까지 주문대로 준비해 둬요'] },
+    hall: { name: '홀 서빙', base: 6000, desc: ['손님이 25% 덜 지루해해요', '손님이 35% 덜 지루해해요', '손님이 45% 덜 지루해해요'] },
+    oven: { name: '오븐 담당', base: 8000, desc: ['딱 좋은 굽기 구간이 조금 넓어져요', '딱 좋은 굽기 구간이 넓어져요', '딱 좋은 굽기 구간이 아주 넓어져요'] },
+    cook: { name: '주방 보조', base: 12000, desc: ['하루에 피자 1판을 따로 만들어 팔아요', '하루에 피자 2판을 따로 만들어 팔아요', '하루에 피자 3판을 따로 만들어 팔아요'] },
+  };
+  const ALBA_NAMES = [['민지', '👩‍🦱'], ['준호', '🧑'], ['다은', '👩'], ['현우', '👨'], ['유나', '👱‍♀️'], ['태윤', '🧑‍🦱'],
+    ['소희', '👩‍🦰'], ['지훈', '👨‍🦱'], ['채원', '🙋‍♀️'], ['시우', '🙋‍♂️'], ['하은', '💁‍♀️'], ['도현', '🧔']];
+  const INTROS = {
+    prep: ['반죽은 자신 있어요!', '손이 엄청 빨라요.'],
+    hall: ['손님 응대는 맡겨 주세요!', '웃는 얼굴이 제 장점이에요.'],
+    oven: ['불 조절 하나는 잘해요.', '빵집에서 일해 봤어요.'],
+    cook: ['피자집 알바 경험 있어요!', '혼자서도 척척 만들어요.'],
+  };
+  const MAX_STAFF = 3;
 
   const PEOPLE = [
     { name: '민준', face: '🧒' }, { name: '서연', face: '👧' }, { name: '김 할머니', face: '👵' },
@@ -1043,15 +1218,18 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
       houses: ['gosiwon'], home: 'gosiwon', furn: { bed: 1 },
       layouts: { gosiwon: { wall: 'cream', floor: 'wood', cells: { f4: 'bed' } } },
       stage: 'work', hour: 18, sleepBonus: 0,
-      today: { idx: 0, revenue: 0, results: [] },
-      bestDay: 0, orderSeq: 0, totalPizzas: 0,
+      today: { idx: 0, revenue: 0, results: [], cook: {}, settled: false },
+      bestDay: 0, orderSeq: 0, totalPizzas: 0, totalEarned: 0,
+      staff: [], cands: null, candDay: 0, shopName: '', savedAt: 0,
     };
   }
   function normalize(s) {
     const d = defaultSave();
     if (!s || s.v !== 2) return d;
     const out = Object.assign(d, s);
-    out.today = Object.assign({ idx: 0, revenue: 0, results: [] }, s.today || {});
+    out.today = Object.assign({ idx: 0, revenue: 0, results: [], cook: {}, settled: false }, s.today || {});
+    out.staff = Array.isArray(s.staff) ? s.staff.filter(x => x && ROLES[x.role]) : [];
+    out.shopName = typeof s.shopName === 'string' ? s.shopName.slice(0, 14) : '';
     out.unlocked = (s.unlocked || d.unlocked).filter(id => ING_BY[id]);
     out.houses = (s.houses || ['gosiwon']).filter(id => HOUSE_BY[id]);
     if (!out.houses.length) out.houses = ['gosiwon'];
@@ -1064,8 +1242,13 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
     try { const raw = localStorage.getItem(SAVE_KEY); return raw ? normalize(JSON.parse(raw)) : null; }
     catch (e) { return null; }
   }
-  function persist() {
+  function persistLocal() {
     try { localStorage.setItem(SAVE_KEY, JSON.stringify(S)); } catch (e) { /* storage unavailable: the game still runs */ }
+  }
+  function persist() {
+    S.savedAt = Date.now();
+    persistLocal();
+    queueRemote();
   }
   function layout(id) {
     if (!S.layouts[id]) S.layouts[id] = { wall: 'cream', floor: 'wood', cells: {} };
@@ -1098,10 +1281,14 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
   // ---------- views + status ----------
   function showView(v) {
     view = v;
-    for (const id of ['shop', 'evening', 'store', 'home']) $('v-' + id).hidden = id !== v;
+    for (const id of ['shop', 'evening', 'store', 'home', 'friends', 'visit']) $('v-' + id).hidden = id !== v;
+    if (v !== 'visit' && social.noteUnsub) { social.noteUnsub(); social.noteUnsub = null; }
+    $('cheerBar').hidden = true;
     if (v === 'evening') renderEvening();
     if (v === 'home') renderHome();
-    renderStatus();
+    if (v === 'friends') renderFriends();
+    if (v === 'visit') renderVisit();
+    renderCrew(); renderStatus(); setPresence();
     window.scrollTo({ top: 0 });
   }
   document.addEventListener('click', e => {
@@ -1120,7 +1307,7 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
     }
     $('skillStars').textContent = '★'.repeat(S.skill) + '☆'.repeat(5 - S.skill);
     const tired = S.energy < 25;
-    if (view === 'shop') {
+    if (S.stage === 'work') {
       const n = Math.min(DAY_LEN, S.today.idx + (phase === 'result' || phase === 'dayend' ? 0 : 1));
       el.ctx.textContent = (tired ? '피곤해요 · ' : '') + `손님 ${n}/${DAY_LEN}`;
       el.ctx.classList.toggle('tired', tired);
@@ -1295,9 +1482,11 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
     S.today.results.push({ name: r.person.name, face: r.person.face, stars: r.stars, earn: r.earn, tip: r.tip });
     S.today.idx++;
     S.totalPizzas++;
+    S.totalEarned = (S.totalEarned || 0) + r.earn + r.tip;
     S.energy = clamp(S.energy - 6, 0, 100);
     S.mood = clamp(S.mood + [-5, -2, 1, 3][r.stars], 0, 100);
     persist();
+    setPresence({ last: { stars: r.stars, t: Date.now() } });
     sfx.ding(); if (r.earn > 0) setTimeout(sfx.coin, 380);
     showResult(r);
     render(); renderStatus();
@@ -1305,7 +1494,7 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
 
   // ---------- scoring ----------
   function makeZones() {
-    const w = 1.5 * S.skill;
+    const w = 1.5 * S.skill + [0, 3, 4.5, 6][staffLv('oven')];
     zones = [
       { to: 40, label: '반죽이 날것이에요', short: '날것', pts: 0, cls: 'bad' },
       { to: 58 - w, label: '조금 덜 익었어요', short: '덜 익음', pts: 15, cls: '' },
@@ -1332,8 +1521,9 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
     const total = (sauceOk ? 15 : 0) + (cheeseOk ? 10 : 0) + topPts + zone.pts;
     const stars = total >= 90 ? 3 : total >= 70 ? 2 : total >= 45 ? 1 : 0;
     const earn = round100(priceNow() * total / 100);
-    const tip = stars >= 2 ? Math.round((3000 * patience * tipMult()) / 500) * 500 : 0;
-    return { person, order, counts: c, sauce: pizza.sauce, cheese: pizza.cheese, sauceOk, cheeseOk, extras, zone, total, stars, earn, tip };
+    const team = workingMates().length > 0;
+    const tip = stars >= 2 ? Math.round((3000 * patience * tipMult() * (team ? 1.2 : 1)) / 500) * 500 : 0;
+    return { person, order, counts: c, sauce: pizza.sauce, cheese: pizza.cheese, sauceOk, cheeseOk, extras, zone, total, stars, earn, tip, team };
   }
 
   const TITLES = ['이건 제 피자가 아니에요…', '음, 먹을 만해요', '맛있어요!', '완벽한 피자예요!'];
@@ -1361,6 +1551,7 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
     ].join('');
     $('resEarn').textContent = won(r.earn) + '원';
     $('resTip').textContent = won(r.tip) + '원';
+    $('tipLabel').textContent = r.team ? '팁 · 친구랑 같이 +20%' : '팁';
     $('resQuote').textContent = `“${pick(QUOTES[r.stars])}”`;
     $('nextBtn').textContent = S.today.idx >= DAY_LEN ? '오늘 장사 마감' : '다음 손님 받기';
     openOv('resultOv');
@@ -1377,19 +1568,44 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
     return `다음 집 <b>${next.name}</b>까지 <b>${won(next.price - S.money)}원</b> 남았어요.`;
   }
 
+  // Runs once per day (guarded by today.settled): finishes the kitchen helpers' pizzas and pays wages.
+  function settleDay() {
+    if (S.today.settled && S.today.settle) return S.today.settle;
+    let cookEarn = 0;
+    for (const s of S.staff) if (s.role === 'cook') { const st = cookState(s); while (st.done < lvOf(s)) cookSell(s); cookEarn += st.earn; }
+    let wages = 0;
+    const quit = [], up = [];
+    for (const s of S.staff.slice()) {
+      const w = wageOf(s);
+      if (S.money >= w) {
+        const lv0 = lvOf(s);
+        S.money -= w; wages += w; s.days = (s.days || 0) + 1;
+        if (lvOf(s) > lv0) up.push(`${s.face} ${s.name} ★${lvOf(s)}`);
+      } else { quit.push(`${s.face} ${s.name}`); S.staff = S.staff.filter(x => x !== s); }
+    }
+    const net = S.today.revenue - wages;
+    const best = net > S.bestDay;
+    if (best) S.bestDay = net;
+    S.today.settle = { cookEarn, wages, quit, up, net, best };
+    S.today.settled = true;
+    persist();
+    return S.today.settle;
+  }
+
   function showDayEnd() {
     phase = 'dayend';
-    const res = S.today.results;
+    const res = S.today.results, st = settleDay();
     const starSum = res.reduce((s, r) => s + r.stars, 0);
-    const isBest = S.today.revenue > S.bestDay;
-    if (isBest) S.bestDay = S.today.revenue;
-    persist();
     $('dayTitle').textContent = `${S.day}일째 장사 끝, 퇴근이에요!`;
-    $('dayStars').innerHTML = `별 <b>${starSum}</b> / ${DAY_LEN * 3}개 · 오늘 번 돈` + (isBest && S.day > 1 ? '<span class="badge">최고 기록</span>' : '');
-    $('dayTotal').textContent = won(S.today.revenue) + '원';
+    $('dayStars').innerHTML = `별 <b>${starSum}</b> / ${DAY_LEN * 3}개 · 오늘 번 돈` + (st.best && S.day > 1 ? '<span class="badge">최고 기록</span>' : '');
+    $('dayTotal').textContent = won(st.net) + '원';
     $('dayLines').innerHTML = res.map(r =>
-      `<li><span>${r.face} ${r.name}</span><span>${'★'.repeat(r.stars)}${'☆'.repeat(3 - r.stars)} · ${won(r.earn + r.tip)}원</span></li>`).join('');
-    $('dayWallet').innerHTML = `지갑 <b>${won(S.money)}원</b><br>${nextGoal()}`;
+      `<li><span>${r.face} ${r.name}</span><span>${'★'.repeat(r.stars)}${'☆'.repeat(3 - r.stars)} · ${won(r.earn + r.tip)}원</span></li>`).join('') +
+      (st.cookEarn ? `<li><span>🍳 주방 보조가 판 피자</span><span class="good">+${won(st.cookEarn)}원</span></li>` : '') +
+      (st.wages ? `<li><span>알바비</span><span class="bad">−${won(st.wages)}원</span></li>` : '');
+    $('dayWallet').innerHTML = `지갑 <b>${won(S.money)}원</b><br>${nextGoal()}` +
+      (st.up.length ? `<br>실력이 늘었어요: ${st.up.join(', ')}` : '') +
+      (st.quit.length ? `<br>💸 일당을 못 줘서 그만뒀어요: ${st.quit.join(', ')}` : '');
     sfx.fanfare();
     openOv('dayOv');
     renderStatus();
@@ -1438,7 +1654,7 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
     S.orderSeq++;
     const tired = S.energy < 25;
     patience = 1; moodLevel = 'high';
-    patienceSec = (55 - idx * 3) / (tired ? 1.25 : 1);
+    patienceSec = (55 - idx * 3) / (tired ? 1.25 : 1) / (1 - [0, 0.25, 0.35, 0.45][staffLv('hall')]);
     bakeMs = (6200 - idx * 250) * (tired ? 0.8 : 1);
     makeZones();
     el.face.textContent = person.face;
@@ -1452,6 +1668,11 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
     el.clear.textContent = '처음부터'; clearArmed = 0;
     buildTray();
     freshPizza();
+    const prep = staffLv('prep');
+    if (prep >= 1) { pizza.dough = true; hist.push('dough'); }
+    if (prep >= 2) { pizza.sauce = order.sauce; hist.push('sauce'); }
+    if (prep >= 3) { pizza.cheese = order.cheese; hist.push('cheese'); setTrayPage('top'); }
+    renderCrew();
   }
 
   // ---------- shop render ----------
@@ -1555,18 +1776,23 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
         `<span class="act-m">${why ? why + ' · ' : ''}${actMeta(a)}${extra}</span></button>`;
     }).join('');
     const home = HOUSE_BY[S.home];
-    $('places').innerHTML = PLACES.map(p => {
+    const places = PLACES.filter(p => !p.social || socialOn());
+    $('places').innerHTML = places.map((p, i) => {
       const closed = p.shop && !shopsOpen();
-      const sub = p.id === 'home' ? `${home.name} · 아늑함 ${cozyScore()}` : closed ? '문 닫았어요' : p.sub;
-      return `<button class="act place" type="button" data-place="${p.id}" ${closed ? 'disabled' : ''}>` +
+      const sub = p.id === 'home' ? `${home.name} · 아늑함 ${cozyScore()}` : closed ? '문 닫았어요'
+        : p.id === 'staff' ? `알바생 ${S.staff.length}/${MAX_STAFF}명` : p.id === 'friends' ? `지금 접속 ${onlineCount()}명` : p.sub;
+      const wide = places.length % 2 && i === places.length - 1 ? ' wide' : '';
+      return `<button class="act place${wide}" type="button" data-place="${p.id}" ${closed ? 'disabled' : ''}>` +
         `<span class="act-e" aria-hidden="true">${p.e}</span><span class="act-t">${p.name}</span><span class="act-m">${sub}</span></button>`;
     }).join('');
     $('effects').innerHTML = [
       `기분 ${Math.round(S.mood)}: 팁 ×${tipMult().toFixed(2)}`,
       S.energy < 25 ? `체력 ${Math.round(S.energy)}: 피곤해서 오븐 바늘이 빨라지고 손님이 빨리 지쳐요` : `체력 ${Math.round(S.energy)}: 25 아래로 떨어지면 장사가 힘들어져요`,
       S.skill ? `실력 ★${S.skill}: 딱 좋은 굽기 구간이 넓어지고 피자값 +${S.skill * 4}%` : '요리 연습을 하면 굽기가 쉬워지고 피자값이 올라요',
+      S.staff.length ? `알바생 ${S.staff.map(s => `${s.name}(${ROLES[s.role].name})`).join(', ')} · 내일 일당 ${won(S.staff.reduce((t, s) => t + wageOf(s), 0))}원` : '알바생을 뽑으면 반죽, 서빙, 굽기, 주방 일을 도와줘요',
     ].map(t => `<li>${t}</li>`).join('');
     $('sleepBtn').textContent = h >= 24 ? '자정이에요, 이제 자요' : '잠자고 내일 영업하기';
+    renderEveFriends();
   }
   $('acts').addEventListener('click', e => {
     const b = e.target.closest('[data-act]'); if (!b || b.disabled) return;
@@ -1581,6 +1807,7 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
     if (a.sleep) S.sleepBonus += a.sleep;
     S.hour += a.h;
     persist();
+    setPresence({ act: a.name });
     if (a.skill) sfx.fanfare(); else if (a.money) sfx.coin(); else sfx.ding();
     const fx = [a.energy ? `체력 ${signed(a.energy)}` : '', mood ? `기분 ${signed(mood)}` : '', a.skill ? `실력 ★${S.skill}` : ''].filter(Boolean).join(', ');
     toast(`${a.e} ${pick(a.lines)}${fx ? ' (' + fx + ')' : ''}`, 3200);
@@ -1591,6 +1818,7 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
     const b = e.target.closest('[data-place]'); if (!b || b.disabled) return;
     sfx.click();
     if (b.dataset.place === 'home') { homeSel = null; showView('home'); }
+    else if (b.dataset.place === 'friends') openFriends();
     else { renderStore(b.dataset.place); showView('store'); }
   });
   $('sleepBtn').addEventListener('click', goSleep);
@@ -1618,8 +1846,9 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
     $('sleepTitle').textContent = `${S.day}일째 밤, 잘 자요`;
     $('sleepWhere').innerHTML = `<b>${HOUSE_BY[S.home].name}</b>에서 푹 잤어요.` + (mGain < 0 ? '<br>집을 더 아늑하게 꾸미면 자고 나서 기분도 좋아져요.' : '');
     $('sleepLines').innerHTML = lines.join('');
-    S.day++; S.stage = 'work'; S.hour = 18; S.sleepBonus = 0; S.today = { idx: 0, revenue: 0, results: [] };
+    S.day++; S.stage = 'work'; S.hour = 18; S.sleepBonus = 0; S.today = { idx: 0, revenue: 0, results: [], cook: {}, settled: false };
     persist();
+    setPresence({ act: null });
     sfx.night();
     openOv('sleepOv');
   }
@@ -1652,6 +1881,16 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
           `<span class="item-meta">아늑함 +${f.cozy} · ${f.at === 'wall' ? '벽에 걸어요' : '바닥에 놓아요'}${n ? `<br>${n}개 있어요` : ''}</span><span class="spacer"></span>` +
           `<button class="btn primary small" type="button" data-buy="${f.id}">${won(f.price)}원</button></div>`;
       }).join('');
+    } else if (kind === 'staff') {
+      $('storeTitle').textContent = '알바 구하기';
+      $('storeSub').textContent = `알바생은 ${MAX_STAFF}명까지 뽑을 수 있어요. 일당은 매일 퇴근할 때 나가고, 3일 일할 때마다 실력이 늘어요.`;
+      list.className = 'view';
+      const cands = candidates();
+      list.innerHTML =
+        `<h3 class="sec-title">우리 가게 알바생 ${S.staff.length}/${MAX_STAFF}</h3>` +
+        `<div class="houses">${S.staff.length ? S.staff.map(s => staffCard(s, true)).join('') : '<p class="empty">아직 알바생이 없어요.</p>'}</div>` +
+        `<h3 class="sec-title">오늘 지원한 사람</h3>` +
+        `<div class="houses">${cands.length ? cands.map(c => staffCard(c, false)).join('') : '<p class="empty">오늘 지원자는 다 뽑았어요. 내일 또 와 봐요.</p>'}</div>`;
     } else {
       $('storeTitle').textContent = '부동산';
       $('storeSub').textContent = '큰 집일수록 가구 놓을 칸이 많고 기본 아늑함이 높아요. 이사하면 가구는 상자에 담겨 따라와요.';
@@ -1667,6 +1906,9 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
     }
   }
   $('storeList').addEventListener('click', e => {
+    const hire = e.target.closest('[data-hire]'), fire = e.target.closest('[data-fire]');
+    if (hire) { if (!hire.disabled) hireStaff(hire.dataset.hire); return; }
+    if (fire) { fireStaff(fire.dataset.fire, fire); return; }
     const buy = e.target.closest('[data-buy]'), move = e.target.closest('[data-move]');
     if (move) { const h = HOUSE_BY[move.dataset.move]; moveTo(h.id); sfx.ding(); toast(`${josa(h.name, '으로', '로')} 이사했어요.`); renderStore('realty'); return; }
     if (!buy) return;
@@ -1695,22 +1937,28 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
 
   // ---------- home ----------
   const available = id => (S.furn[id] || 0) - Object.values(layout(S.home).cells).filter(x => x === id).length;
-  function renderHome(popKey) {
-    const h = HOUSE_BY[S.home], L = layout(S.home);
-    $('homeTitle').textContent = `우리 집 · ${h.name}`;
-    const room = $('room');
-    room.style.setProperty('--cols', h.cols);
+  // One room picture for both my home (editable buttons) and a friend's (read-only).
+  function roomHTML(h, L, opts) {
     const cell = (key, at) => {
       const it = L.cells[key], f = it && FURN_BY[it];
+      if (opts.readOnly) return `<div class="rcell${f ? ' has' : ''}"${f ? ` role="img" aria-label="${f.name}"` : ''}>${f ? f.e : ''}</div>`;
       const target = !it && homeSel && FURN_BY[homeSel].at === at;
       const label = f ? `${f.name}, 눌러서 치우기` : at === 'wall' ? '빈 벽' : '빈 바닥';
-      return `<button class="rcell${target ? ' target' : ''}${f ? ' has' : ''}${key === popKey ? ' pop' : ''}" type="button" data-cell="${key}" data-at="${at}" aria-label="${label}">${f ? f.e : ''}</button>`;
+      return `<button class="rcell${target ? ' target' : ''}${f ? ' has' : ''}${key === opts.popKey ? ' pop' : ''}" type="button" data-cell="${key}" data-at="${at}" aria-label="${label}">${f ? f.e : ''}</button>`;
     };
     let wall = '';
     for (let i = 0; i < h.cols; i++) wall += h.win.includes(i) ? `<div class="win view-${h.view}" aria-hidden="true"></div>` : cell('w' + i, 'wall');
     let floor = '';
     for (let i = 0; i < h.cols * h.rows; i++) floor += cell('f' + i, 'floor');
-    room.innerHTML = `<div class="wall wp-${L.wall}"><div class="wall-row">${wall}</div></div><div class="floor fl-${L.floor}"><div class="floor-grid">${floor}</div></div>`;
+    return `<div class="wall wp-${L.wall}"><div class="wall-row">${wall}</div></div><div class="floor fl-${L.floor}"><div class="floor-grid">${floor}</div></div>`;
+  }
+  function renderHome(popKey) {
+    const h = HOUSE_BY[S.home], L = layout(S.home);
+    $('homeTitle').textContent = `우리 집 · ${h.name}`;
+    const room = $('room');
+    room.style.setProperty('--cols', h.cols);
+    room.innerHTML = roomHTML(h, L, { popKey });
+    renderHomeBook();
     const cozy = cozyScore();
     $('cozy').innerHTML = `아늑함 <b>${cozy}</b> · 자고 나면 체력 +${sleepEnergy(cozy)}, 기분 ${signed(sleepMood(cozy))}`;
 
@@ -1773,6 +2021,7 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
         if (lvl === 'low') el.say.textContent = '“아직이에요? 너무 배고파요!”';
       }
     }
+    if (view === 'shop' && (phase === 'make' || phase === 'bake')) tickCooks(dt);
     if (view === 'shop' && phase === 'bake') {
       bake = Math.min(100, bake + (dt * 1000 / bakeMs) * 100);
       el.needle.style.left = bake.toFixed(1) + '%';
@@ -1798,6 +2047,572 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
   });
   document.addEventListener('pointerdown', () => audio(), { once: true });
 
+  // ---------- part-timers ----------
+  const lvOf = s => Math.min(3, 1 + Math.floor((s.days || 0) / 3));
+  const wageOf = s => ROLES[s.role].base + (lvOf(s) - 1) * 2500;
+  const staffLv = role => Math.max(0, ...S.staff.filter(s => s.role === role).map(lvOf));
+  const cookT = {};
+  function cookState(s) {
+    if (!S.today.cook) S.today.cook = {};
+    return S.today.cook[s.id] || (S.today.cook[s.id] = { done: 0, earn: 0 });
+  }
+  function cookSell(s) {
+    const st = cookState(s);
+    const o = makeOrder(1 + Math.floor(rand() * 3));
+    const q = clamp([0.7, 0.8, 0.9][lvOf(s) - 1] + (rand() * 0.2 - 0.1), 0.5, 1);
+    const e = round100(o.price * q);
+    st.done++; st.earn += e;
+    S.money += e; S.today.revenue += e; S.totalEarned = (S.totalEarned || 0) + e;
+    persist(); renderStatus();
+    return e;
+  }
+  function tickCooks(dt) {
+    for (const s of S.staff) {
+      if (s.role !== 'cook') continue;
+      const st = cookState(s);
+      if (st.done >= lvOf(s)) continue;
+      cookT[s.id] = (cookT[s.id] || 0) + dt / 38;
+      const bar = document.querySelector(`[data-cookbar="${s.id}"]`);
+      if (bar) bar.style.width = Math.min(100, cookT[s.id] * 100).toFixed(0) + '%';
+      if (cookT[s.id] >= 1) {
+        cookT[s.id] = 0;
+        const e = cookSell(s);
+        sfx.coin(); toast(`${s.face} ${josa(s.name, '이', '가')} 피자를 따로 팔았어요 +${won(e)}원`, 2000);
+        renderCrew();
+      }
+    }
+  }
+  function candidates() {
+    if (S.candDay !== S.day || !Array.isArray(S.cands)) {
+      const roles = shuffle(Object.keys(ROLES));
+      const taken = new Set(S.staff.map(s => s.name));
+      const names = shuffle(ALBA_NAMES).filter(([n]) => !taken.has(n));
+      S.cands = [0, 1, 2].map(i => ({
+        id: 'a' + Date.now().toString(36) + i, name: names[i][0], face: names[i][1], role: roles[i],
+        days: rand() < 0.3 ? 3 : 0, intro: pick(INTROS[roles[i]]),
+      }));
+      S.candDay = S.day;
+      persist();
+    }
+    return S.cands;
+  }
+  function staffCard(s, hired) {
+    const r = ROLES[s.role], lv = lvOf(s);
+    const dup = !hired && s.role !== 'cook' && S.staff.some(x => x.role === s.role);
+    const full = !hired && S.staff.length >= MAX_STAFF;
+    const why = dup ? '이미 같은 일을 하는 알바생이 있어요' : full ? '알바생 자리가 꽉 찼어요' : '';
+    const action = hired
+      ? `<button class="btn ghost small" type="button" data-fire="${s.id}">내보내기</button>`
+      : `<button class="btn primary small" type="button" data-hire="${s.id}" ${dup || full ? 'disabled' : ''}>뽑기 · 일당 ${won(wageOf(s))}원</button>`;
+    return `<div class="house"><div class="thumb staff-face" aria-hidden="true">${s.face}</div><div class="house-body">` +
+      `<span class="item-name">${s.name} · ${r.name} <span class="skill-stars">${'★'.repeat(lv)}${'☆'.repeat(3 - lv)}</span></span>` +
+      `<span class="item-meta">${hired ? `${s.days || 0}일 일했어요 · 일당 ${won(wageOf(s))}원` : `“${s.intro}”${s.days ? ' · 경력 있음' : ''}`}<br>${r.desc[lv - 1]}${why ? `<br>${why}` : ''}</span>` +
+      `${action}</div></div>`;
+  }
+  function hireStaff(id) {
+    const c = (S.cands || []).find(x => x.id === id);
+    if (!c) return;
+    if (S.staff.length >= MAX_STAFF) { sfx.bad(); toast('알바생 자리가 꽉 찼어요.'); return; }
+    if (c.role !== 'cook' && S.staff.some(x => x.role === c.role)) { sfx.bad(); toast('이미 같은 일을 하는 알바생이 있어요.'); return; }
+    S.staff.push({ id: c.id, name: c.name, face: c.face, role: c.role, days: c.days || 0, hiredDay: S.day });
+    S.cands = S.cands.filter(x => x.id !== id);
+    persist(); sfx.fanfare();
+    toast(`${c.face} ${c.name} 알바생을 뽑았어요! 내일부터 ${josa(ROLES[c.role].name, '을', '를')} 맡아요.`, 3200);
+    renderStore('staff');
+  }
+  const fireArmed = {};
+  function fireStaff(id, btn) {
+    const s = S.staff.find(x => x.id === id);
+    if (!s) return;
+    if (Date.now() - (fireArmed[id] || 0) > 2500) {
+      fireArmed[id] = Date.now(); btn.textContent = '한 번 더 누르면 내보내요';
+      setTimeout(() => { if (btn.isConnected && Date.now() - fireArmed[id] >= 2500) btn.textContent = '내보내기'; }, 2600);
+      return;
+    }
+    delete fireArmed[id];
+    S.staff = S.staff.filter(x => x.id !== id);
+    persist(); sfx.click();
+    toast(`${s.face} ${s.name} 알바생과 인사하고 헤어졌어요.`);
+    renderStore('staff');
+  }
+  function renderCrew() {
+    const c = $('crew');
+    if (view !== 'shop' || S.stage !== 'work') { c.hidden = true; return; }
+    const items = [];
+    const mates = workingMates();
+    if (mates.length) items.push('<span class="mate bonus">친구랑 같이 장사 중 · 팁 +20%</span>');
+    for (const p of mates) {
+      const u = uidOf(p);
+      items.push(`<button class="mate friend" type="button" data-cheer="${esc(p.peer)}" ${social.cheerOk ? '' : 'disabled'}>${avatarHTML(u)}<b>${esc(nameOf(u))}</b>` +
+        `<small>손님 ${Math.min(DAY_LEN, (p.presence.cust | 0) + 1)}/${DAY_LEN}${social.cheerOk ? ' · 응원하기' : ''}</small></button>`);
+    }
+    for (const s of S.staff) {
+      const extra = s.role === 'cook'
+        ? `<span class="bar"><i data-cookbar="${s.id}" style="width:${Math.round((cookT[s.id] || 0) * 100)}%"></i></span><small>${cookState(s).done}/${lvOf(s)}판</small>` : '';
+      items.push(`<span class="mate"><span class="mf">${s.face}</span><b>${s.name}</b><small>${ROLES[s.role].name}</small>${extra}</span>`);
+    }
+    c.innerHTML = items.join('');
+    c.hidden = !items.length;
+  }
+
+  // ---------- friends: shared data (db) + who is here right now (room) ----------
+  // Each player keeps their own game. db holds each player's save (private) and a public shop profile;
+  // the room's presence says who is online and what they are doing; events carry cheers.
+  const cap = name => (window.claude && typeof window.claude.use === 'function') ? window.claude.use(name).catch(() => null) : Promise.resolve(null);
+  const social = {
+    db: null, user: null, room: null, uid: null, canWrite: null,
+    players: {}, playersLoaded: false, playersSlow: false, synced: false, prof: {},
+    myPeer: null, peers: [], seenLast: {}, inviteOut: null, inviteTimer: 0, pending: null, handled: new Set(),
+    mailSeen: new Set(), cheerOk: true, cheerTo: null,
+    visit: null, notes: [], noteUnsub: null, homeNotes: [], homeNoteMax: -1, giftTo: null,
+  };
+  const CHEERS = ['👍', '🔥', '🍕', '💪', '🎉'];
+  const STICKERS = ['🍕 피자 최고!', '🏡 집이 예뻐요!', '🐱 너무 귀여워요!', '✨ 멋져요!', '🎉 또 놀러 올게요!', '💪 오늘도 화이팅!'];
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const seg = s => String(s).replace(/[^A-Za-z0-9_\-.~:@+]/g, '-');
+  const socialOn = () => !!(social.db || social.room);
+  const others = () => social.peers.filter(p => !p.isMe && p.kind === 'viewer');
+  const uidOf = p => p.by || (p.presence && typeof p.presence.uid === 'string' ? p.presence.uid : null);
+  const peerOf = uid => others().find(p => uidOf(p) === uid);
+  const onlineCount = () => new Set(others().map(p => uidOf(p) || p.peer)).size;
+  const workingMates = () => others().filter(p => p.presence && p.presence.stage === 'work' && p.presence.view === 'shop');
+  const canHang = p => S.stage === 'evening' && S.hour + 2 <= 24 && !!p.presence && p.presence.stage === 'evening' && (p.presence.hour | 0) + 2 <= 24;
+  const savePath = () => `data/users/${social.uid}/save`;
+
+  function nameOf(uid) {
+    const p = uid && social.prof[uid], pl = uid && social.players[uid];
+    return (p && p.name) || (pl && typeof pl.shopName === 'string' && pl.shopName.slice(0, 14)) || '친구';
+  }
+  function avatarImg(uid) {
+    const p = uid && social.prof[uid];
+    return p && p.avatarUrl ? `<img src="${esc(p.avatarUrl)}" alt="">` : '🧑‍🍳';
+  }
+  const avatarHTML = uid => `<span class="mf">${avatarImg(uid)}</span>`;
+  function ago(t) {
+    const m = Math.max(0, Math.round((Date.now() - (t || 0)) / 60000));
+    return m < 1 ? '방금' : m < 60 ? `${m}분 전` : m < 1440 ? `${Math.round(m / 60)}시간 전` : `${Math.round(m / 1440)}일 전`;
+  }
+  function statusText(pr) {
+    if (pr.stage === 'work') return `가게에서 손님 ${Math.min(DAY_LEN, (pr.cust | 0) + 1)}/${DAY_LEN} 받는 중`;
+    if (pr.stage === 'evening') {
+      const what = pr.view === 'home' ? '집 꾸미는 중' : pr.view === 'store' ? '쇼핑하는 중' : typeof pr.act === 'string' ? pr.act.slice(0, 20) : '';
+      return `퇴근 후 ${pr.hour | 0}:00${what ? ' · ' + what : ''}`;
+    }
+    return '접속 중';
+  }
+
+  function setPresence(extra) {
+    if (!social.room) return;
+    const base = { uid: social.uid || null, stage: S.stage, view, day: S.day, cust: S.today.idx, hour: S.hour };
+    social.room.presence(Object.assign(base, extra || {})).catch(() => {});
+  }
+  function renderSocial() {
+    const n = onlineCount();
+    $('onlineDot').textContent = n ? String(n) : '';
+    $('friendsBtn').setAttribute('aria-label', n ? `친구들, ${n}명 접속 중` : '친구들');
+    if (view === 'friends') renderFriends();
+    else if (view === 'visit') renderVisit();
+    else if (view === 'evening') renderEvening();
+    else if (view === 'shop') renderCrew();
+  }
+  let profBusy = false;
+  async function refreshProfiles() {
+    if (!social.user || profBusy) return;
+    const ids = [...new Set([...Object.keys(social.players), ...others().map(uidOf),
+      ...social.notes.map(n => n.from), ...social.homeNotes.map(n => n.from)].filter(x => typeof x === 'string'))];
+    if (!ids.length) return;
+    profBusy = true;
+    try {
+      const ps = await social.user.profiles(ids);
+      const changed = ids.some(id => !social.prof[id] || social.prof[id].name !== ps[id].name || social.prof[id].avatarUrl !== ps[id].avatarUrl);
+      social.prof = Object.assign({}, social.prof, ps);
+      if (changed) renderSocial();
+    } finally { profBusy = false; }
+  }
+
+  // Saves: localStorage first; the db copy follows a moment later, one write at a time.
+  function publicProfile() {
+    const L = layout(S.home);
+    return {
+      day: S.day, money: S.money, home: S.home, houses: S.houses.length, bestDay: S.bestDay, totalEarned: S.totalEarned || 0,
+      totalPizzas: S.totalPizzas, skill: S.skill, shopName: S.shopName || '', wall: L.wall, floor: L.floor, cells: L.cells,
+      staff: S.staff.map(s => ({ name: s.name, face: s.face, role: s.role })), updatedAt: Date.now(),
+    };
+  }
+  const profileKey = p => p ? JSON.stringify([p.day, p.money, p.home, p.houses, p.bestDay, p.totalEarned, p.totalPizzas, p.skill, p.shopName, p.wall, p.floor, p.cells, p.staff]) : '';
+  let remoteTimer = 0, remoteBusy = false, remoteAgain = false, remoteOff = false;
+  function queueRemote() {
+    if (!social.db || !social.uid || remoteOff) return;
+    clearTimeout(remoteTimer);
+    remoteTimer = setTimeout(flushRemote, 1500);
+  }
+  async function flushRemote() {
+    if (remoteBusy) { remoteAgain = true; return; }
+    remoteBusy = true;
+    try {
+      await social.db.doc(savePath()).set(JSON.parse(JSON.stringify(S)));
+      const pub = publicProfile();
+      if (profileKey(pub) !== profileKey(social.players[social.uid])) await social.db.doc('players/' + social.uid).set(pub);
+    } catch (e) {
+      if (e && ['invalid_argument', 'revoked', 'not_granted', 'capability_disabled'].includes(e.code)) remoteOff = true;
+    } finally {
+      remoteBusy = false;
+      if (remoteAgain) { remoteAgain = false; queueRemote(); }
+    }
+  }
+  async function pullRemoteSave() {
+    try {
+      const snap = await social.db.doc(savePath()).get();
+      const r = snap.exists ? JSON.parse(JSON.stringify(snap.data())) : null;
+      if (r && r.v === 2 && (r.savedAt || 0) > (S.savedAt || 0)) {
+        if (!$('startOv').hidden) { S = normalize(r); persistLocal(); refreshTitle(); prepareBehind(); }
+      } else if ((S.savedAt || 0) > ((r && r.savedAt) || 0)) queueRemote();
+    } catch (e) { /* keep playing from the local save */ }
+  }
+
+  function watchNotes(uid, cb) {
+    if (!social.db || !uid) return () => {};
+    return social.db.collection('notes').where('to', '==', uid).onSnapshot(snap => {
+      cb(snap.docs.map(d => d.data()).filter(n => n && typeof n.s === 'number' && typeof n.from === 'string')
+        .sort((a, b) => (b.at || 0) - (a.at || 0)).slice(0, 12));
+    }, () => cb([]));
+  }
+
+  async function initSocial() {
+    const [db, user, room] = await Promise.all([cap('db'), cap('user'), cap('room')]);
+    social.db = db; social.user = user; social.room = room;
+    if (user) { social.uid = await user.id(); social.canWrite = await user.can('data.write'); }
+    if (social.canWrite === false || !social.uid) remoteOff = true;
+    if (!db && !room) return;
+    $('friendsBtn').hidden = false;
+    if (view === 'evening') renderEvening();
+    if (db) {
+      if (!remoteOff) await pullRemoteSave();
+      const slow = setTimeout(() => { if (!social.playersLoaded) { social.playersSlow = true; renderSocial(); } }, 10000);
+      db.collection('players').onSnapshot(snap => {
+        const m = {};
+        for (const d of snap.docs) { const v = d.data(); if (v && typeof v === 'object') m[d.id] = v; }
+        social.players = m;
+        if (!snap.metadata.fromCache) {
+          clearTimeout(slow); social.playersLoaded = true; social.playersSlow = false;
+          if (!social.synced) { social.synced = true; if (!remoteOff && profileKey(publicProfile()) !== profileKey(m[social.uid])) queueRemote(); }
+        }
+        refreshProfiles(); renderSocial();
+      }, () => { clearTimeout(slow); social.playersLoaded = true; renderSocial(); });
+      if (social.uid) {
+        db.collection('mail').where('to', '==', social.uid).onSnapshot(snap => { for (const d of snap.docs) claimMail(d); }, () => {});
+        watchNotes(social.uid, list => {
+          const max = list.reduce((a, n) => Math.max(a, n.at || 0), 0);
+          if (social.homeNoteMax >= 0) {
+            for (const n of list) if ((n.at || 0) > social.homeNoteMax && n.from !== social.uid) {
+              toast(`🏡 ${nameOf(n.from)}님이 우리 집에 '${STICKERS[n.s] || '👋'}' 스티커를 남겼어요`, 3200);
+            }
+          }
+          social.homeNoteMax = Math.max(social.homeNoteMax, max);
+          social.homeNotes = list;
+          refreshProfiles();
+          if (view === 'home') renderHomeBook();
+        });
+      }
+    }
+    if (room) {
+      room.onPeers(onPeers, () => {});
+      room.on('cheer', onCheer, () => {});
+      setPresence();
+    }
+  }
+
+  // Gifts travel as mail docs; the receiver deletes the doc, then adds the gift.
+  async function claimMail(d) {
+    if (social.mailSeen.has(d.id)) return;
+    social.mailSeen.add(d.id);
+    const m = d.data() || {};
+    try { await social.db.doc('mail/' + d.id).delete(); } catch (e) { social.mailSeen.delete(d.id); return; }
+    let what = '';
+    if (m.kind === 'money' && [1000, 5000, 10000].includes(m.amount)) { S.money += m.amount; what = won(m.amount) + '원'; }
+    else if (m.kind === 'furn' && FURN_BY[m.item]) { S.furn[m.item] = (S.furn[m.item] || 0) + 1; what = `${FURN_BY[m.item].e} ${FURN_BY[m.item].name}`; }
+    else return;
+    persist(); renderStatus();
+    if (view === 'home') renderHome();
+    sfx.fanfare();
+    toast(`🎁 ${nameOf(m.from)}님이 ${josa(what, '을', '를')} 선물했어요!`, 3400);
+  }
+  async function sendGift(to, kind, x) {
+    if (!social.db || remoteOff || !to) return;
+    if (kind === 'money') { if (S.money < x) { sfx.bad(); toast('돈이 모자라요.'); return; } S.money -= x; }
+    else { if (available(x) <= 0) return; S.furn[x]--; }
+    closeOv('giftOv');
+    persist(); renderStatus();
+    try {
+      await social.db.collection('mail').add({ to, from: social.uid, kind, amount: kind === 'money' ? x : 0, item: kind === 'furn' ? x : '', at: Date.now() });
+      sfx.coin(); toast(`🎁 ${nameOf(to)}님에게 선물을 보냈어요!`);
+    } catch (e) {
+      if (kind === 'money') S.money += x; else S.furn[x] = (S.furn[x] || 0) + 1;
+      persist(); renderStatus(); sfx.bad();
+      toast(e && e.code === 'quota_exceeded' ? '선물 상자가 가득 찼어요. 나중에 다시 보내 주세요.' : '선물을 보내지 못했어요. 잠시 뒤에 다시 해 보세요.');
+    }
+  }
+  function openGift(uid) {
+    social.giftTo = uid;
+    $('giftTo').textContent = `${nameOf(uid)}님에게 보낼 선물을 골라요. 지갑: ${won(S.money)}원`;
+    $('giftMoney').innerHTML = [1000, 5000, 10000].map(a =>
+      `<button class="btn ghost small" type="button" data-gm="${a}" ${S.money < a ? 'disabled' : ''}>${won(a)}원</button>`).join('');
+    const own = FURN.filter(f => available(f.id) > 0);
+    $('giftFurn').innerHTML = own.length
+      ? own.map(f => `<button class="inv" type="button" data-gf="${f.id}"><span class="inv-e" aria-hidden="true">${f.e}</span><span>${f.name}</span><em>${available(f.id)}개</em></button>`).join('')
+      : '<p class="note">집에 놓지 않은 가구가 없어요.</p>';
+    openOv('giftOv');
+  }
+  $('giftMoney').addEventListener('click', e => { const b = e.target.closest('[data-gm]'); if (b && !b.disabled) sendGift(social.giftTo, 'money', +b.dataset.gm); });
+  $('giftFurn').addEventListener('click', e => { const b = e.target.closest('[data-gf]'); if (b) sendGift(social.giftTo, 'furn', b.dataset.gf); });
+  $('giftClose').addEventListener('click', () => closeOv('giftOv'));
+
+  async function leaveSticker(to, i) {
+    if (!social.db || remoteOff || !STICKERS[i]) return;
+    try {
+      await social.db.doc(`notes/${seg(to)}~${seg(social.uid)}`).set({ to, from: social.uid, s: i, at: Date.now() });
+      sfx.pop(); toast(`'${STICKERS[i]}' 스티커를 남겼어요!`);
+    } catch (e) { sfx.bad(); toast('스티커를 남기지 못했어요. 잠시 뒤에 다시 해 보세요.'); }
+  }
+
+  // Live room: presence carries where everyone is; invites and replies ride presence too, so any viewer can answer.
+  function onPeers(ch) {
+    social.peers = ch.peers;
+    const me = ch.peers.find(p => p.sameTab);
+    if (me) social.myPeer = me.peer;
+    for (const p of ch.joined.concat(ch.updated)) {
+      if (p.isMe || p.kind !== 'viewer') continue;
+      const pr = p.presence || {};
+      const last = pr.last && typeof pr.last.t === 'number' ? pr.last : null;
+      const known = p.peer in social.seenLast, prev = social.seenLast[p.peer];
+      social.seenLast[p.peer] = last ? last.t : null;
+      if (known && last && last.t !== prev && view === 'shop') {
+        const n = clamp(last.stars | 0, 0, 3);
+        toast(`${nameOf(uidOf(p))}님이 ${n ? '★'.repeat(n) : '별 없는'} 피자를 만들었어요`, 1800);
+      }
+      const inv = pr.invite;
+      if (inv && typeof inv.id === 'string' && inv.to === social.myPeer && !social.handled.has(inv.id)) {
+        social.handled.add(inv.id);
+        showInvite(p, inv);
+      }
+      const rep = pr.reply;
+      if (rep && social.inviteOut && rep.id === social.inviteOut.id) {
+        const ok = !!rep.ok;
+        endInvite();
+        if (ok) applyHangout(uidOf(p)); else toast(`${nameOf(uidOf(p))}님이 다음에 놀재요.`);
+      }
+    }
+    if (ch.left.some(p => social.inviteOut && p.peer === social.inviteOut.to)) { endInvite(); toast('친구가 나갔어요.'); }
+    refreshProfiles();
+    renderSocial();
+  }
+  function inviteFriend(peer) {
+    if (social.inviteOut || !social.room) return;
+    social.inviteOut = { to: peer, id: 'i' + Math.random().toString(36).slice(2, 10), t: Date.now() };
+    setPresence({ invite: social.inviteOut });
+    clearTimeout(social.inviteTimer);
+    social.inviteTimer = setTimeout(() => { if (social.inviteOut) { endInvite(); toast('친구가 대답이 없어요. 나중에 다시 불러 보세요.'); } }, 45000);
+    toast('같이 놀자고 했어요. 친구 대답을 기다려요…');
+    renderSocial();
+  }
+  function endInvite() {
+    clearTimeout(social.inviteTimer);
+    social.inviteOut = null;
+    setPresence({ invite: null });
+    renderSocial();
+  }
+  function showInvite(p, inv) {
+    if (S.stage !== 'evening') { setPresence({ reply: { id: inv.id, ok: false, to: p.peer } }); return; }
+    social.pending = { peer: p.peer, uid: uidOf(p), id: inv.id };
+    $('inviteText').textContent = `${nameOf(uidOf(p))}님이 같이 놀자고 해요! 2시간 동안 놀고 둘 다 기분이 30 올라요.`;
+    sfx.fanfare();
+    openOv('inviteOv');
+  }
+  function answerInvite(ok) {
+    const pd = social.pending;
+    social.pending = null;
+    closeOv('inviteOv');
+    if (!pd) return;
+    const can = ok && S.stage === 'evening' && S.hour + 2 <= 24;
+    setPresence({ reply: { id: pd.id, ok: can, to: pd.peer } });
+    setTimeout(() => setPresence({ reply: null }), 20000);
+    if (can) applyHangout(pd.uid); else if (ok) toast('오늘은 시간이 모자라요.');
+  }
+  $('inviteYes').addEventListener('click', () => answerInvite(true));
+  $('inviteNo').addEventListener('click', () => answerInvite(false));
+  function applyHangout(uid) {
+    if (S.stage !== 'evening') return;
+    S.hour = Math.min(24, S.hour + 2);
+    S.mood = clamp(S.mood + 30, 0, 100);
+    S.energy = clamp(S.energy - 5, 0, 100);
+    persist();
+    setPresence({ act: '친구랑 노는 중' });
+    sfx.fanfare();
+    toast(`👫 ${josa(nameOf(uid), '이랑', '랑')} ${pick(['떡볶이를 먹으며 수다를 떨었어요!', '같이 노래방에 갔어요!', '공원에서 자전거를 탔어요!', '만화방에서 만화책을 봤어요!'])} (기분 +30)`, 3600);
+    renderStatus();
+    if (view === 'evening') renderEvening();
+    if (S.hour >= 24) setTimeout(goSleep, 1600);
+  }
+  function sendCheer(peer, e) {
+    if (!social.room || !peer) return;
+    social.room.emit('cheer', { to: peer, e }).then(() => toast(`${e} 응원을 보냈어요!`, 1400)).catch(err => {
+      if (err && err.code === 'not_permitted') { social.cheerOk = false; renderCrew(); toast('응원은 편집 권한이 있는 사람만 보낼 수 있어요.'); }
+    });
+  }
+  function onCheer(msg) {
+    const d = msg && msg.data;
+    if (!d || msg.isMe || d.to !== social.myPeer) return;
+    const e = CHEERS.includes(d.e) ? d.e : '👍';
+    const from = msg.by || (others().find(p => p.peer === msg.peer) || {}).presence?.uid;
+    floatEmoji(e); sfx.ding();
+    toast(`${nameOf(from)}님이 ${e} 응원했어요!`, 2200);
+  }
+  function floatEmoji(e) {
+    const s = document.createElement('span');
+    s.className = 'float-emo'; s.textContent = e;
+    s.style.left = (30 + Math.random() * 40) + 'vw'; s.style.top = '42vh';
+    document.body.appendChild(s);
+    setTimeout(() => s.remove(), 1700);
+  }
+  $('crew').addEventListener('click', e => {
+    const b = e.target.closest('[data-cheer]');
+    if (!b || b.disabled) return;
+    social.cheerTo = b.dataset.cheer;
+    const bar = $('cheerBar');
+    bar.innerHTML = CHEERS.map(x => `<button class="sticker" type="button" data-emo="${x}" aria-label="${x} 응원 보내기">${x}</button>`).join('');
+    bar.hidden = false; sfx.click();
+  });
+  $('cheerBar').addEventListener('click', e => {
+    const b = e.target.closest('[data-emo]');
+    if (!b) return;
+    $('cheerBar').hidden = true;
+    sendCheer(social.cheerTo, b.dataset.emo);
+  });
+
+  // Friends list, friend's house, my guestbook
+  let prevView = 'shop';
+  function openFriends() { if (view !== 'friends' && view !== 'visit') prevView = view; showView('friends'); }
+  $('friendsBtn').addEventListener('click', () => { sfx.click(); openFriends(); });
+  $('friendsBack').addEventListener('click', () => { sfx.click(); showView(prevView); });
+  $('shopNameBtn').addEventListener('click', () => {
+    const v = $('shopName').value.replace(/[\u0000-\u001f\u007f​-‏‪-‮⁠-⁤]/g, '').trim().slice(0, 14);
+    S.shopName = v; persist(); sfx.ding();
+    toast(v ? `가게 이름을 '${v}'(으)로 정했어요.` : '가게 이름을 지웠어요.');
+    renderFriends();
+  });
+  function renderFriends() {
+    const ro = remoteOff;
+    const inp = $('shopName');
+    if (document.activeElement !== inp) inp.value = S.shopName || '';
+    inp.disabled = ro; $('shopNameBtn').disabled = ro;
+    $('writeNote').hidden = !ro;
+    $('writeNote').textContent = !social.uid
+      ? '로그인해야 내 가게를 친구 목록에 올릴 수 있어요.'
+      : '지금은 보기만 할 수 있어요. 게임 주인에게 편집 권한을 받으면 내 가게가 순위에 올라가고 선물과 스티커를 보낼 수 있어요.';
+    const online = new Set(others().map(uidOf).filter(Boolean));
+    const ids = Object.keys(social.players);
+    if (social.uid && !ro && !ids.includes(social.uid)) ids.push(social.uid);
+    const data = uid => uid === social.uid ? publicProfile() : social.players[uid] || {};
+    const rows = ids.map(uid => ({ uid, p: data(uid) })).sort((a, b) => (+b.p.totalEarned || 0) - (+a.p.totalEarned || 0));
+    const row = ({ uid, p }, i) => {
+      const me = uid === social.uid, peer = me ? null : peerOf(uid);
+      const h = HOUSE_BY[p.home] || HOUSES[0];
+      const pending = peer && social.inviteOut && social.inviteOut.to === peer.peer;
+      const acts = me ? '' : `<div class="p-actions">` +
+        `<button class="btn ghost" type="button" data-visit="${esc(uid)}">집 구경</button>` +
+        `<button class="btn ghost" type="button" data-gift="${esc(uid)}" ${ro ? 'disabled' : ''}>선물</button>` +
+        (peer ? `<button class="btn primary" type="button" data-hang="${esc(peer.peer)}" ${canHang(peer) && !social.inviteOut ? '' : 'disabled'}>${pending ? '대답 기다리는 중…' : '같이 놀기'}</button>` : '') +
+        `</div>`;
+      const shop = typeof p.shopName === 'string' && p.shopName ? p.shopName.slice(0, 14) : '피자 공방';
+      return `<li class="person${me ? ' me' : ''}"><span class="rank">${i + 1}</span>` +
+        `<span class="avatar">${avatarImg(uid)}${me || online.has(uid) ? '<i class="on" title="접속 중"></i>' : ''}</span>` +
+        `<div class="p-body"><span class="p-name">${esc(nameOf(uid))}${me ? ' (나)' : ''}</span>` +
+        `<span class="p-meta">${esc(shop)} · ${clamp(p.day | 0, 0, 99999)}일째 · ${h.name} · 총 ${won(clamp(+p.totalEarned || 0, 0, 1e12))}원</span>` +
+        (peer ? `<span class="p-meta">${esc(statusText(peer.presence || {}))}</span>` : '') + acts + `</div></li>`;
+    };
+    const list = $('people');
+    if (!social.db) {
+      const ps = others();
+      list.innerHTML = ps.length ? ps.map(p => `<li class="person"><span class="rank">·</span><span class="avatar">${avatarImg(uidOf(p))}<i class="on"></i></span><div class="p-body"><span class="p-name">${esc(nameOf(uidOf(p)))}</span><span class="p-meta">${esc(statusText(p.presence || {}))}</span></div></li>`).join('')
+        : '<li class="empty">지금 접속한 친구가 없어요.</li>';
+      return;
+    }
+    if (!social.playersLoaded && rows.length <= 1) {
+      list.innerHTML = rows.map(row).join('') + `<li class="empty">${social.playersSlow ? '친구 목록을 아직 못 불러왔어요. 인터넷 연결을 확인해 주세요.' : '친구 목록을 불러오는 중이에요…'}</li>`;
+      return;
+    }
+    list.innerHTML = rows.map(row).join('') + (rows.filter(r => r.uid !== social.uid).length ? '' : '<li class="empty">아직 같이 하는 친구가 없어요. 아래 방법으로 친구를 불러 보세요.</li>');
+  }
+  function renderEveFriends() {
+    const box = $('eveFriends');
+    const seen = new Set(), rows = [];
+    for (const p of others()) { const k = uidOf(p) || p.peer; if (!seen.has(k)) { seen.add(k); rows.push(p); } }
+    if (!social.room || !rows.length) { box.hidden = true; return; }
+    box.hidden = false;
+    $('eveFriendList').innerHTML = rows.map(p => {
+      const u = uidOf(p), ok = canHang(p) && !social.inviteOut;
+      const pending = social.inviteOut && social.inviteOut.to === p.peer;
+      const sub = pending ? '대답을 기다리는 중…' : statusText(p.presence || {}) + (canHang(p) ? ' · 2시간 · 기분 +30' : '');
+      return `<button class="act" type="button" data-hang="${esc(p.peer)}" ${ok ? '' : 'disabled'}>` +
+        `<span class="act-e" aria-hidden="true">${avatarHTML(u)}</span><span class="act-t">${esc(josa(nameOf(u), '이랑', '랑'))} 같이 놀기</span>` +
+        `<span class="act-m">${esc(sub)}</span></button>`;
+    }).join('');
+  }
+  function socialClick(e) {
+    const v = e.target.closest('[data-visit]'), g = e.target.closest('[data-gift]'), h = e.target.closest('[data-hang]');
+    if (v) { sfx.click(); openVisit(v.dataset.visit); }
+    else if (g && !g.disabled) { sfx.click(); openGift(g.dataset.gift); }
+    else if (h && !h.disabled) { sfx.click(); inviteFriend(h.dataset.hang); }
+  }
+  $('people').addEventListener('click', socialClick);
+  $('eveFriendList').addEventListener('click', socialClick);
+
+  function cleanLayout(pl) {
+    const cells = {};
+    const src = pl && pl.cells && typeof pl.cells === 'object' ? pl.cells : {};
+    for (const [k, v] of Object.entries(src)) if (/^[wf]\d{1,2}$/.test(k) && FURN_BY[v]) cells[k] = v;
+    return {
+      wall: WALLS.some(w => w[0] === pl.wall) ? pl.wall : 'cream',
+      floor: FLOORS.some(f => f[0] === pl.floor) ? pl.floor : 'wood',
+      cells,
+    };
+  }
+  function openVisit(uid) {
+    social.visit = uid; social.notes = [];
+    if (social.noteUnsub) social.noteUnsub();
+    social.noteUnsub = watchNotes(uid, list => { social.notes = list; refreshProfiles(); if (view === 'visit') renderVisit(); });
+    showView('visit');
+  }
+  function bookHTML(list, empty) {
+    return list.length
+      ? list.map(n => `<li><span>${esc(STICKERS[n.s] || '👋')} · ${esc(nameOf(n.from))}</span><span>${ago(n.at)}</span></li>`).join('')
+      : `<li><span>${empty}</span></li>`;
+  }
+  function renderVisit() {
+    const uid = social.visit, pl = social.players[uid] || {};
+    const h = HOUSE_BY[pl.home] || HOUSES[0], L = cleanLayout(pl);
+    $('visitTitle').textContent = `${nameOf(uid)}님의 ${h.name}`;
+    const room = $('visitRoom');
+    room.style.setProperty('--cols', h.cols);
+    room.innerHTML = roomHTML(h, L, { readOnly: true });
+    const cozy = h.base + Object.values(L.cells).reduce((s, f) => s + FURN_BY[f].cozy, 0);
+    const crew = Array.isArray(pl.staff) ? pl.staff.length : 0;
+    $('visitCozy').innerHTML = `아늑함 <b>${cozy}</b>` + (crew ? ` · 알바생 ${crew}명` : '');
+    const ro = remoteOff;
+    $('stickerBtns').innerHTML = STICKERS.map((s, i) => `<button class="sticker" type="button" data-st="${i}" ${ro ? 'disabled' : ''}>${s}</button>`).join('');
+    $('stickerNote').textContent = ro ? '편집 권한이 있어야 스티커를 남길 수 있어요.' : '스티커는 친구 집마다 하나씩 남아요. 다시 고르면 바뀌어요.';
+    $('visitGift').disabled = ro;
+    $('visitBook').innerHTML = bookHTML(social.notes, '아직 스티커가 없어요. 첫 스티커를 남겨 보세요!');
+  }
+  $('stickerBtns').addEventListener('click', e => { const b = e.target.closest('[data-st]'); if (b && !b.disabled) leaveSticker(social.visit, +b.dataset.st); });
+  $('visitGift').addEventListener('click', () => openGift(social.visit));
+  function renderHomeBook() {
+    const box = $('homeBook');
+    if (!social.db || !social.uid) { box.hidden = true; return; }
+    box.hidden = false;
+    $('homeBookList').innerHTML = bookHTML(social.homeNotes, '친구가 우리 집에 놀러 오면 여기에 스티커가 남아요.');
+  }
+
   // ---------- title + boot ----------
   function resumeWork() {
     showView('shop');
@@ -1822,9 +2637,18 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
       return;
     }
     S = defaultSave(); persist();
-    b.hidden = true; $('saveInfo').hidden = true; $('startBtn').textContent = '가게 문 열기';
-    prepareBehind(); toast('새 게임을 준비했어요.');
+    b.textContent = '처음부터 새로 하기'; b.classList.remove('armed');
+    refreshTitle(); prepareBehind(); toast('새 게임을 준비했어요.');
   });
+  function refreshTitle() {
+    const fresh = S.day === 1 && S.today.idx === 0 && S.stage === 'work' && S.money === 0;
+    $('saveInfo').hidden = fresh; $('resetBtn').hidden = fresh;
+    $('startBtn').textContent = fresh ? '가게 문 열기' : '이어서 하기';
+    if (!fresh) {
+      $('saveInfo').innerHTML = `<b>${S.day}일째</b> · 지갑 <b>${won(S.money)}원</b> · <b>${HOUSE_BY[S.home].name}</b>에 살아요` +
+        `<br>${S.stage === 'evening' ? '퇴근 후 저녁 시간부터 이어서 해요' : `오늘 손님 ${S.today.idx}/${DAY_LEN}명까지 받았어요`}`;
+    }
+  }
 
   function start(data) {
     data = data || {};
@@ -1838,17 +2662,11 @@ button { font: inherit; color: inherit; touch-action: manipulation; }
     } else {
       const saved = loadSave();
       if (saved) S = saved;
-      const fresh = !saved || (S.day === 1 && S.today.idx === 0 && S.stage === 'work' && S.money === 0);
-      if (!fresh) {
-        $('saveInfo').hidden = false;
-        $('saveInfo').innerHTML = `<b>${S.day}일째</b> · 지갑 <b>${won(S.money)}원</b> · <b>${HOUSE_BY[S.home].name}</b>에 살아요` +
-          `<br>${S.stage === 'evening' ? '퇴근 후 저녁 시간부터 이어서 해요' : `오늘 손님 ${S.today.idx}/${DAY_LEN}명까지 받았어요`}`;
-        $('startBtn').textContent = '이어서 하기';
-        $('resetBtn').hidden = false;
-      }
+      refreshTitle();
       prepareBehind();
     }
     requestAnimationFrame(loop);
+    initSocial();
   }
   const hot = window.claude && window.claude.hot;
   if (hot && typeof hot.snapshot === 'function') {
