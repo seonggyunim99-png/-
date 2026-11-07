@@ -2088,26 +2088,57 @@ const FaceAI = {
   }
 };
 
+// round, puffy heart (Photo Booth sticker shape), centred on its visual middle
 function heartPath(ctx, s) {
   ctx.beginPath();
-  ctx.moveTo(0, s * 0.32);
-  ctx.bezierCurveTo(-s * 0.62, -s * 0.06, -s * 0.36, -s * 0.58, 0, -s * 0.22);
-  ctx.bezierCurveTo(s * 0.36, -s * 0.58, s * 0.62, -s * 0.06, 0, s * 0.32);
+  ctx.moveTo(0, s * 0.38);
+  ctx.bezierCurveTo(-s * 0.1, s * 0.3, -s * 0.56, s * 0.08, -s * 0.56, -s * 0.15);
+  ctx.bezierCurveTo(-s * 0.56, -s * 0.42, -s * 0.2, -s * 0.52, 0, -s * 0.27);
+  ctx.bezierCurveTo(s * 0.2, -s * 0.52, s * 0.56, -s * 0.42, s * 0.56, -s * 0.15);
+  ctx.bezierCurveTo(s * 0.56, s * 0.08, s * 0.1, s * 0.3, 0, s * 0.38);
   ctx.closePath();
 }
-function drawHeart(ctx, s, color) {
+const PINKS = [
+  ['#ffc4e3', '#ff5cad', '#dd2380'],
+  ['#ffd3eb', '#ff7ac0', '#ec3d94'],
+  ['#ffb3d9', '#f2469e', '#c8186d'],
+  ['#ffe2f1', '#ff9bcf', '#f058a6'],
+  ['#ffc0e0', '#ff63b2', '#e22d88']
+];
+function drawHeart(ctx, s, c) {
   heartPath(ctx, s);
-  const g = ctx.createRadialGradient(-s * 0.16, -s * 0.22, s * 0.03, 0, 0, s * 0.62);
-  g.addColorStop(0, '#ffffff');
-  g.addColorStop(0.18, color[0]);
-  g.addColorStop(1, color[1]);
+  const g = ctx.createRadialGradient(-s * 0.14, -s * 0.18, s * 0.02, 0, -s * 0.02, s * 0.62);
+  g.addColorStop(0, c[0]);
+  g.addColorStop(0.42, c[1]);
+  g.addColorStop(1, c[2]);
   ctx.fillStyle = g;
+  ctx.shadowColor = 'rgba(180,10,90,0.35)';
+  ctx.shadowBlur = Math.max(2, s * 0.16);
+  ctx.shadowOffsetY = s * 0.04;
   ctx.fill();
-  ctx.fillStyle = 'rgba(255,255,255,0.55)';
+  ctx.shadowColor = 'transparent';
+  ctx.shadowBlur = 0;
+  ctx.shadowOffsetY = 0;
+  ctx.fillStyle = 'rgba(255,255,255,0.3)';
   ctx.beginPath();
-  ctx.ellipse(-s * 0.2, -s * 0.2, s * 0.07, s * 0.11, -0.6, 0, Math.PI * 2);
+  ctx.ellipse(-s * 0.24, -s * 0.2, s * 0.08, s * 0.13, -0.55, 0, Math.PI * 2);
   ctx.fill();
 }
+// fixed layout for the heart crown: dense arch over the head + a few strays
+const HEART_CROWN = (() => {
+  let seed = 20261107;
+  const r = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const hearts = [], strays = [];
+  const N = 18;
+  for (let i = 0; i < N; i++) {
+    hearts.push({ u: (i + 0.2 + r() * 0.6) / N, s: 0.15 + r() * 0.17, rot: (r() - 0.5) * 0.8, j: (r() - 0.5) * 0.2,
+      ph: r() * 6.28, c: PINKS[(r() * PINKS.length) | 0], a: 0.84 + r() * 0.16 });
+  }
+  for (let i = 0; i < 7; i++) {
+    strays.push({ u: 0.04 + r() * 0.92, s: 0.06 + r() * 0.06, out: 0.12 + r() * 0.16, ph: r(), c: PINKS[(r() * PINKS.length) | 0] });
+  }
+  return { hearts, strays };
+})();
 // little blue bird facing +x; flap ∈ [-1, 1]
 function drawBird(ctx, s, flap) {
   const g = ctx.createLinearGradient(0, -s * 0.35, 0, s * 0.3);
@@ -2150,7 +2181,6 @@ function roundRectPath(ctx, x, y, w, h, r) {
   ctx.closePath();
 }
 
-const HEART_COLORS = [['#ff8cc6', '#e8317a'], ['#8cc8ff', '#2f6fe0'], ['#ffa3d6', '#ff4f9a'], ['#d6a8ff', '#8a4fe0'], ['#ff9cb8', '#ff3366']];
 const Stickers = {
   hintFilter: -1, hintSince: 0, hinted: false,
   inUse() {
@@ -2229,12 +2259,40 @@ const Stickers = {
     }
   },
   kind(ctx, f, fw, fh, eyeY, eyeDist, t, alpha) {
-    if (f === 17) {                                       // Lovestruck
-      this.orbit(ctx, 7, fw, fh, t, 1.15, alpha, (it, s) => {
-        const beat = 1 + 0.08 * Math.sin(t * 9 + it.i);
-        ctx.rotate(Math.sin(t * 2 + it.i) * 0.2);
-        drawHeart(ctx, s * beat, HEART_COLORS[it.i % HEART_COLORS.length]);
-      });
+    if (f === 17) {                                       // Lovestruck — heart crown
+      // an arch from temple to temple over the top of the head; hearts drift slowly along it
+      const rx = fw * 0.68, ry = fh * 0.74, cy = -fh * 0.3;
+      const at = (u, k) => {
+        const phi = Math.PI - 0.14 + u * (Math.PI + 0.28);
+        return [Math.cos(phi) * rx * k, cy + Math.sin(phi) * ry * k];
+      };
+      const drift = t * 0.018;
+      const list = HEART_CROWN.hearts.map(h => {
+        const u = (h.u + drift) % 1;
+        const fade = smooth01(0, 0.07, u) * (1 - smooth01(0.93, 1, u));
+        return { h, u, fade };
+      }).sort((a, b) => a.h.s - b.h.s);
+      for (const { h, u, fade } of list) {
+        if (fade <= 0.01) continue;
+        const p = at(u, 1 + h.j);
+        const bob = Math.sin(t * 2.2 + h.ph) * fh * 0.012;
+        const size = fw * h.s * (0.94 + 0.06 * Math.sin(t * 3.1 + h.ph)) * (0.55 + 0.45 * fade);
+        ctx.save();
+        ctx.translate(p[0], p[1] + bob);
+        ctx.rotate(h.rot + Math.sin(t * 1.4 + h.ph) * 0.07);
+        ctx.globalAlpha = alpha * h.a * fade;
+        drawHeart(ctx, size, h.c);
+        ctx.restore();
+      }
+      for (const st of HEART_CROWN.strays) {
+        const life = (t * 0.22 + st.ph) % 1;
+        const p = at(st.u, 1 + st.out + life * 0.12);
+        ctx.save();
+        ctx.translate(p[0], p[1] - life * fh * 0.08);
+        ctx.globalAlpha = alpha * Math.sin(life * Math.PI) * 0.95;
+        drawHeart(ctx, fw * st.s, st.c);
+        ctx.restore();
+      }
     } else if (f === 18) {                                // Dizzy birds
       this.orbit(ctx, 5, fw, fh, t, 1.7, alpha, (it, s, dir) => {
         ctx.scale(dir, 1);
