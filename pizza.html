@@ -476,6 +476,88 @@ button.mate:disabled { cursor: default; }
 .room.ro .rcell { outline-color: transparent; cursor: default; }
 .sheet .label { font-family: var(--f-display); font-size: 15px; }
 
+/* Pizza process: rolling, rubbing sauce and cheese, cutting, boxing */
+.proc { display: flex; align-items: center; gap: 10px; width: min(100%, 370px); }
+.proc-bar { flex: 1; height: 10px; border-radius: 5px; background: var(--line); overflow: hidden; }
+.proc-bar i { display: block; height: 100%; width: 0; background: var(--mustard); border-radius: inherit; transition: width 0.15s; }
+.proc-bar i.full { background: var(--basil); }
+.proc .btn { flex: none; font-size: 14px; padding: 7px 12px; box-shadow: 0 3px 0 var(--line); }
+#pizza.painting { cursor: none; touch-action: none; }
+#sauce { transition: opacity 0.6s; }
+.tool { pointer-events: none; transition: opacity 0.15s; }
+.cut-dark, .cut-hi { stroke-linecap: round; stroke-dasharray: 270; animation: cut-draw 0.22s ease-out both; }
+.cut-dark { stroke: rgba(70, 30, 10, 0.6); stroke-width: 2.6; }
+.cut-hi { stroke: rgba(255, 240, 210, 0.55); stroke-width: 0.9; transform: translate(1px, 1px); }
+@keyframes cut-draw { from { stroke-dashoffset: 270; } to { stroke-dashoffset: 0; } }
+.cut-guide { stroke: #ffffff; stroke-width: 2; stroke-dasharray: 6 6; opacity: 0.85; }
+.bub { fill: #fff3c4; stroke: rgba(160, 100, 30, 0.35); stroke-width: 0.8; transform-box: fill-box; transform-origin: center; animation: bub 1.1s ease-in-out infinite alternate; }
+.bub:nth-child(3n) { animation-delay: -0.4s; }
+.bub:nth-child(3n+1) { animation-delay: -0.8s; }
+@keyframes bub { from { transform: scale(0.5); } to { transform: scale(1.15); } }
+.flames { position: absolute; left: 50%; bottom: 10px; width: 70%; height: 28%; transform: translateX(-50%); display: flex; justify-content: space-around; align-items: flex-end; pointer-events: none; }
+.flames i {
+  width: 13%; height: 70%; border-radius: 50% 50% 45% 45% / 65% 65% 35% 35%; opacity: 0.9; filter: blur(1px); transform-origin: 50% 100%;
+  background: radial-gradient(60% 70% at 50% 75%, #fff2a8, #ffb03b 45%, rgba(255, 90, 30, 0.85) 70%, transparent 72%);
+  animation: flame 0.7s ease-in-out infinite alternate;
+}
+.flames i:nth-child(2) { height: 90%; animation-delay: -0.2s; }
+.flames i:nth-child(3) { height: 100%; animation-delay: -0.45s; }
+.flames i:nth-child(4) { height: 85%; animation-delay: -0.1s; }
+.flames i:nth-child(5) { height: 65%; animation-delay: -0.35s; }
+@keyframes flame { from { transform: scaleY(0.8) scaleX(1.05); } to { transform: scaleY(1.15) scaleX(0.9) translateY(-4%); } }
+.steam { position: absolute; inset: 12% 25% auto; height: 40%; display: flex; justify-content: space-around; pointer-events: none; opacity: 0; transition: opacity 0.4s; z-index: 2; }
+.steam i { width: 14px; height: 100%; border-radius: 50%; background: linear-gradient(transparent, rgba(255, 255, 255, 0.75), transparent); filter: blur(4px); }
+.stage.steaming .steam { opacity: 1; }
+.stage.steaming .steam i { animation: steam 2.2s ease-out infinite; }
+.stage.steaming .steam i:nth-child(2) { animation-delay: -0.7s; }
+.stage.steaming .steam i:nth-child(3) { animation-delay: -1.4s; }
+@keyframes steam { from { transform: translateY(30%) scaleX(0.8); opacity: 0; } 40% { opacity: 1; } to { transform: translateY(-60%) scaleX(1.4) skewX(12deg); opacity: 0; } }
+.box-base, .box-lid { position: absolute; inset: 3%; border-radius: 10px; opacity: 0; pointer-events: none; }
+.box-base { background: #d7a96f; box-shadow: inset 0 0 0 6px #c08e52, inset 0 0 24px rgba(80, 40, 10, 0.35); transform: scale(0.9); transition: opacity 0.25s, transform 0.3s; }
+.box-lid {
+  z-index: 3; display: grid; place-items: center; transform-origin: 50% 0; transform: perspective(800px) rotateX(-100deg);
+  background: linear-gradient(135deg, #dfb27a, #c99558); box-shadow: 0 12px 26px var(--shadow), inset 0 0 0 3px rgba(120, 70, 20, 0.25);
+}
+.box-lid span { font-family: var(--f-display); color: #8f2c20; font-size: clamp(22px, 7vw, 36px); border: 3px solid #8f2c20; border-radius: 50%; padding: 16% 10%; transform: rotate(-8deg); opacity: 0.85; white-space: nowrap; }
+.stage.boxed .box-base { opacity: 1; transform: none; }
+.stage.boxed #pizza { transform: scale(0.8); }
+.stage.boxed .board { opacity: 0; }
+.stage.boxed .box-lid { animation: lid 0.55s 0.45s cubic-bezier(.3, 1.3, .5, 1) forwards; }
+@keyframes lid { from { opacity: 1; transform: perspective(800px) rotateX(-100deg); } to { opacity: 1; transform: perspective(800px) rotateX(0deg); } }
+.board { transition: opacity 0.25s; }
+
+/* Room editor: a dollhouse room drawn in SVG, furniture dragged anywhere */
+.room { background: #2a1a12; }
+.room-svg { display: block; width: 100%; height: auto; touch-action: none; user-select: none; -webkit-user-select: none; }
+.room.ro .room-svg { touch-action: auto; }
+.room-svg .it { cursor: grab; }
+.room.ro .room-svg .it { cursor: default; }
+.room-svg:focus { outline: none; }
+.room:focus-within { outline: 3px solid var(--mustard); outline-offset: 2px; }
+.sel-ring { fill: none; stroke: #ff6a58; stroke-width: 2; stroke-dasharray: 5 4; animation: ring 1s linear infinite; }
+@keyframes ring { to { stroke-dashoffset: -18; } }
+.room-tools { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; min-height: 40px; }
+.room-tools .label { margin-right: auto; font-size: 14px; color: var(--muted); }
+.room-tools .btn { font-size: 14px; padding: 7px 11px; box-shadow: 0 3px 0 var(--line); }
+.seg { display: inline-flex; border: 1.5px solid var(--line); border-radius: 999px; overflow: hidden; background: var(--panel); }
+.seg button { border: 0; background: none; padding: 6px 12px; font-family: var(--f-display); font-size: 13.5px; cursor: pointer; color: var(--muted); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--panel); }
+.sets { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.set { font-size: 12.5px; padding: 4px 10px; border-radius: 999px; background: var(--cloth); border: 1.5px dashed var(--line); color: var(--muted); }
+.set.on { background: var(--basil-soft); color: var(--basil); border: 1.5px solid transparent; }
+.fu-ico { width: 52px; height: 44px; display: block; }
+.item .fu-ico { width: 78px; height: 64px; }
+.inv .fu-ico { width: 48px; height: 40px; }
+.fish-swim { animation: swim 3.5s ease-in-out infinite alternate; }
+@keyframes swim { from { transform: translateX(-8px); } to { transform: translateX(8px); } }
+.tail-wag { transform-box: fill-box; transform-origin: 0% 100%; animation: wag 0.9s ease-in-out infinite alternate; }
+@keyframes wag { from { transform: rotate(-10deg); } to { transform: rotate(14deg); } }
+.wp-brick { background: repeating-linear-gradient(0deg, #e8c9b4 0 2px, #c9765a 2px 12px); }
+.wp-panel { background: repeating-linear-gradient(90deg, #b98d5e 0 2px, #d9b48a 2px 14px); }
+.wp-stars { background: radial-gradient(#f6c453 1.6px, transparent 2.2px) 0 0 / 14px 14px, #2f3a6b; }
+.fl-light { background: repeating-linear-gradient(90deg, #dcb27f 0 38px, #c99c68 38px 40px); }
+.fl-marble { background: linear-gradient(135deg, #ece8e1, #dcd6cc 60%, #ece8e1); }
+
 /* Overlays */
 .overlay {
   position: fixed; inset: 0; z-index: 30; background: var(--scrim);
@@ -553,6 +635,7 @@ button.mate:disabled { cursor: default; }
   .meter span { display: none; }
   .status { gap: 6px 10px; }
   .brand > span:not(.day) { display: none; }
+  .steps li { padding: 3px 8px; font-size: 12.5px; }
 }
 @media (max-width: 360px) {
   .btn { font-size: 15px; }
@@ -668,7 +751,267 @@ button.mate:disabled { cursor: default; }
       <path d="M-13 9 L13 9 L13 -3 L-13 -9 Z" fill="currentColor" stroke="#c48a14" stroke-width="1.3" stroke-linejoin="round"/>
       <g fill="#000000" opacity="0.13"><circle cx="-4" cy="2.5" r="2.4"/><circle cx="6" cy="4" r="1.8"/><circle cx="3" cy="-2" r="1.3"/></g>
     </g>
-  </defs>
+
+    <!-- Furniture, drawn front-on. Floor pieces stand on (0,0) and grow upward; wall pieces are centred; rugs lie flat. -->
+    <g id="fu-bed" stroke="#4a2f1d" stroke-width="1.6" stroke-linejoin="round">
+      <rect x="-56" y="-64" width="14" height="64" rx="5" fill="#a8703f"/>
+      <rect x="-48" y="-32" width="104" height="27" rx="4" fill="#c88c55"/>
+      <rect x="-46" y="-43" width="100" height="15" rx="7" fill="#fbf6ec"/>
+      <path d="M-20 -46 h66 a8 8 0 0 1 8 8 v10 h-74 z" fill="#78b2d6"/>
+      <path d="M-14 -39 h60" stroke="#a9d1ea" stroke-width="2" fill="none"/>
+      <ellipse cx="-31" cy="-46" rx="13" ry="7" fill="#ffffff"/>
+      <rect x="-44" y="-5" width="7" height="5" fill="#4a2f1d"/><rect x="48" y="-5" width="7" height="5" fill="#4a2f1d"/>
+    </g>
+    <g id="fu-sofa" stroke="#4a2f1d" stroke-width="1.6" stroke-linejoin="round">
+      <rect x="-46" y="-54" width="92" height="30" rx="11" fill="#e07a5f"/>
+      <rect x="-50" y="-32" width="100" height="24" rx="8" fill="#ee9378"/>
+      <path d="M0 -31 v22" fill="none" opacity="0.45"/>
+      <rect x="-56" y="-42" width="17" height="36" rx="8" fill="#d0654c"/>
+      <rect x="39" y="-42" width="17" height="36" rx="8" fill="#d0654c"/>
+      <rect x="-30" y="-50" width="18" height="16" rx="5" fill="#f6d36b" transform="rotate(-8 -21 -42)"/>
+      <rect x="-46" y="-8" width="6" height="8" fill="#4a2f1d"/><rect x="40" y="-8" width="6" height="8" fill="#4a2f1d"/>
+    </g>
+    <g id="fu-chair" stroke="#4a2f1d" stroke-width="1.6" stroke-linejoin="round">
+      <rect x="-12" y="-50" width="24" height="26" rx="5" fill="#b57944"/>
+      <rect x="-8" y="-45" width="16" height="4" rx="2" fill="#d39a61" stroke="none"/>
+      <rect x="-15" y="-26" width="30" height="7" rx="3" fill="#c98b53"/>
+      <path d="M-12 -19 L-13 0 M12 -19 L13 0" fill="none" stroke-width="3"/>
+    </g>
+    <g id="fu-table" stroke="#4a2f1d" stroke-width="1.6" stroke-linejoin="round">
+      <rect x="-40" y="-36" width="80" height="8" rx="3" fill="#c88c55"/>
+      <path d="M-32 -28 L-34 0 M32 -28 L34 0" fill="none" stroke-width="3.2"/>
+      <path d="M-20 -28 L-21 -8 M20 -28 L21 -8" fill="none" stroke-width="2" opacity="0.6"/>
+      <path d="M-6 -36 c-2 -6 -1 -10 1 -12 h10 c2 2 3 6 1 12 z" fill="#8fc6e8"/>
+      <path d="M0 -48 c-4 -6 -10 -8 -12 -4 M2 -48 c4 -7 10 -8 12 -3" fill="none" stroke="#3d8f3a" stroke-width="2"/>
+      <circle cx="-9" cy="-53" r="3.5" fill="#f28c9a"/><circle cx="10" cy="-53" r="3.5" fill="#f6d36b"/>
+    </g>
+    <g id="fu-desk" stroke="#4a2f1d" stroke-width="1.6" stroke-linejoin="round">
+      <rect x="-36" y="-34" width="72" height="7" rx="2" fill="#d8b07a"/>
+      <rect x="10" y="-27" width="22" height="27" rx="2" fill="#c4975f"/>
+      <path d="M16 -18 h10 M16 -8 h10" fill="none"/>
+      <path d="M-31 -27 L-31 0" fill="none" stroke-width="3"/>
+      <rect x="-26" y="-58" width="30" height="20" rx="2" fill="#3b4a63"/>
+      <rect x="-23" y="-55" width="24" height="14" rx="1" fill="#8fd3f5" stroke="none"/>
+      <rect x="-16" y="-38" width="10" height="4" fill="#3b4a63"/>
+      <path d="M18 -34 l4 -16 l10 4" fill="none" stroke-width="2"/>
+      <path d="M28 -50 l9 4 -5 6 z" fill="#f6c453"/>
+    </g>
+    <g id="fu-shelf" stroke="#4a2f1d" stroke-width="1.6" stroke-linejoin="round">
+      <rect x="-27" y="-86" width="54" height="86" rx="3" fill="#b07a45"/>
+      <rect x="-22" y="-81" width="44" height="76" fill="#8a5a30"/>
+      <path d="M-22 -56 h44 M-22 -31 h44" fill="none" stroke-width="3"/>
+      <g stroke-width="1">
+        <rect x="-20" y="-78" width="6" height="21" fill="#e07a5f"/><rect x="-14" y="-75" width="5" height="18" fill="#78b2d6"/>
+        <rect x="-9" y="-78" width="7" height="21" fill="#f6c453"/><rect x="-2" y="-74" width="5" height="17" fill="#7cc47a"/>
+        <rect x="6" y="-77" width="6" height="20" fill="#b48ad6" transform="rotate(12 9 -57)"/>
+        <rect x="-20" y="-52" width="6" height="20" fill="#7cc47a"/><rect x="-14" y="-50" width="7" height="18" fill="#e07a5f"/>
+        <rect x="-7" y="-53" width="5" height="21" fill="#78b2d6"/>
+        <path d="M8 -32 h10 l-2 -8 h-6 z" fill="#d0654c"/>
+        <rect x="-20" y="-26" width="16" height="20" rx="2" fill="#f1e4cc"/><rect x="-2" y="-27" width="6" height="21" fill="#f6c453"/>
+        <rect x="4" y="-24" width="6" height="18" fill="#e07a5f"/><rect x="10" y="-27" width="7" height="21" fill="#78b2d6"/>
+      </g>
+      <path d="M13 -40 c-6 -6 -6 -10 -2 -12 M13 -40 c5 -7 8 -9 5 -12" fill="none" stroke="#3d8f3a" stroke-width="2"/>
+    </g>
+    <g id="fu-tv" stroke="#4a2f1d" stroke-width="1.6" stroke-linejoin="round">
+      <rect x="-34" y="-20" width="68" height="20" rx="3" fill="#c88c55"/>
+      <path d="M0 -20 v20" fill="none" opacity="0.5"/>
+      <circle cx="-6" cy="-10" r="1.5" fill="#4a2f1d"/><circle cx="6" cy="-10" r="1.5" fill="#4a2f1d"/>
+      <rect x="-6" y="-25" width="12" height="5" fill="#2b3040"/>
+      <rect x="-30" y="-62" width="60" height="38" rx="3" fill="#2b3040"/>
+      <rect x="-26" y="-58" width="52" height="30" rx="1" fill="#3b4f78" stroke="none"/>
+      <path d="M-22 -54 h14 l-20 22 z" fill="#6a84b8" stroke="none" opacity="0.6"/>
+    </g>
+    <g id="fu-piano" stroke="#4a2f1d" stroke-width="1.6" stroke-linejoin="round">
+      <rect x="-40" y="-70" width="80" height="44" rx="3" fill="#2f2a2e"/>
+      <rect x="-34" y="-64" width="68" height="14" rx="2" fill="#463e44" stroke="none"/>
+      <rect x="-10" y="-62" width="20" height="10" fill="#fbfaf6" stroke-width="1"/>
+      <rect x="-42" y="-30" width="84" height="10" rx="2" fill="#fbfaf6"/>
+      <g fill="#2f2a2e" stroke="none">
+        <rect x="-36.5" y="-30" width="3" height="6"/><rect x="-29.5" y="-30" width="3" height="6"/><rect x="-15.5" y="-30" width="3" height="6"/>
+        <rect x="-8.5" y="-30" width="3" height="6"/><rect x="-1.5" y="-30" width="3" height="6"/><rect x="12.5" y="-30" width="3" height="6"/>
+        <rect x="19.5" y="-30" width="3" height="6"/><rect x="33.5" y="-30" width="3" height="6"/>
+      </g>
+      <rect x="-40" y="-20" width="80" height="14" fill="#2f2a2e"/>
+      <path d="M-36 -6 v6 M36 -6 v6" fill="none" stroke-width="3"/>
+    </g>
+    <g id="fu-fish" stroke="#4a2f1d" stroke-width="1.6" stroke-linejoin="round">
+      <rect x="-24" y="-22" width="48" height="22" rx="2" fill="#c88c55"/>
+      <rect x="-28" y="-62" width="56" height="40" rx="4" fill="#8fd3f5" fill-opacity="0.85"/>
+      <rect x="-28" y="-62" width="56" height="6" rx="2" fill="#5a6b80"/>
+      <path d="M-26 -26 c8 -4 14 2 22 -2 c8 -4 14 2 22 -1 v5 h-44 z" fill="#e9d29b" stroke="none"/>
+      <path d="M-14 -26 c-2 -8 2 -12 0 -18 M16 -26 c2 -6 -2 -10 1 -16" fill="none" stroke="#3d8f3a" stroke-width="2"/>
+      <g class="fish-swim" stroke-width="1"><path d="M-6 -44 c4 -5 10 -5 13 0 c-3 5 -9 5 -13 0 z" fill="#f28c3c"/><path d="M-6 -44 l-5 -4 v8 z" fill="#f28c3c"/></g>
+      <circle cx="12" cy="-50" r="1.6" fill="#ffffff" stroke="none"/><circle cx="15" cy="-55" r="1.1" fill="#ffffff" stroke="none"/>
+      <path d="M-22 -55 v26" fill="none" stroke="#ffffff" stroke-width="2" opacity="0.6"/>
+    </g>
+    <g id="fu-bath" stroke="#4a2f1d" stroke-width="1.6" stroke-linejoin="round">
+      <path d="M38 -28 v-14 a6 6 0 0 0 -12 0" fill="none" stroke="#9aa3ad" stroke-width="2.4"/>
+      <g fill="#ffffff" stroke="#b9c4d0" stroke-width="1"><circle cx="-26" cy="-31" r="7"/><circle cx="-14" cy="-34" r="9"/><circle cx="-2" cy="-30" r="6"/><circle cx="8" cy="-33" r="7"/></g>
+      <ellipse cx="20" cy="-31" rx="6" ry="4" fill="#f6c453"/><circle cx="24" cy="-36" r="3.2" fill="#f6c453"/><path d="M27 -36.5 l3 1 -3 1 z" fill="#f28c3c" stroke-width="1"/>
+      <path d="M-45 -28 h90 v6 c0 14 -12 20 -24 20 h-42 c-12 0 -24 -6 -24 -20 z" fill="#f4f6f8"/>
+      <path d="M-34 -2 l-3 4 M34 -2 l3 4" fill="none" stroke-width="3"/>
+    </g>
+    <g id="fu-plant" stroke="#4a2f1d" stroke-width="1.6" stroke-linejoin="round">
+      <path d="M-12 -18 h24 l-3 18 h-18 z" fill="#d86f4f"/>
+      <rect x="-14" y="-21" width="28" height="5" rx="2" fill="#e8876a"/>
+      <path d="M0 -21 C-14 -28 -16 -40 -8 -48 C-6 -38 -2 -30 0 -21 Z" fill="#5aa84f"/>
+      <path d="M0 -21 C12 -26 16 -38 10 -50 C6 -40 2 -30 0 -21 Z" fill="#3d8f3a"/>
+      <path d="M0 -21 C-4 -32 -2 -42 2 -50 C4 -40 3 -30 0 -21 Z" fill="#6cbf5a"/>
+    </g>
+    <g id="fu-monstera" stroke="#4a2f1d" stroke-width="1.6" stroke-linejoin="round">
+      <path d="M0 -24 L-6 -50 M0 -24 L10 -56 M0 -24 L-2 -66" fill="none" stroke="#3d7a32" stroke-width="2"/>
+      <path d="M-6 -50 c-18 2 -24 -12 -16 -22 c8 -4 18 4 16 22 z" fill="#3d8f3a"/>
+      <path d="M10 -56 c18 0 24 -14 14 -24 c-10 -2 -18 8 -14 24 z" fill="#4a9e42"/>
+      <path d="M-2 -66 c-10 -6 -6 -18 4 -16 c8 4 6 14 -4 16 z" fill="#5aa84f"/>
+      <path d="M-14 -60 l6 3 M-18 -55 l6 2 M20 -66 l-6 3 M24 -61 l-7 2" fill="none" stroke="#2f6d29" stroke-width="1.2"/>
+      <path d="M-14 -24 h28 l-4 24 h-20 z" fill="#efe6d6"/>
+    </g>
+    <g id="fu-cactus" stroke="#4a2f1d" stroke-width="1.6" stroke-linejoin="round">
+      <rect x="-5" y="-38" width="10" height="27" rx="5" fill="#5aa84f"/>
+      <path d="M-5 -24 h-4 a3 3 0 0 1 -3 -3 v-6 a2.5 2.5 0 0 1 5 0 v4 h2" fill="#6cbf5a"/>
+      <path d="M5 -20 h4 a3 3 0 0 0 3 -3 v-5 a2.5 2.5 0 0 0 -5 0 v3 h-2" fill="#6cbf5a"/>
+      <circle cx="0" cy="-39" r="2.5" fill="#f28c9a"/>
+      <path d="M-9 -12 h18 l-2 12 h-14 z" fill="#d9a066"/>
+    </g>
+    <g id="fu-tree" stroke="#4a2f1d" stroke-width="1.6" stroke-linejoin="round">
+      <rect x="-5" y="-12" width="10" height="12" fill="#8a5a30"/>
+      <path d="M0 -80 L-14 -56 h6 L-20 -36 h7 L-24 -12 h48 L13 -36 h7 L8 -56 h6 Z" fill="#3d8f3a"/>
+      <path d="M0 -88 l2.5 5 5.5 .8 -4 3.8 1 5.4 -5 -2.6 -5 2.6 1 -5.4 -4 -3.8 5.5 -.8 z" fill="#f6c453"/>
+      <g stroke="none"><circle cx="-6" cy="-58" r="2.4" fill="#f28c9a"/><circle cx="6" cy="-48" r="2.4" fill="#78b2d6"/><circle cx="-10" cy="-38" r="2.4" fill="#f6c453"/>
+        <circle cx="10" cy="-30" r="2.4" fill="#f28c9a"/><circle cx="-4" cy="-24" r="2.4" fill="#78b2d6"/><circle cx="14" cy="-17" r="2.4" fill="#f6c453"/><circle cx="-16" cy="-17" r="2.4" fill="#f28c9a"/></g>
+    </g>
+    <g id="fu-lamp" stroke="#4a2f1d" stroke-width="1.6" stroke-linejoin="round">
+      <ellipse cx="0" cy="-3" rx="12" ry="3.5" fill="#6f5a48"/>
+      <path d="M0 -4 V-66" fill="none" stroke-width="2.4"/>
+      <path d="M-14 -66 h28 l-6 -20 h-16 z" fill="#f8e7b8"/>
+      <path d="M-12 -70 h24" fill="none" stroke="#e8cf8f" stroke-width="2"/>
+    </g>
+    <g id="fu-game" stroke="#4a2f1d" stroke-width="1.6" stroke-linejoin="round">
+      <rect x="-22" y="-14" width="24" height="14" rx="3" fill="#ecedf2"/>
+      <path d="M-18 -8 h12" fill="none" stroke="#78b2d6" stroke-width="2"/>
+      <path d="M8 -14 c-4 0 -6 4 -5 8 c1 4 5 5 7 2 l2 -2 h6 l2 2 c2 3 6 2 7 -2 c1 -4 -1 -8 -5 -8 z" fill="#e07a5f"/>
+      <path d="M8 -9 h4 M10 -11 v4" fill="none" stroke-width="1.2"/><circle cx="18" cy="-9" r="1.3" fill="#4a2f1d" stroke="none"/>
+    </g>
+    <g id="fu-guitar" stroke="#4a2f1d" stroke-width="1.6" stroke-linejoin="round">
+      <path d="M-9 0 l9 -14 9 14" fill="none" stroke-width="2"/>
+      <rect x="-2.5" y="-62" width="5" height="34" fill="#8a5a30"/>
+      <rect x="-4" y="-67" width="8" height="7" rx="2" fill="#4a2f1d"/>
+      <path d="M0 -30 c-9 0 -12 6 -9 11 c-5 4 -4 15 9 15 c13 0 14 -11 9 -15 c3 -5 0 -11 -9 -11 z" fill="#e08a3c"/>
+      <circle cx="0" cy="-16" r="3.5" fill="#4a2f1d"/>
+      <path d="M0 -60 V-8" fill="none" stroke="#f6e7c8" stroke-width="0.7"/>
+    </g>
+    <g id="fu-cat" stroke="#4a2f1d" stroke-width="1.6" stroke-linejoin="round">
+      <path class="tail-wag" d="M8 -4 c10 0 12 -8 8 -14" fill="none" stroke="#f0a35a" stroke-width="4" stroke-linecap="round"/>
+      <path d="M-12 0 c-2 -10 0 -18 6 -20 h12 c6 2 8 10 6 20 z" fill="#f0a35a"/>
+      <path d="M-9 -29 l1 -9 6 5 z M9 -29 l-1 -9 -6 5 z" fill="#f0a35a"/>
+      <circle cx="0" cy="-24" r="10" fill="#f0a35a"/>
+      <circle cx="-3.6" cy="-25" r="1.3" fill="#4a2f1d" stroke="none"/><circle cx="3.6" cy="-25" r="1.3" fill="#4a2f1d" stroke="none"/>
+      <path d="M-1.5 -21 l1.5 1.2 1.5 -1.2" fill="none" stroke-width="1.1"/>
+      <path d="M-4 -12 c2 2 6 2 8 0" fill="none" stroke="#d98a43" stroke-width="2"/>
+      <path d="M-4 0 v-5 M4 0 v-5" fill="none" stroke-width="1.2"/>
+    </g>
+    <g id="fu-dog" stroke="#4a2f1d" stroke-width="1.6" stroke-linejoin="round">
+      <path class="tail-wag" d="M10 -8 c8 -2 10 -8 8 -14" fill="none" stroke="#d9b38c" stroke-width="4" stroke-linecap="round"/>
+      <path d="M-13 0 c-2 -10 1 -18 7 -20 h12 c6 2 9 10 7 20 z" fill="#e8c9a3"/>
+      <circle cx="0" cy="-25" r="11" fill="#e8c9a3"/>
+      <path d="M-10 -31 c-6 2 -6 12 -2 14 c3 -3 4 -9 2 -14 z M10 -31 c6 2 6 12 2 14 c-3 -3 -4 -9 -2 -14 z" fill="#a8703f"/>
+      <ellipse cx="0" cy="-21" rx="5" ry="3.6" fill="#fbf3e6"/>
+      <circle cx="0" cy="-22.5" r="1.8" fill="#4a2f1d" stroke="none"/>
+      <circle cx="-4" cy="-27" r="1.3" fill="#4a2f1d" stroke="none"/><circle cx="4" cy="-27" r="1.3" fill="#4a2f1d" stroke="none"/>
+      <path d="M-6 -15 h12" fill="none" stroke="#e07a5f" stroke-width="2.4"/>
+    </g>
+    <g id="fu-teddy" stroke="#4a2f1d" stroke-width="1.6" stroke-linejoin="round">
+      <circle cx="-7" cy="-26" r="4" fill="#b98455"/><circle cx="7" cy="-26" r="4" fill="#b98455"/>
+      <ellipse cx="0" cy="-9" rx="11" ry="9" fill="#c99464"/>
+      <circle cx="0" cy="-21" r="8" fill="#c99464"/>
+      <ellipse cx="0" cy="-18.5" rx="3.6" ry="2.6" fill="#f1dcc2"/>
+      <circle cx="-3" cy="-22.5" r="1" fill="#4a2f1d" stroke="none"/><circle cx="3" cy="-22.5" r="1" fill="#4a2f1d" stroke="none"/>
+      <ellipse cx="-11" cy="-3" rx="4" ry="3" fill="#b98455"/><ellipse cx="11" cy="-3" rx="4" ry="3" fill="#b98455"/>
+      <path d="M-4 -13 l4 2 4 -2 -4 -2 z" fill="#e07a5f" stroke-width="1"/>
+    </g>
+    <g id="fu-books" stroke="#4a2f1d" stroke-width="1.4" stroke-linejoin="round">
+      <rect x="-15" y="-7" width="30" height="7" rx="1.5" fill="#78b2d6"/>
+      <rect x="-12" y="-14" width="26" height="7" rx="1.5" fill="#e07a5f" transform="rotate(-4 1 -10)"/>
+      <rect x="-13" y="-21" width="24" height="7" rx="1.5" fill="#f6c453"/>
+      <path d="M11 -7 v7 M8 -21 v7" fill="none" stroke="#fbf6ec" stroke-width="1.5"/>
+    </g>
+    <g id="fu-trophy" stroke="#4a2f1d" stroke-width="1.6" stroke-linejoin="round">
+      <rect x="-13" y="-10" width="26" height="10" rx="2" fill="#8a5a30"/>
+      <rect x="-4" y="-20" width="8" height="10" fill="#e8b423"/>
+      <path d="M-12 -40 c-8 0 -8 10 0 10 M12 -40 c8 0 8 10 0 10" fill="none" stroke="#e8b423" stroke-width="2.4"/>
+      <path d="M-12 -44 h24 v6 c0 10 -6 16 -12 16 c-6 0 -12 -6 -12 -16 z" fill="#f6c453"/>
+      <circle cx="0" cy="-34" r="4" fill="#f9dd84" stroke="none"/>
+      <path d="M-8 -6 h16" fill="none" stroke="#f6c453" stroke-width="1.5"/>
+    </g>
+    <g id="fu-frame" stroke="#4a2f1d" stroke-width="1.6" stroke-linejoin="round">
+      <rect x="-20" y="-15" width="40" height="30" rx="2" fill="#c88c55"/>
+      <rect x="-15" y="-10" width="30" height="20" fill="#bfe3f5" stroke-width="1"/>
+      <path d="M-15 10 l9 -10 6 6 5 -5 10 9 z" fill="#6cbf5a" stroke="none"/>
+      <circle cx="8" cy="-4" r="3" fill="#f6c453" stroke="none"/>
+    </g>
+    <g id="fu-poster" stroke="#4a2f1d" stroke-width="1.4" stroke-linejoin="round">
+      <rect x="-15" y="-20" width="30" height="40" rx="1.5" fill="#fff6e6"/>
+      <path d="M0 10 L-11 -10 A13 9 0 0 1 11 -10 Z" fill="#e2b06a"/>
+      <path d="M0 6 L-8 -8 A10 6 0 0 1 8 -8 Z" fill="#f7cf4a" stroke="none"/>
+      <circle cx="-2" cy="-5" r="1.8" fill="#c83c2e" stroke="none"/><circle cx="2" cy="0" r="1.6" fill="#c83c2e" stroke="none"/>
+      <path d="M-9 15 h18" fill="none" stroke="#c83c2e" stroke-width="2"/>
+    </g>
+    <g id="fu-mirror" stroke="#4a2f1d" stroke-width="1.6">
+      <ellipse rx="13" ry="19" fill="#e0b061"/><ellipse rx="9.5" ry="15.5" fill="#d9eef7"/>
+      <path d="M-4 -9 l6 -5 M-5 -3 l9 -8" fill="none" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round"/>
+    </g>
+    <g id="fu-clock" stroke="#4a2f1d" stroke-width="1.6">
+      <circle r="13" fill="#e07a5f"/><circle r="10" fill="#fffaf0"/>
+      <path d="M0 0 V-7 M0 0 L5 2" fill="none" stroke-width="1.8" stroke-linecap="round"/>
+      <g stroke="none" fill="#4a2f1d"><circle cy="-8" r="0.9"/><circle cx="8" r="0.9"/><circle cy="8" r="0.9"/><circle cx="-8" r="0.9"/></g>
+    </g>
+    <g id="fu-calendar" stroke="#4a2f1d" stroke-width="1.4" stroke-linejoin="round">
+      <rect x="-11" y="-14" width="22" height="28" rx="2" fill="#fffaf0"/>
+      <rect x="-11" y="-14" width="22" height="8" rx="2" fill="#e07a5f"/>
+      <g fill="#4a2f1d" stroke="none"><rect x="-7" y="-2" width="3" height="3"/><rect x="-1.5" y="-2" width="3" height="3"/><rect x="4" y="-2" width="3" height="3"/><rect x="-7" y="4" width="3" height="3"/><rect x="-1.5" y="4" width="3" height="3" fill="#e07a5f"/></g>
+    </g>
+    <g id="fu-lantern" stroke="#4a2f1d" stroke-width="1.4" stroke-linejoin="round">
+      <path d="M0 -17 v4" fill="none"/><rect x="-6" y="-13" width="12" height="3" fill="#4a2f1d"/>
+      <ellipse cx="0" cy="1" rx="10" ry="12" fill="#f26b5a"/>
+      <path d="M-10 1 h20 M-9 -5 h18 M-9 7 h18" fill="none" stroke="#c94b3c" stroke-width="1"/>
+      <rect x="-6" y="12" width="12" height="3" fill="#4a2f1d"/><path d="M0 15 v4" fill="none" stroke="#f6c453" stroke-width="2"/>
+    </g>
+    <g id="fu-wallshelf" stroke="#4a2f1d" stroke-width="1.5" stroke-linejoin="round">
+      <path d="M-22 6 h10 l-2 -8 h-6 z" fill="#d86f4f"/>
+      <path d="M-17 -2 c-5 -6 -4 -10 0 -12 c3 3 4 8 0 12 z" fill="#5aa84f"/>
+      <rect x="-6" y="-8" width="5" height="14" fill="#78b2d6"/><rect x="-1" y="-6" width="5" height="12" fill="#f6c453"/>
+      <rect x="4" y="-9" width="5" height="15" fill="#e07a5f" transform="rotate(10 6 6)"/>
+      <circle cx="20" cy="1" r="5" fill="#fbf6ec"/>
+      <rect x="-28" y="6" width="56" height="6" rx="1.5" fill="#c88c55"/>
+      <path d="M-20 12 l4 5 M20 12 l-4 5" fill="none" stroke-width="2"/>
+    </g>
+    <g id="fu-rug">
+      <circle r="58" fill="#e8876a"/><circle r="48" fill="#f6d9a8"/><circle r="38" fill="#e8876a"/><circle r="28" fill="#f6d9a8"/><circle r="10" fill="#e8876a"/>
+      <circle r="58" fill="none" stroke="#c96a4f" stroke-width="2" stroke-dasharray="3 3"/>
+    </g>
+    <g id="fu-rug2">
+      <rect x="-62" y="-33" width="124" height="66" rx="6" fill="#78b2d6"/>
+      <g fill="#f4efe4"><rect x="-62" y="-22" width="124" height="7"/><rect x="-62" y="-4" width="124" height="7"/><rect x="-62" y="14" width="124" height="7"/></g>
+      <path d="M-62 -33 v66 M62 -33 v66" stroke="#f4efe4" stroke-width="5" stroke-dasharray="1 3"/>
+    </g>
+
+    <!-- Room materials -->
+    <pattern id="wp-cream" width="24" height="24" patternUnits="userSpaceOnUse"><rect width="24" height="24" fill="#f6ead8"/><circle cx="12" cy="12" r="1" fill="#e9d8bf"/></pattern>
+    <pattern id="wp-mint" width="24" height="24" patternUnits="userSpaceOnUse"><rect width="24" height="24" fill="#d4ecdf"/><circle cx="12" cy="12" r="1" fill="#bcdcca"/></pattern>
+    <pattern id="wp-sky" width="24" height="24" patternUnits="userSpaceOnUse"><rect width="24" height="24" fill="#d7e7f6"/><circle cx="12" cy="12" r="1" fill="#bfd5ec"/></pattern>
+    <pattern id="wp-pink" width="24" height="24" patternUnits="userSpaceOnUse"><rect width="24" height="24" fill="#f7dbe1"/><path d="M12 9 l1 2 2 .3 -1.5 1.4 .4 2 -1.9 -1 -1.9 1 .4 -2 -1.5 -1.4 2 -.3 z" fill="#efc1cb"/></pattern>
+    <pattern id="wp-lav" width="24" height="24" patternUnits="userSpaceOnUse"><rect width="24" height="24" fill="#e3dcf2"/><circle cx="12" cy="12" r="1.2" fill="#cdc2e6"/></pattern>
+    <pattern id="wp-stripe" width="24" height="24" patternUnits="userSpaceOnUse"><rect width="24" height="24" fill="#f4e4d0"/><rect width="12" height="24" fill="#ead2b6"/></pattern>
+    <pattern id="wp-dots" width="16" height="16" patternUnits="userSpaceOnUse"><rect width="16" height="16" fill="#fbeee7"/><circle cx="8" cy="8" r="2.2" fill="#e7a99a"/></pattern>
+    <pattern id="wp-pizza" width="20" height="20" patternUnits="userSpaceOnUse"><rect width="20" height="20" fill="#fffaf3"/><rect width="10" height="20" fill="#d1392e" opacity="0.16"/><rect width="20" height="10" fill="#d1392e" opacity="0.16"/></pattern>
+    <pattern id="wp-brick" width="40" height="20" patternUnits="userSpaceOnUse"><rect width="40" height="20" fill="#c9765a"/><path d="M0 0.8 H40 M0 10.8 H40 M20 0 V10 M10 10 V20 M30 10 V20" stroke="#e8c9b4" stroke-width="1.6"/></pattern>
+    <pattern id="wp-panel" width="26" height="100" patternUnits="userSpaceOnUse"><rect width="26" height="100" fill="#d9b48a"/><rect width="2" height="100" fill="#b98d5e"/><rect x="7" width="1" height="100" fill="#e6c9a3"/></pattern>
+    <pattern id="wp-stars" width="30" height="30" patternUnits="userSpaceOnUse"><rect width="30" height="30" fill="#2f3a6b"/><path d="M8 5 l1.2 2.6 2.8 .3 -2.1 1.9 .6 2.8 -2.5 -1.4 -2.5 1.4 .6 -2.8 -2.1 -1.9 2.8 -.3 z" fill="#f6c453"/><circle cx="22" cy="21" r="1.3" fill="#fffaf0"/><circle cx="21" cy="6" r="0.9" fill="#fffaf0"/></pattern>
+    <pattern id="fl-dots" width="8" height="8" patternUnits="userSpaceOnUse"><circle cx="4" cy="4" r="0.9" fill="#ffffff" opacity="0.28"/></pattern>
+    <radialGradient id="g-glow"><stop offset="0" stop-color="#ffe2a0" stop-opacity="0.9"/><stop offset="0.45" stop-color="#ffb04a" stop-opacity="0.35"/><stop offset="1" stop-color="#ff9a3a" stop-opacity="0"/></radialGradient>
+    <linearGradient id="g-curtain" x1="0" x2="1"><stop offset="0" stop-color="#e98f7b"/><stop offset="0.35" stop-color="#f6b3a3"/><stop offset="0.7" stop-color="#e07a64"/><stop offset="1" stop-color="#f3a594"/></linearGradient>
+    <linearGradient id="g-floorShade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a1408" stop-opacity="0.28"/><stop offset="0.5" stop-color="#2a1408" stop-opacity="0.06"/><stop offset="1" stop-color="#ffffff" stop-opacity="0.08"/></linearGradient>
+    <linearGradient id="g-wallShade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a1408" stop-opacity="0.12"/><stop offset="1" stop-color="#2a1408" stop-opacity="0"/></linearGradient>
 </svg>
 
 <div class="app">
@@ -722,35 +1065,67 @@ button.mate:disabled { cursor: default; }
 
     <section class="board-area">
       <ol class="steps" id="steps">
-        <li>도우</li><li>소스</li><li>치즈</li><li>토핑</li><li>굽기</li>
+        <li>도우</li><li>소스</li><li>치즈</li><li>토핑</li><li>굽기</li><li>자르기</li>
       </ol>
       <div class="stage" id="stage">
-        <div class="oven" aria-hidden="true"></div>
-        <svg id="pizza" viewBox="0 0 300 300" tabindex="0" role="button" aria-label="피자 판. 고른 재료를 올려요">
+        <div class="oven" aria-hidden="true"><div class="flames"><i></i><i></i><i></i><i></i><i></i></div></div>
+        <div class="box-base" aria-hidden="true"></div>
+        <svg id="pizza" viewBox="0 0 300 300" tabindex="0" role="button" aria-label="피자 판. 재료를 올리거나 문질러요. Enter 키를 누르면 지금 단계를 자동으로 해요">
           <defs>
             <pattern id="grain" width="300" height="14" patternUnits="userSpaceOnUse">
               <rect class="wood" width="300" height="14"/>
               <path class="grain" d="M0 7 Q40 3 80 7 T160 7 T240 7 T320 7"/>
             </pattern>
+            <filter id="goo" x="-10%" y="-10%" width="120%" height="120%">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="b"/>
+              <feColorMatrix in="b" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -8"/>
+            </filter>
+            <filter id="tshadow" x="-30%" y="-30%" width="160%" height="160%">
+              <feDropShadow dx="0" dy="2" stdDeviation="1.4" flood-color="#3a1a08" flood-opacity="0.4"/>
+            </filter>
+            <radialGradient id="doughShade" cx="42%" cy="38%" r="65%">
+              <stop offset="0" stop-color="#ffffff" stop-opacity="0.28"/>
+              <stop offset="0.7" stop-color="#ffffff" stop-opacity="0"/>
+              <stop offset="1" stop-color="#5a3010" stop-opacity="0.2"/>
+            </radialGradient>
+            <clipPath id="doughClip"><circle id="doughClipC" cx="150" cy="150" r="119"/></clipPath>
           </defs>
-          <circle cx="150" cy="150" r="148" fill="url(#grain)"/>
-          <circle class="board-rim" cx="150" cy="150" r="146"/>
-          <circle class="ghost" id="ghost" cx="150" cy="150" r="128"/>
-          <g class="layer" id="lDough">
-            <circle id="crust" cx="150" cy="150" r="132"/>
-            <circle id="doughIn" cx="150" cy="150" r="119"/>
+          <g class="board">
+            <circle cx="150" cy="150" r="148" fill="url(#grain)"/>
+            <circle class="board-rim" cx="150" cy="150" r="146"/>
+            <g id="flour" fill="#fffaf0"></g>
           </g>
-          <g class="layer" id="lSauce"><path id="sauce"/></g>
-          <g class="layer" id="lCheese">
-            <path id="cheese"/>
+          <circle class="ghost" id="ghost" cx="150" cy="150" r="128"/>
+          <g id="lDough">
+            <path id="crust"/>
+            <path id="doughIn"/>
+            <circle id="doughHi" cx="150" cy="150" r="119" fill="url(#doughShade)" pointer-events="none"/>
+          </g>
+          <g id="lSauce" clip-path="url(#doughClip)">
+            <path id="sauce" style="opacity:0"/>
+            <g id="sauceBlobs" filter="url(#goo)"></g>
+          </g>
+          <g id="lCheese" clip-path="url(#doughClip)">
+            <path id="cheese" style="opacity:0"/>
             <g id="melt" fill="#fff4c4"></g>
             <g id="spots" fill="#a8621f"></g>
+            <g id="shreds" stroke="rgba(150,100,20,0.35)" stroke-width="0.5"></g>
+            <g id="bubbles" style="opacity:0"></g>
           </g>
-          <g id="lTops"></g>
+          <g id="lTops" filter="url(#tshadow)"></g>
+          <g id="cuts"></g>
           <circle id="char" cx="150" cy="150" r="132" fill="#2b1408" opacity="0" pointer-events="none"/>
+          <line id="cutGuide" class="cut-guide" x1="0" y1="0" x2="0" y2="0" style="display:none"/>
+          <g id="tool" class="tool" style="opacity:0"></g>
         </svg>
+        <div class="steam" aria-hidden="true"><i></i><i></i><i></i></div>
+        <div class="box-lid" aria-hidden="true"><span>피자 공방</span></div>
       </div>
-      <p class="hint" id="hint">도우를 눌러 반죽을 펴세요</p>
+      <p class="hint" id="hint">도우를 눌러 반죽을 꺼내요</p>
+      <div class="proc" id="proc" hidden>
+        <div class="proc-bar" aria-hidden="true"><i id="procFill"></i></div>
+        <button class="btn ghost small" id="autoBtn" type="button">자동으로 하기</button>
+      </div>
     </section>
 
     <section class="controls">
@@ -832,7 +1207,14 @@ button.mate:disabled { cursor: default; }
     <div class="home-grid">
       <div class="view">
         <div class="room" id="room"></div>
+        <div class="room-tools">
+          <span class="label" id="selName">가구를 눌러 고르고, 끌어서 옮겨요</span>
+          <button class="btn ghost small" id="flipBtn" type="button" hidden>좌우 뒤집기</button>
+          <button class="btn ghost small" id="putAwayBtn" type="button" hidden>보관함에 넣기</button>
+          <div class="seg" role="group" aria-label="조명"><button type="button" data-light="day" aria-pressed="false">낮</button><button type="button" data-light="night" aria-pressed="false">밤</button></div>
+        </div>
         <p class="cozy" id="cozy"></p>
+        <div class="sets" id="sets"></div>
         <div class="panel-card" id="homeBook" hidden>
           <span class="p-name">방명록</span>
           <ul class="guestbook" id="homeBookList"></ul>
@@ -1037,44 +1419,64 @@ button.mate:disabled { cursor: default; }
     return `<svg viewBox="-16 -16 32 32" aria-hidden="true"${i.color ? ` style="color:${i.color}"` : ''}><use href="#${iconOf(i)}"/></svg>`;
   }
 
+  // w/h: drawing size in room units. Floor pieces stand on their base point, wall pieces are centred, rugs lie flat.
+  // light: [dx, dy, radius] of the glow a piece gives off at night.
   const FURN = [
-    { id: 'calendar', e: '📅', name: '달력', at: 'wall', cozy: 1, price: 1500 },
-    { id: 'cactus', e: '🌵', name: '선인장', at: 'floor', cozy: 2, price: 2000 },
-    { id: 'plant', e: '🪴', name: '화분', at: 'floor', cozy: 3, price: 3000 },
-    { id: 'chair', e: '🪑', name: '의자', at: 'floor', cozy: 2, price: 4000 },
-    { id: 'frame', e: '🖼️', name: '그림 액자', at: 'wall', cozy: 4, price: 5000 },
-    { id: 'teddy', e: '🧸', name: '곰인형', at: 'floor', cozy: 5, price: 6000 },
-    { id: 'mirror', e: '🪞', name: '거울', at: 'wall', cozy: 3, price: 6000 },
-    { id: 'clock', e: '🕰️', name: '벽시계', at: 'wall', cozy: 3, price: 7000 },
-    { id: 'lantern', e: '🏮', name: '종이 등', at: 'wall', cozy: 4, price: 8000 },
-    { id: 'books', e: '📚', name: '책 더미', at: 'floor', cozy: 4, price: 8000 },
-    { id: 'bed', e: '🛏️', name: '침대', at: 'floor', cozy: 10, price: 15000 },
-    { id: 'tree', e: '🎄', name: '트리', at: 'floor', cozy: 7, price: 15000 },
-    { id: 'guitar', e: '🎸', name: '기타', at: 'floor', cozy: 6, price: 18000 },
-    { id: 'game', e: '🎮', name: '게임기', at: 'floor', cozy: 6, price: 20000 },
-    { id: 'sofa', e: '🛋️', name: '소파', at: 'floor', cozy: 12, price: 25000 },
-    { id: 'fish', e: '🐠', name: '어항', at: 'floor', cozy: 8, price: 25000 },
-    { id: 'tv', e: '📺', name: 'TV', at: 'floor', cozy: 7, price: 30000 },
-    { id: 'bath', e: '🛁', name: '욕조', at: 'floor', cozy: 10, price: 40000 },
-    { id: 'cat', e: '🐈', name: '고양이', at: 'floor', cozy: 15, price: 50000 },
-    { id: 'dog', e: '🐕', name: '강아지', at: 'floor', cozy: 15, price: 50000 },
-    { id: 'piano', e: '🎹', name: '피아노', at: 'floor', cozy: 12, price: 60000 },
-    { id: 'trophy', e: '🏆', name: '피자 트로피', at: 'floor', cozy: 20, price: 100000 },
+    { id: 'calendar', e: '📅', name: '달력', at: 'wall', cozy: 1, price: 1500, w: 22, h: 28 },
+    { id: 'cactus', e: '🌵', name: '선인장', at: 'floor', cozy: 2, price: 2000, w: 24, h: 42 },
+    { id: 'plant', e: '🪴', name: '화분', at: 'floor', cozy: 3, price: 3000, w: 32, h: 52 },
+    { id: 'chair', e: '🪑', name: '의자', at: 'floor', cozy: 2, price: 4000, w: 32, h: 52 },
+    { id: 'poster', e: '🍕', name: '피자 포스터', at: 'wall', cozy: 3, price: 4000, w: 30, h: 40 },
+    { id: 'frame', e: '🖼️', name: '그림 액자', at: 'wall', cozy: 4, price: 5000, w: 40, h: 30 },
+    { id: 'teddy', e: '🧸', name: '곰인형', at: 'floor', cozy: 5, price: 6000, w: 30, h: 32 },
+    { id: 'mirror', e: '🪞', name: '거울', at: 'wall', cozy: 3, price: 6000, w: 26, h: 38 },
+    { id: 'clock', e: '🕰️', name: '벽시계', at: 'wall', cozy: 3, price: 7000, w: 26, h: 26 },
+    { id: 'rug', e: '🟠', name: '동그란 러그', at: 'rug', cozy: 4, price: 7000, w: 120, h: 120 },
+    { id: 'lantern', e: '🏮', name: '종이 등', at: 'wall', cozy: 4, price: 8000, w: 22, h: 38, light: [0, 1, 46] },
+    { id: 'books', e: '📚', name: '책 더미', at: 'floor', cozy: 4, price: 8000, w: 32, h: 24 },
+    { id: 'wallshelf', e: '🪵', name: '벽 선반', at: 'wall', cozy: 4, price: 9000, w: 58, h: 28 },
+    { id: 'rug2', e: '🟦', name: '줄무늬 러그', at: 'rug', cozy: 5, price: 10000, w: 128, h: 70 },
+    { id: 'lamp', e: '💡', name: '스탠드 조명', at: 'floor', cozy: 5, price: 12000, w: 30, h: 88, light: [0, -76, 72] },
+    { id: 'desk', e: '🖥️', name: '책상', at: 'floor', cozy: 5, price: 14000, w: 76, h: 60 },
+    { id: 'bed', e: '🛏️', name: '침대', at: 'floor', cozy: 10, price: 15000, w: 114, h: 66 },
+    { id: 'tree', e: '🎄', name: '트리', at: 'floor', cozy: 7, price: 15000, w: 50, h: 90, light: [0, -44, 62] },
+    { id: 'monstera', e: '🌿', name: '몬스테라', at: 'floor', cozy: 6, price: 16000, w: 54, h: 84 },
+    { id: 'table', e: '🍽️', name: '원목 식탁', at: 'floor', cozy: 6, price: 18000, w: 82, h: 58 },
+    { id: 'guitar', e: '🎸', name: '기타', at: 'floor', cozy: 6, price: 18000, w: 26, h: 68 },
+    { id: 'shelf', e: '📚', name: '책장', at: 'floor', cozy: 7, price: 20000, w: 56, h: 88 },
+    { id: 'game', e: '🎮', name: '게임기', at: 'floor', cozy: 6, price: 20000, w: 50, h: 18 },
+    { id: 'sofa', e: '🛋️', name: '소파', at: 'floor', cozy: 12, price: 25000, w: 114, h: 56 },
+    { id: 'fish', e: '🐠', name: '어항', at: 'floor', cozy: 8, price: 25000, w: 58, h: 64, light: [0, -42, 50] },
+    { id: 'tv', e: '📺', name: 'TV', at: 'floor', cozy: 7, price: 30000, w: 70, h: 64, light: [0, -43, 58] },
+    { id: 'bath', e: '🛁', name: '욕조', at: 'floor', cozy: 10, price: 40000, w: 92, h: 46 },
+    { id: 'cat', e: '🐈', name: '고양이', at: 'floor', cozy: 15, price: 50000, w: 36, h: 40 },
+    { id: 'dog', e: '🐕', name: '강아지', at: 'floor', cozy: 15, price: 50000, w: 40, h: 38 },
+    { id: 'piano', e: '🎹', name: '피아노', at: 'floor', cozy: 12, price: 60000, w: 86, h: 72 },
+    { id: 'trophy', e: '🏆', name: '피자 트로피', at: 'floor', cozy: 20, price: 100000, w: 34, h: 46 },
+  ];
+  // Furniture that goes together earns extra coziness.
+  const SETS = [
+    { name: '아늑한 거실', items: ['sofa', 'tv', 'rug'], bonus: 8 },
+    { name: '포근한 침실', items: ['bed', 'lamp', 'teddy'], bonus: 6 },
+    { name: '공부방', items: ['desk', 'chair', 'shelf'], bonus: 6 },
+    { name: '작은 음악실', items: ['piano', 'guitar'], bonus: 6 },
+    { name: '초록 정원', items: ['plant', 'cactus', 'monstera'], bonus: 5 },
+    { name: '반려동물 친구', items: ['cat', 'dog'], bonus: 8 },
   ];
   const FURN_BY = Object.fromEntries(FURN.map(f => [f.id, f]));
 
   // cols × rows = floor slots; the wall has one row of cols slots, some of them windows.
   const HOUSES = [
-    { id: 'gosiwon', name: '고시원', price: 0, cols: 4, rows: 2, win: [1], view: 'city', base: 0, desc: '창문 하나 있는 작은 방' },
-    { id: 'rooftop', name: '옥탑방', price: 30000, cols: 5, rows: 2, win: [3], view: 'sunset', base: 4, desc: '노을이 보이는 옥상 방' },
-    { id: 'oneroom', name: '원룸', price: 90000, cols: 5, rows: 3, win: [1], view: 'sky', base: 8, desc: '햇빛 잘 드는 깔끔한 방' },
-    { id: 'apt', name: '아파트', price: 220000, cols: 6, rows: 3, win: [1, 4], view: 'skyline', base: 14, desc: '도시 야경이 보이는 높은 층' },
-    { id: 'house', name: '마당 있는 주택', price: 450000, cols: 6, rows: 4, win: [2, 3], view: 'garden', base: 22, desc: '창밖으로 나무와 꽃이 보여요' },
-    { id: 'villa', name: '바닷가 별장', price: 900000, cols: 7, rows: 4, win: [1, 3, 5], view: 'sea', base: 35, desc: '창밖으로 바다가 펼쳐져요' },
+    { id: 'gosiwon', name: '고시원', price: 0, cols: 4, rows: 2, win: [1], view: 'city', base: 0, cap: 8, desc: '창문 하나 있는 작은 방' },
+    { id: 'rooftop', name: '옥탑방', price: 30000, cols: 5, rows: 2, win: [3], view: 'sunset', base: 4, cap: 12, desc: '노을이 보이는 옥상 방' },
+    { id: 'oneroom', name: '원룸', price: 90000, cols: 5, rows: 3, win: [1], view: 'sky', base: 8, cap: 16, desc: '햇빛 잘 드는 깔끔한 방' },
+    { id: 'apt', name: '아파트', price: 220000, cols: 6, rows: 3, win: [1, 4], view: 'skyline', base: 14, cap: 20, desc: '도시 야경이 보이는 높은 층' },
+    { id: 'house', name: '마당 있는 주택', price: 450000, cols: 6, rows: 4, win: [2, 3], view: 'garden', base: 22, cap: 26, desc: '창밖으로 나무와 꽃이 보여요' },
+    { id: 'villa', name: '바닷가 별장', price: 900000, cols: 7, rows: 4, win: [1, 3, 5], view: 'sea', base: 35, cap: 32, desc: '창밖으로 바다가 펼쳐져요' },
   ];
   const HOUSE_BY = Object.fromEntries(HOUSES.map(h => [h.id, h]));
-  const WALLS = [['cream', '크림'], ['mint', '민트'], ['sky', '하늘'], ['pink', '분홍'], ['lav', '라벤더'], ['stripe', '줄무늬'], ['dots', '물방울'], ['pizza', '체크']];
-  const FLOORS = [['wood', '원목'], ['dark', '진한 나무'], ['tile', '타일'], ['green', '초록 카펫'], ['pink', '분홍 카펫']];
+  const WALLS = [['cream', '크림'], ['mint', '민트'], ['sky', '하늘'], ['pink', '분홍 별'], ['lav', '라벤더'], ['stripe', '줄무늬'], ['dots', '물방울'], ['pizza', '체크'], ['brick', '벽돌'], ['panel', '나무 판자'], ['stars', '밤하늘']];
+  const FLOORS = [['wood', '원목'], ['light', '밝은 원목'], ['dark', '진한 나무'], ['tile', '타일'], ['marble', '대리석'], ['green', '초록 카펫'], ['pink', '분홍 카펫']];
 
   const ACTS = [
     { id: 'rest', e: '🛋️', name: '집에서 쉬기', h: 1, energy: 15, mood: 5, bonus: ['tv', 'sofa'], bonusMood: 5,
@@ -1208,6 +1610,11 @@ button.mate:disabled { cursor: default; }
     coin: () => { tone(988, 0.08, 'square', 0.06); tone(1319, 0.25, 'square', 0.06, 0.08); },
     fanfare: () => [523, 659, 784, 1046].forEach((f, i) => tone(f, 0.25, 'triangle', 0.14, i * 0.11)),
     night: () => [784, 659, 523].forEach((f, i) => tone(f, 0.4, 'sine', 0.1, i * 0.18)),
+    roll: () => tone(95 + rand() * 20, 0.16, 'triangle', 0.07, 0, 70),
+    smear: () => tone(160 + rand() * 40, 0.12, 'sawtooth', 0.025, 0, 110),
+    sprinkle: () => tone(1400 + rand() * 600, 0.04, 'square', 0.015),
+    slice: () => tone(1700, 0.14, 'sawtooth', 0.035, 0, 500),
+    box: () => { tone(220, 0.08, 'square', 0.06); tone(160, 0.12, 'square', 0.05, 0.06); },
   };
 
   // ---------- save ----------
@@ -1216,7 +1623,7 @@ button.mate:disabled { cursor: default; }
       v: 2, day: 1, money: 0, energy: 80, mood: 60, skill: 0,
       unlocked: ING.filter(i => !i.cost).map(i => i.id),
       houses: ['gosiwon'], home: 'gosiwon', furn: { bed: 1 },
-      layouts: { gosiwon: { wall: 'cream', floor: 'wood', cells: { f4: 'bed' } } },
+      layouts: { gosiwon: { wall: 'cream', floor: 'wood', items: [{ k: 'i0', f: 'bed', u: 0.3, v: 0.5, flip: false }] } },
       stage: 'work', hour: 18, sleepBonus: 0,
       today: { idx: 0, revenue: 0, results: [], cook: {}, settled: false },
       bestDay: 0, orderSeq: 0, totalPizzas: 0, totalEarned: 0,
@@ -1251,9 +1658,20 @@ button.mate:disabled { cursor: default; }
     queueRemote();
   }
   function layout(id) {
-    if (!S.layouts[id]) S.layouts[id] = { wall: 'cream', floor: 'wood', cells: {} };
-    if (!S.layouts[id].cells) S.layouts[id].cells = {};
-    return S.layouts[id];
+    if (!S.layouts[id]) S.layouts[id] = { wall: 'cream', floor: 'wood', items: [] };
+    const L = S.layouts[id];
+    if (!Array.isArray(L.items)) L.items = cellsToItems(L.cells || {}, HOUSE_BY[id] || HOUSES[0]);
+    delete L.cells;
+    return L;
+  }
+  // Older saves kept furniture in grid cells ("f4", "w1"); turn them into free positions.
+  function cellsToItems(cells, h) {
+    return Object.entries(cells).filter(([k, f]) => /^[wf]\d{1,2}$/.test(k) && FURN_BY[f]).map(([k, f], i) => {
+      const n = +k.slice(1);
+      if (FURN_BY[f].at === 'wall' || k[0] === 'w') return { k: 'm' + i, f, u: clamp((n % h.cols + 0.5) / h.cols, 0.1, 0.9), v: 0.4, flip: false };
+      const col = n % h.cols, row = Math.floor(n / h.cols);
+      return { k: 'm' + i, f, u: 0.12 + (0.76 * (col + 0.5)) / h.cols, v: 0.2 + (0.7 * (row + 0.5)) / h.rows, flip: false };
+    });
   }
 
   // ---------- state ----------
@@ -1276,6 +1694,8 @@ button.mate:disabled { cursor: default; }
     ticket: $('ticket'), ctx: $('ctx'),
     lDough: $('lDough'), lSauce: $('lSauce'), lCheese: $('lCheese'), lTops: $('lTops'), ghost: $('ghost'),
     crust: $('crust'), doughIn: $('doughIn'), sauce: $('sauce'), cheese: $('cheese'), melt: $('melt'), spots: $('spots'), char: $('char'),
+    doughHi: $('doughHi'), doughClipC: $('doughClipC'), sauceBlobs: $('sauceBlobs'), shreds: $('shreds'), bubbles: $('bubbles'),
+    cuts: $('cuts'), flour: $('flour'), tool: $('tool'), cutGuide: $('cutGuide'), proc: $('proc'), procFill: $('procFill'), autoBtn: $('autoBtn'),
   };
 
   // ---------- views + status ----------
@@ -1347,50 +1767,218 @@ button.mate:disabled { cursor: default; }
   el.tabTop.addEventListener('click', () => { setTrayPage('top'); sfx.click(); });
 
   el.tray.addEventListener('click', e => {
-    const b = e.target.closest('.ing'); if (!b || b.disabled || phase !== 'make') return;
+    const b = e.target.closest('.ing'); if (!b || b.disabled || phase !== 'make' || autoRun) return;
     const id = b.dataset.id, kind = id === 'dough' ? 'dough' : ING_BY[id].kind;
-    if (kind === 'dough' && !pizza.dough) { pizza.dough = true; hist.push('dough'); sfx.pop(); }
-    else if (kind === 'sauce' && pizza.dough && !pizza.sauce) { pizza.sauce = id; hist.push('sauce'); sfx.splat(); }
-    else if (kind === 'cheese' && pizza.sauce && !pizza.cheese) {
-      pizza.cheese = id; hist.push('cheese'); sfx.pop();
-      setTimeout(() => { if (pizza.cheese) { setTrayPage('top'); render(); } }, 350);
-    }
-    else if (kind === 'top' && pizza.cheese) { tool = tool === id ? null : id; sfx.click(); }
+    if (kind === 'dough' && pizza.doughP === 0) { pizza.doughP = 0.02; scatterFlour(); drawDough(); setMode('roll'); sfx.pop(); }
+    else if (kind === 'dough' && !pizza.dough) setMode('roll');
+    else if (kind === 'sauce' && pizza.dough && !pizza.sauce) { chooseSauce(id); setMode('sauce'); sfx.splat(); }
+    else if (kind === 'sauce' && pizza.sauce === id && !pizza.sauceDone) setMode('sauce');
+    else if (kind === 'cheese' && pizza.sauceDone && !pizza.cheese) { chooseCheese(id); setMode('cheese'); sfx.pop(); }
+    else if (kind === 'cheese' && pizza.cheese === id && !pizza.cheeseDone) setMode('cheese');
+    else if (kind === 'top' && pizza.cheeseDone) { tool = tool === id ? null : id; sfx.click(); }
     setHintWarn(false);
     render();
   });
 
   // ---------- pizza ----------
-  function freshPizza() {
-    pizza = { dough: false, sauce: null, cheese: null, tops: [] };
-    hist = []; tool = null; bake = 0;
-    el.lTops.textContent = '';
-    el.sauce.setAttribute('d', blobPath(111, 3.2, 26));
-    el.cheese.setAttribute('d', blobPath(102, 6, 20));
-    el.melt.textContent = ''; el.spots.textContent = '';
-    for (let i = 0; i < 9; i++) el.melt.appendChild(ellipseAt(80, 5, 12, 2, 4));
-    for (let i = 0; i < 16; i++) el.spots.appendChild(ellipseAt(90, 3, 8, 2, 6));
-    setTrayPage('base');
-    paintBake();
+  // The board is a 300×300 SVG with the pie centred at (150,150). Dough rolls out from a ball to radius 132;
+  // sauce and cheese are rubbed on with the pointer and fill a coverage grid, so each step ends once the pie is evenly covered.
+  const R_FULL = 132, R_SAUCE = 112;
+  const COVER = [];
+  for (let y = 46; y <= 254; y += 10) for (let x = 46; x <= 254; x += 10) if (Math.hypot(x - 150, y - 150) <= 104) COVER.push([x, y]);
+  let mode = null, drag = null, cover = null, autoRun = 0, autoBase = null, doughNoise = [], strokeLen = 0, toolMode = null;
+  const svgNode = (tag, attrs) => { const n = document.createElementNS(NS, tag); for (const k in attrs) n.setAttribute(k, attrs[k]); return n; };
+  function ringPath(r, noise, amp) {
+    const n = noise.length, pts = [];
+    for (let i = 0; i < n; i++) { const a = (i / n) * Math.PI * 2, rr = r + noise[i] * amp; pts.push([150 + Math.cos(a) * rr, 150 + Math.sin(a) * rr]); }
+    const mid = (p, q) => `${((p[0] + q[0]) / 2).toFixed(1)} ${((p[1] + q[1]) / 2).toFixed(1)}`;
+    let d = 'M' + mid(pts[n - 1], pts[0]);
+    for (let i = 0; i < n; i++) { const p = pts[i], q = pts[(i + 1) % n]; d += ` Q${p[0].toFixed(1)} ${p[1].toFixed(1)} ${mid(p, q)}`; }
+    return d + 'Z';
   }
   function ellipseAt(maxR, rx0, rx1, ry0, ry1) {
     const a = rand() * Math.PI * 2, d = Math.sqrt(rand()) * maxR;
-    const e = document.createElementNS(NS, 'ellipse');
     const cx = (150 + Math.cos(a) * d).toFixed(1), cy = (150 + Math.sin(a) * d).toFixed(1);
-    e.setAttribute('cx', cx); e.setAttribute('cy', cy);
-    e.setAttribute('rx', (rx0 + rand() * (rx1 - rx0)).toFixed(1));
-    e.setAttribute('ry', (ry0 + rand() * (ry1 - ry0)).toFixed(1));
-    e.setAttribute('transform', `rotate(${Math.round(rand() * 180)} ${cx} ${cy})`);
-    return e;
+    return svgNode('ellipse', { cx, cy, rx: (rx0 + rand() * (rx1 - rx0)).toFixed(1), ry: (ry0 + rand() * (ry1 - ry0)).toFixed(1), transform: `rotate(${Math.round(rand() * 180)} ${cx} ${cy})` });
   }
+
+  function freshPizza() {
+    if (autoRun) { cancelAnimationFrame(autoRun); autoRun = 0; }
+    pizza = { doughP: 0, dough: false, sauce: null, sauceDone: false, cheese: null, cheeseDone: false, tops: [], cuts: [] };
+    hist = []; tool = null; bake = 0; cover = null; drag = null;
+    doughNoise = Array.from({ length: 22 }, () => rand() * 2 - 1);
+    for (const g of [el.lTops, el.sauceBlobs, el.shreds, el.cuts, el.flour, el.melt, el.spots, el.bubbles]) g.textContent = '';
+    el.sauce.setAttribute('d', blobPath(R_SAUCE, 3.2, 26));
+    el.cheese.setAttribute('d', blobPath(102, 6, 20));
+    el.sauce.style.opacity = 0;
+    for (let i = 0; i < 9; i++) el.melt.appendChild(ellipseAt(80, 5, 12, 2, 4));
+    for (let i = 0; i < 16; i++) el.spots.appendChild(ellipseAt(90, 3, 8, 2, 6));
+    for (let i = 0; i < 18; i++) {
+      const a = rand() * 6.283, d = Math.sqrt(rand()) * 92;
+      el.bubbles.appendChild(svgNode('circle', { class: 'bub', cx: (150 + Math.cos(a) * d).toFixed(1), cy: (150 + Math.sin(a) * d).toFixed(1), r: (1.6 + rand() * 2.6).toFixed(1) }));
+    }
+    el.stage.classList.remove('boxed', 'steaming');
+    el.cutGuide.style.display = 'none';
+    setMode(null);
+    setTrayPage('base');
+    drawDough(); paintBake();
+  }
+  function drawDough() {
+    const p = pizza.doughP;
+    el.lDough.style.display = p > 0 ? '' : 'none';
+    el.ghost.style.display = p > 0 ? 'none' : '';
+    if (p <= 0) return;
+    const r = 46 + (R_FULL - 46) * p, amp = 7 * (1 - p) + 1.4, rim = 4 + 9 * p;
+    el.crust.setAttribute('d', ringPath(r, doughNoise, amp));
+    el.doughIn.setAttribute('d', ringPath(r - rim, doughNoise, amp * 0.85));
+    el.doughHi.setAttribute('r', r.toFixed(1));
+    el.doughClipC.setAttribute('r', (r - rim).toFixed(1));
+  }
+  function scatterFlour() {
+    el.flour.textContent = '';
+    for (let i = 0; i < 46; i++) {
+      const a = rand() * 6.283, d = 60 + rand() * 86;
+      el.flour.appendChild(svgNode('circle', { cx: (150 + Math.cos(a) * d).toFixed(1), cy: (150 + Math.sin(a) * d).toFixed(1), r: (0.6 + rand() * 1.8).toFixed(1), opacity: (0.35 + rand() * 0.5).toFixed(2) }));
+    }
+  }
+  function markCover(x, y, R) {
+    if (!cover) cover = new Uint8Array(COVER.length);
+    const R2 = R * R;
+    for (let i = 0; i < COVER.length; i++) if (!cover[i]) { const dx = COVER[i][0] - x, dy = COVER[i][1] - y; if (dx * dx + dy * dy <= R2) cover[i] = 1; }
+  }
+  const coverage = () => (cover ? cover.reduce((s, v) => s + v, 0) / COVER.length : 0);
+  function paintSauce(x, y) {
+    if (Math.hypot(x - 150, y - 150) > R_SAUCE + 4 || el.sauceBlobs.childElementCount > 700) return;
+    el.sauceBlobs.appendChild(svgNode('circle', { cx: x.toFixed(1), cy: y.toFixed(1), r: (12 + rand() * 6).toFixed(1) }));
+    markCover(x, y, 17);
+  }
+  function sprinkleCheese(x, y, k) {
+    for (let i = 0; i < k && el.shreds.childElementCount < 900; i++) {
+      const a = rand() * 6.283, d = rand() * 14, sx = x + Math.cos(a) * d, sy = y + Math.sin(a) * d;
+      if (Math.hypot(sx - 150, sy - 150) > 110) continue;
+      const w = 5 + rand() * 5;
+      el.shreds.appendChild(svgNode('rect', {
+        x: (sx - w / 2).toFixed(1), y: (sy - 1.1).toFixed(1), width: w.toFixed(1), height: 2.3, rx: 1.15,
+        transform: `rotate(${Math.round(rand() * 180)} ${sx.toFixed(1)} ${sy.toFixed(1)})`, opacity: (0.8 + rand() * 0.2).toFixed(2),
+      }));
+    }
+    markCover(x, y, 13);
+  }
+  function rollDough(dist) {
+    if (pizza.dough) return;
+    pizza.doughP = Math.min(1, pizza.doughP + dist / 850);
+    strokeLen += dist;
+    if (strokeLen > 140) { strokeLen = 0; sfx.roll(); }
+    drawDough(); setProc(pizza.doughP);
+    if (pizza.doughP >= 1) { pizza.dough = true; hist.push('dough'); setMode(null); sfx.ding(); render(); }
+  }
+  function spiralPts(maxR, arc, ring) {
+    const pts = [];
+    let a = rand() * 6.283, r = 4;
+    while (r < maxR) { pts.push([150 + Math.cos(a) * r, 150 + Math.sin(a) * r]); const rr = Math.max(r, 8); a += arc / rr; r += (ring * arc) / (6.283 * rr); }
+    return pts;
+  }
+  function chooseSauce(id) { pizza.sauce = id; el.sauce.style.fill = ING_BY[id].color; el.sauceBlobs.style.fill = ING_BY[id].color; cover = null; }
+  function chooseCheese(id) { pizza.cheese = id; el.shreds.style.fill = ING_BY[id].color; cover = null; }
+  function finishSauce() {
+    if (pizza.sauceDone) return;
+    pizza.sauceDone = true; hist.push('sauce'); cover = null;
+    el.sauce.style.opacity = 1;
+    setMode(null); sfx.ding(); render();
+  }
+  function finishCheese() {
+    if (pizza.cheeseDone) return;
+    pizza.cheeseDone = true; hist.push('cheese'); cover = null;
+    setMode(null); sfx.ding();
+    setTimeout(() => { if (pizza.cheeseDone && phase === 'make') { setTrayPage('top'); render(); } }, 350);
+    render();
+  }
+  // Part-timers who prep the pie do each step in one go.
+  function instantDough() { pizza.doughP = 1; pizza.dough = true; hist.push('dough'); scatterFlour(); drawDough(); }
+  function instantSauce(id) {
+    chooseSauce(id);
+    for (const [x, y] of spiralPts(R_SAUCE - 6, 10, 18)) paintSauce(x, y);
+    pizza.sauceDone = true; hist.push('sauce'); el.sauce.style.opacity = 1; cover = null;
+  }
+  function instantCheese(id) {
+    chooseCheese(id);
+    for (const [x, y] of spiralPts(104, 6, 14)) sprinkleCheese(x, y, 2);
+    pizza.cheeseDone = true; hist.push('cheese'); cover = null; setTrayPage('top');
+  }
+
+  const MODE_TXT = { roll: '자동으로 밀기', sauce: '자동으로 바르기', cheese: '자동으로 뿌리기', cut: '자동으로 자르기' };
+  function setMode(m) {
+    mode = m; toolMode = null;
+    if (autoRun && !m) { cancelAnimationFrame(autoRun); autoRun = 0; }
+    el.svg.classList.toggle('painting', !!m);
+    el.proc.hidden = !m;
+    if (m) {
+      el.autoBtn.textContent = MODE_TXT[m]; el.autoBtn.disabled = false;
+      setProc(m === 'roll' ? pizza.doughP : m === 'cut' ? pizza.cuts.length / (order.slices / 2) : coverage() / (m === 'sauce' ? 0.85 : 0.8));
+    } else hideTool();
+  }
+  function setProc(f) {
+    const w = Math.round(clamp(f, 0, 1) * 100);
+    el.procFill.style.width = w + '%';
+    el.procFill.classList.toggle('full', w >= 100);
+  }
+  const TOOL_ART = {
+    roll: '<g transform="rotate(90)"><rect x="-58" y="-8" width="116" height="16" rx="8" fill="#e3b87e" stroke="#8f5f2f" stroke-width="2"/><path d="M-46 -3 H46" stroke="#f6dcb3" stroke-width="2.2" stroke-linecap="round"/><rect x="-82" y="-4.5" width="26" height="9" rx="4.5" fill="#a8703c" stroke="#7a4d22" stroke-width="1.5"/><rect x="56" y="-4.5" width="26" height="9" rx="4.5" fill="#a8703c" stroke="#7a4d22" stroke-width="1.5"/></g>',
+    sauce: '<g><path d="M8 -6 L44 -42" stroke="#7d8790" stroke-width="5" stroke-linecap="round"/><path d="M8 -6 L44 -42" stroke="#d7dde3" stroke-width="2" stroke-linecap="round"/><ellipse rx="14" ry="11" fill="#b8c0c8" stroke="#6f7882" stroke-width="2"/><ellipse cy="-1" rx="10" ry="7" class="tool-fill"/></g>',
+    cheese: '<g transform="translate(6 -26) rotate(-18)"><rect x="-10" y="-32" width="22" height="18" rx="3" class="tool-fill" stroke="#c48a14" stroke-width="1.5"/><path d="M-16 -14 L16 -14 L20 14 L-20 14 Z" fill="#c9ced4" stroke="#6f7882" stroke-width="2"/><path d="M-12 -6 h6 M0 -6 h6 M-14 2 h6 M-2 2 h6 M10 2 h6 M-8 9 h6 M4 9 h6" stroke="#6f7882" stroke-width="1.6" stroke-linecap="round"/></g>',
+    cut: '<g><path d="M6 6 L34 34" stroke="#c0392b" stroke-width="7" stroke-linecap="round"/><circle r="15" fill="#dfe4ea" stroke="#6f7882" stroke-width="2"/><circle r="10" fill="none" stroke="#ffffff" stroke-width="1.2" opacity="0.8"/><circle r="3" fill="#6f7882"/></g>',
+  };
+  function showTool(x, y, ang) {
+    if (!mode) return hideTool();
+    if (toolMode !== mode) {
+      el.tool.innerHTML = TOOL_ART[mode]; toolMode = mode;
+      const f = el.tool.querySelector('.tool-fill');
+      if (f) f.style.fill = mode === 'sauce' ? ING_BY[pizza.sauce].color : ING_BY[pizza.cheese].color;
+    }
+    const rot = mode === 'roll' && ang != null ? ang * 57.3 : 0;
+    el.tool.setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${rot.toFixed(0)})`);
+    el.tool.style.opacity = 0.95;
+  }
+  function hideTool() { el.tool.style.opacity = 0; }
+  function applyStroke(x, y, d) {
+    if (mode === 'roll') { const r = 46 + (R_FULL - 46) * pizza.doughP; if (Math.hypot(x - 150, y - 150) <= r + 26) rollDough(d); }
+    else if (mode === 'sauce') { paintSauce(x, y); strokeLen += d; if (strokeLen > 90) { strokeLen = 0; sfx.smear(); } }
+    else if (mode === 'cheese') { sprinkleCheese(x, y, rand() < 0.5 ? 1 : 2); strokeLen += d; if (strokeLen > 70) { strokeLen = 0; sfx.sprinkle(); } }
+  }
+  function checkProgress() {
+    if (mode === 'sauce') { const c = coverage(); setProc(c / 0.85); if (c >= 0.85) finishSauce(); }
+    else if (mode === 'cheese') { const c = coverage(); setProc(c / 0.8); if (c >= 0.8) finishCheese(); }
+  }
+  function runAuto() {
+    if (!mode || autoRun) return;
+    const m = mode;
+    el.autoBtn.disabled = true;
+    if (m === 'cut') { autoCut(); return; }
+    const pts = m === 'sauce' ? spiralPts(R_SAUCE - 6, 10, 18) : m === 'cheese' ? spiralPts(104, 6, 14) : null;
+    let i = 0, t = 0;
+    const step = () => {
+      autoRun = 0;
+      if (mode !== m || phase !== 'make') return;
+      if (m === 'roll') {
+        t++;
+        const x = 150 + Math.sin(t * 0.25) * 70, y = 150 + Math.cos(t * 0.11) * 30;
+        showTool(x, y, 0); rollDough(22);
+      } else {
+        for (let k = 0; k < 4 && i < pts.length; k++, i++) applyStroke(pts[i][0], pts[i][1], 10);
+        if (i < pts.length) showTool(pts[i][0], pts[i][1]);
+        checkProgress();
+        if (i >= pts.length && mode === m) { if (m === 'sauce') finishSauce(); else finishCheese(); }
+      }
+      if (mode === m) autoRun = requestAnimationFrame(step);
+    };
+    autoRun = requestAnimationFrame(step);
+  }
+
   function addPiece(type, x, y) {
-    const g = document.createElementNS(NS, 'g');
-    g.setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${Math.round(rand() * 360)}) scale(1.3)`);
-    const inner = document.createElementNS(NS, 'g');
-    inner.setAttribute('class', 'drop');
-    const u = document.createElementNS(NS, 'use');
-    u.setAttribute('href', '#t-' + type);
-    inner.appendChild(u); g.appendChild(inner); el.lTops.appendChild(g);
+    const g = svgNode('g', { transform: `translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${Math.round(rand() * 360)}) scale(${(1.3 * (0.92 + rand() * 0.16)).toFixed(2)})` });
+    const inner = svgNode('g', { class: 'drop' });
+    inner.appendChild(svgNode('use', { href: '#t-' + type }));
+    g.appendChild(inner); el.lTops.appendChild(g);
     pizza.tops.push({ type, node: g });
     hist.push('top');
   }
@@ -1404,32 +1992,63 @@ button.mate:disabled { cursor: default; }
     el.crust.style.fill = mix(CRUST, t);
     el.doughIn.style.fill = mix(DOUGH, t);
     el.cheese.style.fill = mix(CHEESE[pizza.cheese || 'mozza'], t);
-    el.sauce.style.fill = pizza.sauce ? ING_BY[pizza.sauce].color : 'transparent';
-    el.melt.setAttribute('opacity', (0.55 * clamp(1 - t * 1.6, 0, 1)).toFixed(2));
+    el.cheese.style.opacity = pizza.cheeseDone ? clamp((t - 0.2) / 0.35, 0, 1).toFixed(2) : 0;
+    el.shreds.style.opacity = (1 - 0.9 * clamp((t - 0.3) / 0.3, 0, 1)).toFixed(2);
+    el.melt.setAttribute('opacity', (0.5 * clamp((t - 0.3) / 0.2, 0, 1) * clamp((0.75 - t) / 0.2, 0, 1)).toFixed(2));
     el.spots.setAttribute('opacity', (0.75 * clamp((t - 0.45) / 0.35, 0, 1)).toFixed(2));
+    el.bubbles.style.opacity = (clamp((t - 0.32) / 0.12, 0, 1) * clamp((0.9 - t) / 0.15, 0, 1)).toFixed(2);
     el.char.setAttribute('opacity', (0.6 * clamp((t - 0.8) / 0.2, 0, 1)).toFixed(2));
   }
 
   function placeAt(x, y) {
     if (phase !== 'make') return;
-    if (!pizza.dough) { trayBtn('dough').click(); return; }
-    if (!pizza.cheese) { warn(!pizza.sauce ? '먼저 소스를 골라 발라요' : '먼저 치즈를 골라 뿌려요'); return; }
+    if (pizza.doughP === 0) { trayBtn('dough').click(); return; }
+    if (!pizza.dough) { setMode('roll'); render(); return; }
+    if (!pizza.sauceDone) { warn(pizza.sauce ? '국자로 문질러서 소스를 마저 발라요' : '먼저 소스를 골라요'); return; }
+    if (!pizza.cheeseDone) { warn(pizza.cheese ? '문질러서 치즈를 마저 뿌려요' : '먼저 치즈를 골라요'); return; }
     if (!tool) { warn('아래 쟁반에서 토핑을 먼저 골라요'); if (trayPage !== 'top') setTrayPage('top'); return; }
     if (Math.hypot(x - 150, y - 150) > 108) { warn('치즈 위에 올려 주세요'); return; }
     if (pizza.tops.length >= 60) { warn('토핑이 너무 많아요'); return; }
     addPiece(tool, x, y); sfx.pop(); setHintWarn(false); render();
   }
+  const toSvg = e => { const r = el.svg.getBoundingClientRect(); return { x: ((e.clientX - r.left) / r.width) * 300, y: ((e.clientY - r.top) / r.height) * 300 }; };
+  const capture = e => { try { el.svg.setPointerCapture(e.pointerId); } catch (err) { /* pointer already gone */ } };
   el.svg.addEventListener('pointerdown', e => {
     if (e.button !== undefined && e.button > 0) return;
-    const r = el.svg.getBoundingClientRect();
-    placeAt(((e.clientX - r.left) / r.width) * 300, ((e.clientY - r.top) / r.height) * 300);
+    const p = toSvg(e);
+    if (phase === 'cut' && mode === 'cut') { drag = { kind: 'cut', x0: p.x, y0: p.y, x: p.x, y: p.y }; capture(e); drawGuide(); showTool(p.x, p.y); return; }
+    if (phase !== 'make') return;
+    if (mode) {
+      if (autoRun) return;
+      drag = { kind: mode, x: p.x, y: p.y }; capture(e);
+      applyStroke(p.x, p.y, 0); showTool(p.x, p.y); checkProgress();
+      return;
+    }
+    placeAt(p.x, p.y);
   });
+  el.svg.addEventListener('pointermove', e => {
+    const p = toSvg(e);
+    if (!drag) { if (mode && !autoRun && e.pointerType === 'mouse') showTool(p.x, p.y); return; }
+    if (drag.kind === 'cut') { drag.x = p.x; drag.y = p.y; drawGuide(); showTool(p.x, p.y); return; }
+    const dx = p.x - drag.x, dy = p.y - drag.y, d = Math.hypot(dx, dy);
+    if (d < 2.5) return;
+    const n = Math.ceil(d / 5);
+    for (let i = 1; i <= n; i++) applyStroke(drag.x + (dx * i) / n, drag.y + (dy * i) / n, d / n);
+    drag.x = p.x; drag.y = p.y;
+    showTool(p.x, p.y, Math.atan2(dy, dx));
+    checkProgress();
+  });
+  el.svg.addEventListener('pointerup', () => { if (drag && drag.kind === 'cut') finishSwipe(); drag = null; });
+  el.svg.addEventListener('pointercancel', () => { drag = null; el.cutGuide.style.display = 'none'; });
+  el.svg.addEventListener('pointerleave', () => { if (!drag) hideTool(); });
   el.svg.addEventListener('keydown', e => {
     if (e.key !== 'Enter' && e.key !== ' ') return;
     e.preventDefault();
+    if (mode) { runAuto(); return; }
     const a = rand() * Math.PI * 2, d = Math.sqrt(rand()) * 95;
     placeAt(150 + Math.cos(a) * d, 150 + Math.sin(a) * d);
   });
+  el.autoBtn.addEventListener('click', () => { sfx.click(); runAuto(); });
 
   let warnTimer = 0;
   function warn(msg) {
@@ -1440,18 +2059,27 @@ button.mate:disabled { cursor: default; }
   function setHintWarn(on) { el.hint.classList.toggle('warn', on); if (!on) clearTimeout(warnTimer); }
 
   // ---------- actions ----------
+  function resetCheese() { pizza.cheese = null; pizza.cheeseDone = false; el.shreds.textContent = ''; cover = null; }
+  function resetSauce() { pizza.sauce = null; pizza.sauceDone = false; el.sauceBlobs.textContent = ''; el.sauce.style.opacity = 0; cover = null; }
+  function resetDough() { pizza.doughP = 0; pizza.dough = false; el.flour.textContent = ''; drawDough(); }
+  const inProgress = () => (pizza.doughP > 0 && !pizza.dough) || (pizza.sauce && !pizza.sauceDone) || (pizza.cheese && !pizza.cheeseDone);
   el.undo.addEventListener('click', () => {
-    if (phase !== 'make' || !hist.length) return;
-    const last = hist.pop();
-    if (last === 'top') pizza.tops.pop().node.remove();
-    else if (last === 'cheese') { pizza.cheese = null; setTrayPage('base'); }
-    else if (last === 'sauce') pizza.sauce = null;
-    else if (last === 'dough') pizza.dough = false;
-    if (!pizza.cheese) tool = null;
-    sfx.click(); render();
+    if (phase !== 'make' || autoRun) return;
+    if (pizza.cheese && !pizza.cheeseDone) resetCheese();
+    else if (pizza.sauce && !pizza.sauceDone) resetSauce();
+    else if (pizza.doughP > 0 && !pizza.dough) resetDough();
+    else if (hist.length) {
+      const last = hist.pop();
+      if (last === 'top') pizza.tops.pop().node.remove();
+      else if (last === 'cheese') { resetCheese(); setTrayPage('base'); }
+      else if (last === 'sauce') resetSauce();
+      else if (last === 'dough') resetDough();
+    } else return;
+    if (!pizza.cheeseDone) tool = null;
+    setMode(null); sfx.click(); render();
   });
   el.clear.addEventListener('click', () => {
-    if (phase !== 'make' || !hist.length) return;
+    if (phase !== 'make' || autoRun || (!hist.length && !inProgress())) return;
     if (Date.now() - clearArmed > 2500) {
       clearArmed = Date.now(); el.clear.textContent = '한 번 더';
       setTimeout(() => { if (Date.now() - clearArmed >= 2500) el.clear.textContent = '처음부터'; }, 2600);
@@ -1461,8 +2089,9 @@ button.mate:disabled { cursor: default; }
     freshPizza(); sfx.whoosh(); render();
   });
   el.bakeBtn.addEventListener('click', () => {
-    if (phase !== 'make' || !pizza.cheese) return;
+    if (phase !== 'make' || !pizza.cheeseDone) return;
     phase = 'bake'; bake = 0; tool = null;
+    setMode(null);
     el.needle.style.left = '0%';
     const a = zones[1].to, b = zones[2].to;
     el.gauge.style.background = `linear-gradient(90deg, var(--line) 0 40%, var(--mustard-soft) 40% ${a}%, var(--basil) ${a}% ${b}%, var(--mustard) ${b}% 90%, var(--tomato) 90% 100%)`;
@@ -1472,10 +2101,88 @@ button.mate:disabled { cursor: default; }
   });
   el.pull.addEventListener('click', () => pull());
 
+  // Out of the oven: steam, then cut into the slices the customer asked for, then box it.
   function pull() {
     if (phase !== 'bake') return;
-    phase = 'result';
+    phase = 'cut';
     el.stage.classList.remove('baking');
+    el.stage.classList.add('steaming');
+    setTimeout(() => el.stage.classList.remove('steaming'), 3500);
+    el.bakePanel.hidden = true;
+    autoBase = null;
+    sfx.ding();
+    setMode('cut');
+    render();
+  }
+  function drawGuide() {
+    const g = el.cutGuide;
+    g.style.display = '';
+    g.setAttribute('x1', drag.x0.toFixed(1)); g.setAttribute('y1', drag.y0.toFixed(1));
+    g.setAttribute('x2', drag.x.toFixed(1)); g.setAttribute('y2', drag.y.toFixed(1));
+  }
+  const angDiff = (a, b) => { const d = Math.abs(a - b) % Math.PI; return Math.min(d, Math.PI - d); };
+  function finishSwipe() {
+    el.cutGuide.style.display = 'none';
+    const { x0, y0, x, y } = drag, len = Math.hypot(x - x0, y - y0);
+    if (len < 12) return;
+    if (len < 120) { warn('피자 끝에서 끝까지 길게 그어요'); return; }
+    const dist = Math.abs((x - x0) * (y0 - 150) - (x0 - 150) * (y - y0)) / len;
+    if (dist > 36) { warn('피자 한가운데를 지나가게 그어요'); return; }
+    autoBase = null;
+    addCut(Math.atan2(y - y0, x - x0));
+  }
+  function addCut(theta) {
+    const a = ((theta % Math.PI) + Math.PI) % Math.PI;
+    if (pizza.cuts.some(c => angDiff(c, a) < 0.15)) { warn('이미 자른 자리예요. 다른 방향으로 그어요'); return false; }
+    pizza.cuts.push(a);
+    const dx = Math.cos(a) * 134, dy = Math.sin(a) * 134, g = svgNode('g', {});
+    for (const cls of ['cut-dark', 'cut-hi']) g.appendChild(svgNode('line', { class: cls, x1: (150 - dx).toFixed(1), y1: (150 - dy).toFixed(1), x2: (150 + dx).toFixed(1), y2: (150 + dy).toFixed(1) }));
+    el.cuts.appendChild(g);
+    sfx.slice();
+    const need = order.slices / 2;
+    setProc(pizza.cuts.length / need);
+    render();
+    if (pizza.cuts.length >= need) { setMode(null); setTimeout(boxIt, 500); }
+    return true;
+  }
+  function autoCut() {
+    const need = order.slices / 2;
+    if (!pizza.cuts.length) autoBase = rand() * Math.PI;
+    const next = () => {
+      if (phase !== 'cut' || mode !== 'cut' || pizza.cuts.length >= need) return;
+      let a;
+      if (autoBase != null) a = autoBase + (pizza.cuts.length * Math.PI) / need;
+      else {
+        const cs = pizza.cuts.slice().sort((p, q) => p - q);
+        let best = -1;
+        for (let i = 0; i < cs.length; i++) { const gap = i < cs.length - 1 ? cs[i + 1] - cs[i] : cs[0] + Math.PI - cs[i]; if (gap > best) { best = gap; a = cs[i] + gap / 2; } }
+      }
+      addCut(a + (rand() - 0.5) * 0.08);
+      setTimeout(next, 260);
+    };
+    next();
+  }
+  function cutScore() {
+    const need = order.slices / 2, cs = pizza.cuts.slice(0, need).sort((a, b) => a - b);
+    if (cs.length < need) return 0;
+    const ideal = Math.PI / need;
+    let err = 0;
+    for (let i = 0; i < need; i++) err += Math.abs((i < need - 1 ? cs[i + 1] - cs[i] : cs[0] + Math.PI - cs[need - 1]) - ideal);
+    return Math.round(10 * clamp(1 - err / need / (ideal * 0.5), 0, 1));
+  }
+  function boxIt() {
+    if (phase !== 'cut') return;
+    phase = 'boxing';
+    hideTool();
+    el.stage.classList.remove('steaming');
+    el.stage.classList.add('boxed');
+    sfx.whoosh(); setTimeout(() => sfx.box(), 900);
+    render();
+    setTimeout(serve, 1350);
+  }
+  function serve() {
+    if (phase !== 'boxing') return;
+    phase = 'result';
     const r = scorePizza();
     S.money += r.earn + r.tip;
     S.today.revenue += r.earn + r.tip;
@@ -1497,9 +2204,9 @@ button.mate:disabled { cursor: default; }
     const w = 1.5 * S.skill + [0, 3, 4.5, 6][staffLv('oven')];
     zones = [
       { to: 40, label: '반죽이 날것이에요', short: '날것', pts: 0, cls: 'bad' },
-      { to: 58 - w, label: '조금 덜 익었어요', short: '덜 익음', pts: 15, cls: '' },
-      { to: 76 + w, label: '딱 좋게 구워졌어요', short: '딱 좋아요', pts: 30, cls: 'good' },
-      { to: 90, label: '조금 탔어요', short: '조금 탐', pts: 15, cls: '' },
+      { to: 58 - w, label: '조금 덜 익었어요', short: '덜 익음', pts: 12, cls: '' },
+      { to: 76 + w, label: '딱 좋게 구워졌어요', short: '딱 좋아요', pts: 25, cls: 'good' },
+      { to: 90, label: '조금 탔어요', short: '조금 탐', pts: 12, cls: '' },
       { to: 101, label: '새까맣게 탔어요', short: '탔어요', pts: 0, cls: 'bad' },
     ];
   }
@@ -1516,14 +2223,15 @@ button.mate:disabled { cursor: default; }
     acc /= want.length;
     const extras = Object.entries(c).filter(([id]) => !(id in order.toppings));
     const extraN = extras.reduce((s, [, n]) => s + n, 0);
-    const topPts = Math.max(0, Math.round(acc * 45) - extraN * 4);
+    const topPts = Math.max(0, Math.round(acc * 40) - extraN * 4);
     const zone = zoneOf(bake);
-    const total = (sauceOk ? 15 : 0) + (cheeseOk ? 10 : 0) + topPts + zone.pts;
+    const cut = cutScore();
+    const total = (sauceOk ? 15 : 0) + (cheeseOk ? 10 : 0) + topPts + zone.pts + cut;
     const stars = total >= 90 ? 3 : total >= 70 ? 2 : total >= 45 ? 1 : 0;
     const earn = round100(priceNow() * total / 100);
     const team = workingMates().length > 0;
     const tip = stars >= 2 ? Math.round((3000 * patience * tipMult() * (team ? 1.2 : 1)) / 500) * 500 : 0;
-    return { person, order, counts: c, sauce: pizza.sauce, cheese: pizza.cheese, sauceOk, cheeseOk, extras, zone, total, stars, earn, tip, team };
+    return { person, order, counts: c, sauce: pizza.sauce, cheese: pizza.cheese, sauceOk, cheeseOk, extras, zone, cut, slices: order.slices, total, stars, earn, tip, team };
   }
 
   const TITLES = ['이건 제 피자가 아니에요…', '음, 먹을 만해요', '맛있어요!', '완벽한 피자예요!'];
@@ -1547,6 +2255,7 @@ button.mate:disabled { cursor: default; }
       `<li><span>치즈</span><span class="${r.cheeseOk ? 'good' : 'bad'}">${r.cheeseOk ? ING_BY[r.cheese].name + ' ✓' : ING_BY[r.order.cheese].name + ' 치즈를 원했어요'}</span></li>`,
       `<li><span>토핑</span><span>${topLine}</span></li>`,
       `<li><span>굽기</span><span class="${r.zone.cls}">${r.zone.label}</span></li>`,
+      `<li><span>자르기</span><span class="${r.cut >= 8 ? 'good' : r.cut < 4 ? 'bad' : ''}">${r.slices}조각 · ${r.cut >= 8 ? '반듯해요' : r.cut >= 4 ? '조금 삐뚤어요' : '많이 삐뚤어요'}</span></li>`,
       `<li class="sum"><span>점수</span><span>${r.total}점</span></li>`,
     ].join('');
     $('resEarn').textContent = won(r.earn) + '원';
@@ -1632,7 +2341,8 @@ button.mate:disabled { cursor: default; }
     const sauce = weighted(sauces, x => (x === 'tomato' ? 3 : ING_BY[x].cost ? 2 : 1.4));
     const cheese = S.unlocked.includes('cheddar') && rand() < 0.35 ? 'cheddar' : 'mozza';
     const price = 8000 + types.reduce((s, id) => s + ING_BY[id].add, 0) + ING_BY[sauce].add + ING_BY[cheese].add;
-    return { sauce, cheese, toppings, price };
+    const slices = weighted([8, 6, 4], x => (x === 8 ? 5 : x === 6 ? 3 : 2));
+    return { sauce, cheese, toppings, price, slices };
   }
   function pizzaName(o) {
     const ids = Object.keys(o.toppings);
@@ -1654,7 +2364,7 @@ button.mate:disabled { cursor: default; }
     S.orderSeq++;
     const tired = S.energy < 25;
     patience = 1; moodLevel = 'high';
-    patienceSec = (55 - idx * 3) / (tired ? 1.25 : 1) / (1 - [0, 0.25, 0.35, 0.45][staffLv('hall')]);
+    patienceSec = (85 - idx * 4) / (tired ? 1.25 : 1) / (1 - [0, 0.25, 0.35, 0.45][staffLv('hall')]);
     bakeMs = (6200 - idx * 250) * (tired ? 0.8 : 1);
     makeZones();
     el.face.textContent = person.face;
@@ -1669,42 +2379,39 @@ button.mate:disabled { cursor: default; }
     buildTray();
     freshPizza();
     const prep = staffLv('prep');
-    if (prep >= 1) { pizza.dough = true; hist.push('dough'); }
-    if (prep >= 2) { pizza.sauce = order.sauce; hist.push('sauce'); }
-    if (prep >= 3) { pizza.cheese = order.cheese; hist.push('cheese'); setTrayPage('top'); }
+    if (prep >= 1) instantDough();
+    if (prep >= 2) instantSauce(order.sauce);
+    if (prep >= 3) instantCheese(order.cheese);
     renderCrew();
   }
 
   // ---------- shop render ----------
   function render() {
     if (!pizza || !order) return;
-    el.lDough.classList.toggle('on', pizza.dough);
-    el.lSauce.classList.toggle('on', !!pizza.sauce);
-    el.lCheese.classList.toggle('on', !!pizza.cheese);
-    el.ghost.style.display = pizza.dough ? 'none' : '';
-    paintBake();
-
-    const step = phase === 'bake' || phase === 'result' || phase === 'dayend' ? 4 : !pizza.dough ? 0 : !pizza.sauce ? 1 : !pizza.cheese ? 2 : 3;
+    drawDough(); paintBake();
+    const late = phase === 'cut' || phase === 'boxing' || phase === 'result' || phase === 'dayend';
+    const step = late ? 5 : phase === 'bake' ? 4 : !pizza.dough ? 0 : !pizza.sauceDone ? 1 : !pizza.cheeseDone ? 2 : 3;
     [...el.steps].forEach((li, i) => { li.className = i < step ? 'done' : i === step ? 'now' : ''; });
 
     const c = counts();
     for (const b of el.tray.querySelectorAll('.ing')) {
       const id = b.dataset.id, kind = id === 'dough' ? 'dough' : ING_BY[id].kind;
-      let enabled = false, done = false;
-      if (kind === 'dough') { enabled = !pizza.dough; done = pizza.dough; }
-      else if (kind === 'sauce') { enabled = pizza.dough && !pizza.sauce; done = pizza.sauce === id; }
-      else if (kind === 'cheese') { enabled = !!pizza.sauce && !pizza.cheese; done = pizza.cheese === id; }
-      else enabled = !!pizza.cheese;
+      let enabled = false, done = false, on = false;
+      if (kind === 'dough') { enabled = !pizza.dough; done = pizza.dough; on = mode === 'roll'; }
+      else if (kind === 'sauce') { enabled = pizza.dough && (!pizza.sauce || (pizza.sauce === id && !pizza.sauceDone)); done = pizza.sauceDone && pizza.sauce === id; on = mode === 'sauce' && pizza.sauce === id; }
+      else if (kind === 'cheese') { enabled = pizza.sauceDone && (!pizza.cheese || (pizza.cheese === id && !pizza.cheeseDone)); done = pizza.cheeseDone && pizza.cheese === id; on = mode === 'cheese' && pizza.cheese === id; }
+      else { enabled = pizza.cheeseDone; on = tool === id; }
       b.disabled = phase !== 'make' || !enabled;
       b.classList.toggle('done', done);
-      b.classList.toggle('on', tool === id);
-      b.classList.toggle('next', phase === 'make' && enabled && kind === 'dough');
+      b.classList.toggle('on', on);
+      b.classList.toggle('next', phase === 'make' && kind === 'dough' && pizza.doughP === 0);
       if (kind === 'top') { b.setAttribute('aria-pressed', String(tool === id)); b.querySelector('.cnt').textContent = c[id] || ''; }
     }
 
+    const need = order.slices / 2;
     const chips = [];
-    chips.push(chip(`${ING_BY[order.sauce].name} 소스`, pizza.sauce ? (pizza.sauce === order.sauce ? 'ok' : 'bad') : ''));
-    chips.push(chip(`${ING_BY[order.cheese].name} 치즈`, pizza.cheese ? (pizza.cheese === order.cheese ? 'ok' : 'bad') : ''));
+    chips.push(chip(`${ING_BY[order.sauce].name} 소스`, pizza.sauce ? (pizza.sauce === order.sauce ? (pizza.sauceDone ? 'ok' : '') : 'bad') : ''));
+    chips.push(chip(`${ING_BY[order.cheese].name} 치즈`, pizza.cheese ? (pizza.cheese === order.cheese ? (pizza.cheeseDone ? 'ok' : '') : 'bad') : ''));
     let allTops = true;
     for (const [id, w] of Object.entries(order.toppings)) {
       const n = c[id] || 0;
@@ -1712,22 +2419,29 @@ button.mate:disabled { cursor: default; }
       chips.push(chip(`${ING_BY[id].name} <b>${n}/${w}</b>`, n === w ? 'ok' : n > w ? 'bad' : ''));
     }
     for (const [id, n] of Object.entries(c)) if (!(id in order.toppings)) { allTops = false; chips.push(chip(`${ING_BY[id].name} ${n} · 주문에 없음`, 'bad')); }
+    chips.push(chip(`${order.slices}조각으로`, pizza.cuts.length >= need ? 'ok' : ''));
     el.chips.innerHTML = chips.join('');
 
-    el.undo.disabled = phase !== 'make' || !hist.length;
-    el.clear.disabled = phase !== 'make' || !hist.length;
-    el.bakeBtn.disabled = phase !== 'make' || !pizza.cheese;
-    const perfectBuild = !!pizza.cheese && allTops && pizza.sauce === order.sauce && pizza.cheese === order.cheese;
+    const busy = phase !== 'make' || !!autoRun;
+    el.undo.disabled = busy || (!hist.length && !inProgress());
+    el.clear.disabled = busy || (!hist.length && !inProgress());
+    el.bakeBtn.disabled = phase !== 'make' || !pizza.cheeseDone;
+    const perfectBuild = pizza.cheeseDone && allTops && pizza.sauce === order.sauce && pizza.cheese === order.cheese;
     el.bakeBtn.classList.toggle('ready', phase === 'make' && perfectBuild);
-    el.svg.classList.toggle('aim', phase === 'make' && !!tool);
+    el.svg.classList.toggle('aim', phase === 'make' && !!tool && !mode);
 
     if (!el.hint.classList.contains('warn')) {
       let h = '';
       if (phase === 'bake') h = '바늘이 초록색에 오면 꺼내요!';
+      else if (phase === 'cut') h = `피자 위를 끝에서 끝까지 쓱 그어서 ${order.slices}조각으로 잘라요 · ${pizza.cuts.length}/${need}번`;
+      else if (phase === 'boxing') h = '상자에 담고 있어요…';
       else if (phase !== 'make') h = '';
-      else if (!pizza.dough) h = '도우를 눌러 반죽을 펴세요';
+      else if (pizza.doughP === 0) h = '도우를 눌러 반죽을 꺼내요';
+      else if (!pizza.dough) h = '밀대로 반죽 위를 앞뒤로 문질러 넓게 펴요';
       else if (!pizza.sauce) h = '주문서를 보고 소스를 골라요';
+      else if (!pizza.sauceDone) h = '국자로 빙글빙글 문질러 소스를 골고루 발라요';
       else if (!pizza.cheese) h = '주문서를 보고 치즈를 골라요';
+      else if (!pizza.cheeseDone) h = '피자 위를 문질러 치즈를 솔솔 뿌려요';
       else if (perfectBuild) h = '주문대로 다 올렸어요. 오븐에 구워요!';
       else if (!tool) h = '토핑을 고른 뒤 피자를 눌러 올려요';
       else h = `피자를 눌러 ${josa(ING_BY[tool].name, '을', '를')} 올려요`;
@@ -1738,7 +2452,7 @@ button.mate:disabled { cursor: default; }
 
   // ---------- evening ----------
   const shopsOpen = () => S.hour < 22;
-  const placed = id => Object.values(layout(S.home).cells).includes(id);
+  const placed = id => layout(S.home).items.some(i => i.f === id);
   function actBlock(a) {
     if (S.hour + a.h > 24) return '시간이 모자라요';
     if (a.money && S.money < a.money) return '돈이 모자라요';
@@ -1823,12 +2537,9 @@ button.mate:disabled { cursor: default; }
   });
   $('sleepBtn').addEventListener('click', goSleep);
 
-  function cozyScore(id = S.home) {
-    const L = layout(id);
-    return HOUSE_BY[id].base + Object.values(L.cells).reduce((s, f) => s + (FURN_BY[f] ? FURN_BY[f].cozy : 0), 0);
-  }
+  function cozyScore(id = S.home) { return cozyOf(HOUSE_BY[id], layout(id)); }
   const sleepEnergy = cozy => 45 + Math.round(cozy * 0.6);
-  const sleepMood = cozy => Math.round(cozy * 0.25) - 6;
+  const sleepMood = cozy => Math.min(20, Math.round(cozy * 0.25) - 6);
 
   function goSleep() {
     if (S.stage !== 'evening' || !$('sleepOv').hidden) return;
@@ -1877,8 +2588,8 @@ button.mate:disabled { cursor: default; }
       list.className = 'shop-grid';
       list.innerHTML = FURN.map(f => {
         const n = S.furn[f.id] || 0;
-        return `<div class="item"><span class="emo" aria-hidden="true">${f.e}</span><span class="item-name">${f.name}</span>` +
-          `<span class="item-meta">아늑함 +${f.cozy} · ${f.at === 'wall' ? '벽에 걸어요' : '바닥에 놓아요'}${n ? `<br>${n}개 있어요` : ''}</span><span class="spacer"></span>` +
+        return `<div class="item">${furnIcon(f)}<span class="item-name">${f.name}</span>` +
+          `<span class="item-meta">아늑함 +${f.cozy} · ${f.at === 'wall' ? '벽에 걸어요' : f.at === 'rug' ? '바닥에 깔아요' : '바닥에 놓아요'}${n ? `<br>${n}개 있어요` : ''}</span><span class="spacer"></span>` +
           `<button class="btn primary small" type="button" data-buy="${f.id}">${won(f.price)}원</button></div>`;
       }).join('');
     } else if (kind === 'staff') {
@@ -1901,7 +2612,7 @@ button.mate:disabled { cursor: default; }
           : own ? `<button class="btn ghost small" type="button" data-move="${h.id}">이 집으로 이사하기</button>`
           : `<button class="btn primary small" type="button" data-buy="${h.id}">${won(h.price)}원에 사기</button>`;
         return `<div class="house${here ? ' here' : ''}"><div class="thumb view-${h.view}" aria-hidden="true"></div><div class="house-body">` +
-          `<span class="item-name">${h.name}</span><span class="item-meta">${h.desc}<br>바닥 ${h.cols}×${h.rows}칸 · 벽 ${h.cols - h.win.length}칸 · 기본 아늑함 +${h.base}</span>${action}</div></div>`;
+          `<span class="item-name">${h.name}</span><span class="item-meta">${h.desc}<br>가구 ${h.cap}개까지 · 창문 ${h.win.length}개 · 기본 아늑함 +${h.base}</span>${action}</div></div>`;
       }).join('');
     }
   }
@@ -1929,39 +2640,200 @@ button.mate:disabled { cursor: default; }
     persist(); renderStore(storeKind); renderStatus();
   });
   function moveTo(id) {
-    layout(S.home).cells = {};
+    layout(S.home).items = [];
     S.home = id; layout(id);
-    homeSel = null;
+    homeSel = null; selKey = null;
     persist();
   }
 
   // ---------- home ----------
-  const available = id => (S.furn[id] || 0) - Object.values(layout(S.home).cells).filter(x => x === id).length;
-  // One room picture for both my home (editable buttons) and a friend's (read-only).
-  function roomHTML(h, L, opts) {
-    const cell = (key, at) => {
-      const it = L.cells[key], f = it && FURN_BY[it];
-      if (opts.readOnly) return `<div class="rcell${f ? ' has' : ''}"${f ? ` role="img" aria-label="${f.name}"` : ''}>${f ? f.e : ''}</div>`;
-      const target = !it && homeSel && FURN_BY[homeSel].at === at;
-      const label = f ? `${f.name}, 눌러서 치우기` : at === 'wall' ? '빈 벽' : '빈 바닥';
-      return `<button class="rcell${target ? ' target' : ''}${f ? ' has' : ''}${key === opts.popKey ? ' pop' : ''}" type="button" data-cell="${key}" data-at="${at}" aria-label="${label}">${f ? f.e : ''}</button>`;
-    };
-    let wall = '';
-    for (let i = 0; i < h.cols; i++) wall += h.win.includes(i) ? `<div class="win view-${h.view}" aria-hidden="true"></div>` : cell('w' + i, 'wall');
-    let floor = '';
-    for (let i = 0; i < h.cols * h.rows; i++) floor += cell('f' + i, 'floor');
-    return `<div class="wall wp-${L.wall}"><div class="wall-row">${wall}</div></div><div class="floor fl-${L.floor}"><div class="floor-grid">${floor}</div></div>`;
+  // A dollhouse room in one-point perspective (viewBox 400×300). The back wall spans x 56–344 above y 150;
+  // the floor widens toward the viewer, so a piece at depth v (0 back, 1 front) is drawn at scale kAt(y).
+  const kAt = y => 0.72 + (0.28 * (y - 150)) / 150;
+  const xAt = (xf, y) => 200 + (xf - 200) * kAt(y);
+  const floorPt = (u, v) => { const y = 150 + v * 148; return [200 + (u * 2 - 1) * 200 * kAt(y) * 0.92, y]; };
+  const wallPt = (u, v) => [70 + u * 260, 34 + v * 104];
+  const f1 = n => n.toFixed(1);
+  let selKey = null, roomDrag = null, homeLight = null;
+  const available = id => (S.furn[id] || 0) - layout(S.home).items.filter(x => x.f === id).length;
+  const nightFor = () => (homeLight === 'night' ? 1 : homeLight === 'day' ? 0 : S.stage === 'evening' ? (S.hour >= 20 ? 1 : 0.5) : 0);
+  const setsOf = L => { const have = new Set(L.items.map(i => i.f)); return SETS.filter(st => st.items.every(x => have.has(x))); };
+  const cozyOf = (h, L) => h.base + L.items.reduce((s, i) => s + (FURN_BY[i.f] ? FURN_BY[i.f].cozy : 0), 0) + setsOf(L).reduce((s, st) => s + st.bonus, 0);
+  const selItem = () => layout(S.home).items.find(i => i.k === selKey);
+  function furnIcon(f) {
+    const p = 4, vb = f.at === 'floor' ? `${-f.w / 2 - p} ${-f.h - p} ${f.w + 2 * p} ${f.h + 2 * p}` : `${-f.w / 2 - p} ${-f.h / 2 - p} ${f.w + 2 * p} ${f.h + 2 * p}`;
+    return `<svg class="fu-ico" viewBox="${vb}" aria-hidden="true"><use href="#fu-${f.id}"/></svg>`;
   }
-  function renderHome(popKey) {
-    const h = HOUSE_BY[S.home], L = layout(S.home);
-    $('homeTitle').textContent = `우리 집 · ${h.name}`;
-    const room = $('room');
-    room.style.setProperty('--cols', h.cols);
-    room.innerHTML = roomHTML(h, L, { popKey });
-    renderHomeBook();
-    const cozy = cozyScore();
-    $('cozy').innerHTML = `아늑함 <b>${cozy}</b> · 자고 나면 체력 +${sleepEnergy(cozy)}, 기분 ${signed(sleepMood(cozy))}`;
 
+  function floorSVG(kind) {
+    const base = { wood: '#c98f57', light: '#dcb27f', dark: '#7d4f2e', tile: '#ece6dc', marble: '#ece8e1', green: '#9fbf8f', pink: '#e7b4c0' }[kind] || '#c98f57';
+    const poly = 'points="56,150 344,150 400,300 0,300"';
+    const rows = [];
+    for (let i = 0; i <= 9; i++) rows.push(150 + 150 * Math.pow(i / 9, 1.3));
+    let s = `<polygon ${poly} fill="${base}"/>`;
+    if (kind === 'wood' || kind === 'light' || kind === 'dark') {
+      const ln = kind === 'dark' ? '#5c391f' : kind === 'light' ? '#b98c58' : '#a8713f';
+      for (let xf = -300; xf <= 700; xf += 34) s += `<line x1="${f1(xAt(xf, 150))}" y1="150" x2="${xf}" y2="300" stroke="${ln}" stroke-width="1" opacity="0.55"/>`;
+      for (let r = 1; r < rows.length; r++) {
+        const y = rows[r];
+        for (let xf = -300 + (r % 2) * 34; xf <= 700; xf += 68) s += `<line x1="${f1(xAt(xf, y))}" y1="${f1(y)}" x2="${f1(xAt(xf + 34, y))}" y2="${f1(y)}" stroke="${ln}" stroke-width="1" opacity="0.5"/>`;
+      }
+    } else if (kind === 'tile' || kind === 'marble') {
+      const alt = kind === 'tile' ? '#d6cdbf' : '#e2ddd4', grout = kind === 'tile' ? '#cbc1b2' : '#d6d0c6';
+      for (let r = 0; r < rows.length - 1; r++) for (let c = -8; c < 18; c++) {
+        if ((((r + c) % 2) + 2) % 2 === 0) continue;
+        const x0 = c * 40 - 120, x1 = x0 + 40, y0 = rows[r], y1 = rows[r + 1];
+        s += `<polygon points="${f1(xAt(x0, y0))},${f1(y0)} ${f1(xAt(x1, y0))},${f1(y0)} ${f1(xAt(x1, y1))},${f1(y1)} ${f1(xAt(x0, y1))},${f1(y1)}" fill="${alt}"/>`;
+      }
+      for (let xf = -440; xf <= 840; xf += 40) s += `<line x1="${f1(xAt(xf, 150))}" y1="150" x2="${xf}" y2="300" stroke="${grout}" stroke-width="0.8"/>`;
+      for (const y of rows) s += `<line x1="0" y1="${f1(y)}" x2="400" y2="${f1(y)}" stroke="${grout}" stroke-width="0.8"/>`;
+      if (kind === 'marble') s += '<path d="M60 230 C120 200 160 260 230 220 S320 250 380 210 M20 284 C90 262 140 292 210 272 M150 170 C190 182 220 160 270 176" fill="none" stroke="#b5ad9f" stroke-width="1" opacity="0.6"/>';
+    } else {
+      s += `<polygon ${poly} fill="url(#fl-dots)"/>`;
+    }
+    return s + `<polygon ${poly} fill="url(#g-floorShade)"/>`;
+  }
+  function wallsSVG(L) {
+    const wp = `url(#wp-${WALLS.some(w => w[0] === L.wall) ? L.wall : 'cream'})`;
+    return `<rect x="56" y="24" width="288" height="126" fill="${wp}"/><rect x="56" y="24" width="288" height="126" fill="url(#g-wallShade)"/>` +
+      `<polygon points="0,0 56,24 56,150 0,300" fill="${wp}"/><polygon points="0,0 56,24 56,150 0,300" fill="#2a1408" opacity="0.2"/>` +
+      `<polygon points="400,0 344,24 344,150 400,300" fill="${wp}"/><polygon points="400,0 344,24 344,150 400,300" fill="#2a1408" opacity="0.27"/>` +
+      `<polygon points="0,0 400,0 344,24 56,24" fill="#f4eee4"/><polygon points="0,0 400,0 344,24 56,24" fill="#2a1408" opacity="0.07"/>` +
+      `<path d="M56 24 H344" stroke="#fffaf0" stroke-width="3"/>` +
+      `<path d="M56 24 V150 M344 24 V150 M0 0 L56 24 M400 0 L344 24" stroke="#2a1408" stroke-opacity="0.18" stroke-width="1.2"/>` +
+      `<rect x="56" y="142" width="288" height="8" fill="#fffaf0"/><path d="M56 142 H344" stroke="#d9cbb6"/>` +
+      `<polygon points="56,142 56,150 0,300 0,280" fill="#ece3d4"/><polygon points="344,142 344,150 400,300 400,280" fill="#e0d5c4"/>` +
+      `<path d="M200 24 v9" stroke="#8a7a68" stroke-width="1.4"/><path d="M188 42 h24 l-4 -10 h-16 z" fill="#fffaf0" stroke="#cbbba5"/>`;
+  }
+  function viewScene(view, night, x, y, w, h, id) {
+    const dark = night >= 0.75, dusk = night > 0 && !dark;
+    const sky = dark
+      ? { city: ['#141a3d', '#2c3570'], sunset: ['#231f4a', '#5a3f74'], sky: ['#121736', '#323a74'], skyline: ['#10142e', '#3b3170'], garden: ['#142038', '#2d4a6a'], sea: ['#0f1a3a', '#28406e'] }[view]
+      : dusk ? ['#f08a6a', '#ffd29a']
+      : { city: ['#9fd0f0', '#e0f2fb'], sunset: ['#ff9e6b', '#ffcf8a'], sky: ['#78c1f0', '#cfeaff'], skyline: ['#8cc7ee', '#d9eefa'], garden: ['#a9dcf5', '#e4f5fc'], sea: ['#8fd3f5', '#d9f1fb'] }[view];
+    const X = f => f1(x + f * w), Y = f => f1(y + f * h);
+    let s = `<linearGradient id="${id}g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${sky[0]}"/><stop offset="1" stop-color="${sky[1]}"/></linearGradient><rect x="${x}" y="${y}" width="${w}" height="${h}" fill="url(#${id}g)"/>`;
+    if (dark) s += [[0.12, 0.18], [0.38, 0.1], [0.62, 0.3], [0.9, 0.12], [0.5, 0.22], [0.24, 0.36]].map(([a, b]) => `<circle cx="${X(a)}" cy="${Y(b)}" r="0.9" fill="#fffaf0"/>`).join('') + `<circle cx="${X(0.78)}" cy="${Y(0.22)}" r="6" fill="#f6f1dc"/>`;
+    else if (view !== 'sunset') s += `<circle cx="${X(0.8)}" cy="${Y(0.2)}" r="7" fill="#fff4c2"/>`;
+    const lit = dark ? '#ffd76a' : '#d8e8f4';
+    if (view === 'city' || view === 'skyline') {
+      const bc = dark ? '#232b4d' : view === 'skyline' ? '#5d6f96' : '#7f90b2', tall = view === 'skyline' ? 0.42 : 0.3;
+      for (let i = 0; i < 6; i++) {
+        const bw = w / 6 - 2, bh = h * (tall + ((i * 37) % 5) / 11), bx = x + i * (w / 6) + 1, by = y + h - bh;
+        s += `<rect x="${f1(bx)}" y="${f1(by)}" width="${f1(bw)}" height="${f1(bh)}" fill="${bc}"/>`;
+        for (let r = 0; r < 4; r++) for (let c = 0; c < 2; c++) if ((i + r + c) % 3) s += `<rect x="${f1(bx + 2 + c * (bw / 2))}" y="${f1(by + 4 + r * 9)}" width="2.4" height="3.2" fill="${lit}"/>`;
+      }
+    } else if (view === 'sunset') {
+      s += `<circle cx="${X(0.35)}" cy="${Y(0.8)}" r="${f1(h * 0.22)}" fill="${dark ? '#f6f1dc' : '#fff1b8'}"/>`;
+      s += `<path d="M${x} ${Y(0.82)} h${f1(w * 0.18)} v-6 h10 v6 h${f1(w * 0.2)} l8 -8 8 8 h${f1(w)} V${y + h} H${x} z" fill="${dark ? '#1c1735' : '#8a4f5a'}"/>`;
+    } else if (view === 'sky') {
+      const cc = dark ? '#3d4580' : '#ffffff';
+      s += `<ellipse cx="${X(0.3)}" cy="${Y(0.45)}" rx="${f1(w * 0.18)}" ry="${f1(h * 0.09)}" fill="${cc}"/><ellipse cx="${X(0.38)}" cy="${Y(0.38)}" rx="${f1(w * 0.1)}" ry="${f1(h * 0.08)}" fill="${cc}"/>`;
+      s += `<ellipse cx="${X(0.7)}" cy="${Y(0.66)}" rx="${f1(w * 0.14)}" ry="${f1(h * 0.07)}" fill="${cc}"/>`;
+    } else if (view === 'garden') {
+      const g1 = dark ? '#1f3a2a' : '#7cc46a', g2 = dark ? '#173024' : '#3f8f3f';
+      s += `<path d="M${x} ${Y(0.68)} Q${X(0.5)} ${Y(0.52)} ${x + w} ${Y(0.66)} V${y + h} H${x} z" fill="${g1}"/>`;
+      s += `<rect x="${X(0.28)}" y="${Y(0.5)}" width="3" height="${f1(h * 0.2)}" fill="#6b4a2a"/><circle cx="${f1(x + 0.28 * w + 1.5)}" cy="${Y(0.46)}" r="${f1(h * 0.13)}" fill="${g2}"/>`;
+      s += `<rect x="${X(0.72)}" y="${Y(0.56)}" width="3" height="${f1(h * 0.16)}" fill="#6b4a2a"/><circle cx="${f1(x + 0.72 * w + 1.5)}" cy="${Y(0.53)}" r="${f1(h * 0.1)}" fill="${g2}"/>`;
+      if (!dark) s += [0.15, 0.45, 0.6, 0.88].map(a => `<circle cx="${X(a)}" cy="${Y(0.86)}" r="1.8" fill="#f28c9a"/>`).join('');
+    } else if (view === 'sea') {
+      s += `<rect x="${x}" y="${Y(0.5)}" width="${w}" height="${f1(h * 0.3)}" fill="${dark ? '#1b3561' : '#2f8fd0'}"/>`;
+      s += `<path d="M${x} ${Y(0.62)} q6 -3 12 0 t12 0 t12 0 t12 0 t12 0 t12 0 t12 0 t12 0" fill="none" stroke="${dark ? '#3b5c90' : '#8fd3f5'}" stroke-width="1.2"/>`;
+      s += `<rect x="${x}" y="${Y(0.8)}" width="${w}" height="${f1(h * 0.2)}" fill="${dark ? '#5a5070' : '#f4dc9c'}"/>`;
+      if (dark) s += `<rect x="${X(0.74)}" y="${Y(0.52)}" width="8" height="${f1(h * 0.26)}" fill="#f6f1dc" opacity="0.35"/>`;
+    }
+    return s;
+  }
+  function windowsSVG(h, night, pfx) {
+    const n = h.win.length, w = n === 1 ? 96 : n === 2 ? 76 : 60, hh = 66, gap = (288 - n * w) / (n + 1);
+    let s = '';
+    for (let i = 0; i < n; i++) {
+      const x = Math.round(56 + gap + i * (w + gap)), y = 44, id = `${pfx}w${i}`;
+      s += `<clipPath id="${id}c"><rect x="${x}" y="${y}" width="${w}" height="${hh}"/></clipPath>` +
+        `<rect x="${x - 5}" y="${y - 5}" width="${w + 10}" height="${hh + 10}" rx="2" fill="#fffaf0" stroke="#d2c3ad"/>` +
+        `<g clip-path="url(#${id}c)">${viewScene(h.view, night, x, y, w, hh, id)}</g>` +
+        `<path d="M${x + w / 2} ${y} V${y + hh} M${x} ${f1(y + hh * 0.45)} H${x + w}" stroke="#fffaf0" stroke-width="3"/>` +
+        `<rect x="${x - 9}" y="${y + hh + 4}" width="${w + 18}" height="5" rx="2" fill="#f3ead9" stroke="#d2c3ad"/>` +
+        `<path d="M${x - 16} ${y - 11} H${x + w + 16}" stroke="#8a5a30" stroke-width="3" stroke-linecap="round"/>` +
+        `<path d="M${x - 15} ${y - 10} h${f1(w * 0.26)} c-3 ${f1(hh * 0.4)} 4 ${f1(hh * 0.75)} -2 ${hh + 20} h-${f1(w * 0.26 - 2)} z" fill="url(#g-curtain)" stroke="#c96a55" stroke-width="0.8"/>` +
+        `<path d="M${x + w + 15} ${y - 10} h-${f1(w * 0.26)} c3 ${f1(hh * 0.4)} -4 ${f1(hh * 0.75)} 2 ${hh + 20} h${f1(w * 0.26 - 2)} z" fill="url(#g-curtain)" stroke="#c96a55" stroke-width="0.8"/>`;
+    }
+    return s;
+  }
+  function itemsSVG(L, sel) {
+    const rugs = [], wall = [], floor = [];
+    for (const it of L.items) { const f = FURN_BY[it.f]; if (f) (f.at === 'rug' ? rugs : f.at === 'wall' ? wall : floor).push(it); }
+    rugs.sort((a, b) => a.v - b.v); floor.sort((a, b) => a.v - b.v);
+    const g = (it, tf, inner) => `<g class="it" data-k="${it.k}" transform="${tf}">${inner}</g>`;
+    let s = '';
+    for (const it of rugs) {
+      const f = FURN_BY[it.f], [x, y] = floorPt(it.u, it.v), k = kAt(y) * 0.92;
+      s += g(it, `translate(${f1(x)} ${f1(y)}) scale(${(k * (it.flip ? -1 : 1)).toFixed(3)} ${(k * 0.36).toFixed(3)})`,
+        `<use href="#fu-${it.f}"/>` + (it.k === sel ? `<ellipse class="sel-ring" rx="${f.w / 2 + 6}" ry="${f.h / 2 + 6}" vector-effect="non-scaling-stroke"/>` : ''));
+    }
+    for (const it of wall) {
+      const f = FURN_BY[it.f], [x, y] = wallPt(it.u, it.v);
+      s += g(it, `translate(${f1(x)} ${f1(y)}) scale(${it.flip ? -0.9 : 0.9} 0.9)`,
+        `<use href="#fu-${it.f}"/>` + (it.k === sel ? `<rect class="sel-ring" x="${-f.w / 2 - 4}" y="${-f.h / 2 - 4}" width="${f.w + 8}" height="${f.h + 8}" rx="4"/>` : ''));
+    }
+    for (const it of floor) {
+      const f = FURN_BY[it.f], [x, y] = floorPt(it.u, it.v), k = kAt(y) * 0.92;
+      s += g(it, `translate(${f1(x)} ${f1(y)}) scale(${(k * (it.flip ? -1 : 1)).toFixed(3)} ${k.toFixed(3)})`,
+        `<ellipse rx="${f1(f.w * 0.46)}" ry="${f1(f.w * 0.08 + 2)}" fill="#2a1408" opacity="0.18"/><use href="#fu-${it.f}"/>` +
+        (it.k === sel ? `<ellipse class="sel-ring" rx="${f1(f.w * 0.56)}" ry="${f1(f.w * 0.12 + 4)}"/>` : ''));
+    }
+    return s;
+  }
+  function lightsSVG(L, night) {
+    if (night <= 0) return '';
+    let s = `<rect width="400" height="300" fill="#141a3d" opacity="${(0.5 * night).toFixed(2)}" style="mix-blend-mode:multiply"/>` +
+      `<circle cx="200" cy="44" r="120" fill="url(#g-glow)" opacity="${(0.55 * night).toFixed(2)}" style="mix-blend-mode:screen"/>`;
+    for (const it of L.items) {
+      const f = FURN_BY[it.f];
+      if (!f || !f.light) continue;
+      let x, y, k = 0.9;
+      if (f.at === 'wall') [x, y] = wallPt(it.u, it.v); else { [x, y] = floorPt(it.u, it.v); k = kAt(y) * 0.92; }
+      s += `<circle cx="${f1(x + f.light[0] * k)}" cy="${f1(y + f.light[1] * k)}" r="${f1(f.light[2] * k)}" fill="url(#g-glow)" opacity="${night.toFixed(2)}" style="mix-blend-mode:screen"/>`;
+    }
+    return s;
+  }
+  function roomSVG(h, L, o) {
+    const night = o.night || 0;
+    const a11y = o.edit
+      ? 'tabindex="0" role="group" aria-label="방 꾸미기. 가구를 끌어서 옮겨요. 방향키로 고른 가구를 움직이고, Enter로 다른 가구를 골라요"'
+      : `role="img" aria-label="${esc(o.label || '방')}"`;
+    return `<svg class="room-svg" viewBox="0 0 400 300" ${a11y}>` + floorSVG(L.floor) + wallsSVG(L) + windowsSVG(h, night, o.pfx) +
+      `<g class="items">${itemsSVG(L, o.sel)}</g><g class="lights" pointer-events="none">${lightsSVG(L, night)}</g></svg>`;
+  }
+  function refreshRoom() {
+    const svg = $('room').querySelector('svg');
+    if (!svg) return;
+    const L = layout(S.home);
+    svg.querySelector('.items').innerHTML = itemsSVG(L, selKey);
+    svg.querySelector('.lights').innerHTML = lightsSVG(L, nightFor());
+  }
+  function renderRoomBits() {
+    const h = HOUSE_BY[S.home], L = layout(S.home), cozy = cozyOf(h, L), it = selItem();
+    $('selName').textContent = it ? `${FURN_BY[it.f].name} · 끌어서 옮겨요` : `가구 ${L.items.length}/${h.cap}개 · 눌러서 고르고 끌어서 옮겨요`;
+    $('flipBtn').hidden = !it;
+    $('putAwayBtn').hidden = !it;
+    const dark = nightFor() >= 0.75;
+    document.querySelectorAll('[data-light]').forEach(b => b.setAttribute('aria-pressed', String((b.dataset.light === 'night') === dark)));
+    const m = sleepMood(cozy);
+    $('cozy').innerHTML = `아늑함 <b>${cozy}</b> · 자고 나면 체력 +${sleepEnergy(cozy)}, 기분 ${m >= 0 ? '+' : '−'}${Math.abs(m)}`;
+    const have = new Set(L.items.map(i => i.f));
+    $('sets').innerHTML = SETS.map(st => {
+      const got = st.items.filter(x => have.has(x)).length, on = got === st.items.length;
+      return `<span class="set${on ? ' on' : ''}" title="${st.items.map(x => FURN_BY[x].name).join(', ')}">${on ? '✓ ' : ''}${st.name} ${on ? '+' + st.bonus : got + '/' + st.items.length}</span>`;
+    }).join('');
+  }
+  function renderHome() {
+    const h = HOUSE_BY[S.home], L = layout(S.home);
+    if (selKey && !L.items.some(i => i.k === selKey)) selKey = null;
+    $('homeTitle').textContent = `우리 집 · ${h.name}`;
+    $('room').innerHTML = roomSVG(h, L, { pfx: 'h', sel: selKey, night: nightFor(), edit: true });
+    renderRoomBits();
+    renderHomeBook();
     document.querySelectorAll('[data-htab]').forEach(t => t.setAttribute('aria-selected', String(t.dataset.htab === homeTab)));
     const panel = $('homePanel');
     if (homeTab === 'furn') {
@@ -1971,13 +2843,11 @@ button.mate:disabled { cursor: default; }
       } else {
         panel.innerHTML = '<div class="inv-grid">' + owned.map(f => {
           const a = available(f.id);
-          return `<button class="inv${homeSel === f.id ? ' on' : ''}" type="button" data-inv="${f.id}" ${a <= 0 && homeSel !== f.id ? 'disabled' : ''} aria-pressed="${homeSel === f.id}">` +
-            `<span class="inv-e" aria-hidden="true">${f.e}</span><span>${f.name}</span><em>${f.at === 'wall' ? '벽' : '바닥'} · ${a}/${S.furn[f.id]}</em></button>`;
+          return `<button class="inv" type="button" data-inv="${f.id}" ${a <= 0 ? 'disabled' : ''}>${furnIcon(f)}<span>${f.name}</span>` +
+            `<em>${f.at === 'wall' ? '벽' : f.at === 'rug' ? '러그' : '바닥'} · ${a}/${S.furn[f.id]}</em></button>`;
         }).join('') + '</div>' + (shopsOpen() ? '<button class="text-btn" type="button" data-go="furniture">가구점에서 더 사기</button>' : '');
       }
-      $('homeHint').textContent = homeSel
-        ? `${FURN_BY[homeSel].at === 'wall' ? '벽' : '바닥'}의 빈 칸을 눌러 ${josa(FURN_BY[homeSel].name, '을', '를')} 놓아요.`
-        : '가구를 고르고 빈 칸을 눌러 놓아요. 놓인 가구를 누르면 치워요.';
+      $('homeHint').textContent = '가구를 누르면 방에 놓여요. 놓인 가구는 끌어서 옮기고, 고른 뒤 뒤집거나 보관함에 넣을 수 있어요.';
     } else {
       const list = homeTab === 'wall' ? WALLS : FLOORS, cur = homeTab === 'wall' ? L.wall : L.floor, pre = homeTab === 'wall' ? 'wp' : 'fl';
       panel.innerHTML = '<div class="swatches">' + list.map(([id, name]) =>
@@ -1985,24 +2855,95 @@ button.mate:disabled { cursor: default; }
       $('homeHint').textContent = homeTab === 'wall' ? '벽지는 공짜로 바꿀 수 있어요.' : '바닥도 공짜로 바꿀 수 있어요.';
     }
   }
-  document.querySelectorAll('[data-htab]').forEach(t => t.addEventListener('click', () => { homeTab = t.dataset.htab; homeSel = null; sfx.click(); renderHome(); }));
-  $('room').addEventListener('click', e => {
-    const c = e.target.closest('[data-cell]'); if (!c) return;
-    const L = layout(S.home), key = c.dataset.cell, at = c.dataset.at, it = L.cells[key];
-    if (it) { delete L.cells[key]; sfx.click(); persist(); renderHome(); toast(`${FURN_BY[it].e} ${josa(FURN_BY[it].name, '을', '를')} 치웠어요.`, 1600); return; }
-    if (!homeSel) { homeTab = 'furn'; renderHome(); sfx.bad(); toast('아래에서 가구를 먼저 골라요.', 1800); return; }
-    const f = FURN_BY[homeSel];
-    if (f.at !== at) { sfx.bad(); toast(`${josa(f.name, '은', '는')} ${f.at === 'wall' ? '벽에 걸어요' : '바닥에 놓아요'}.`, 1800); return; }
-    if (available(homeSel) <= 0) { homeSel = null; renderHome(); return; }
-    L.cells[key] = homeSel; sfx.pop();
-    if (available(homeSel) <= 0) homeSel = null;
-    persist(); renderHome(key);
-  });
+  function addItem(fid) {
+    const L = layout(S.home), h = HOUSE_BY[S.home], f = FURN_BY[fid];
+    if (!f || available(fid) <= 0) return;
+    if (L.items.length >= h.cap) { sfx.bad(); toast(`${h.name}에는 가구를 ${h.cap}개까지 놓을 수 있어요. 더 큰 집으로 이사해 보세요.`, 3000); return; }
+    // Drop it in the emptiest of a few random spots so new pieces don't pile up.
+    const same = L.items.filter(x => FURN_BY[x.f] && FURN_BY[x.f].at === f.at);
+    let best = [0.5, 0.5], bestD = -1;
+    for (let t = 0; t < 14; t++) {
+      const u = 0.14 + rand() * 0.72, v = f.at === 'wall' ? 0.25 + rand() * 0.45 : f.at === 'rug' ? 0.35 + rand() * 0.4 : 0.22 + rand() * 0.62;
+      const d = same.reduce((m, o) => Math.min(m, Math.hypot(o.u - u, (o.v - v) * 1.4)), 9);
+      if (d > bestD) { bestD = d; best = [u, v]; }
+    }
+    const it = { k: 'i' + Date.now().toString(36) + Math.floor(rand() * 1000), f: fid, u: best[0], v: best[1], flip: false };
+    L.items.push(it);
+    selKey = it.k;
+    persist(); sfx.pop(); renderHome();
+  }
+  function putAway() {
+    const L = layout(S.home), it = selItem();
+    if (!it) return;
+    L.items = L.items.filter(x => x !== it);
+    selKey = null;
+    persist(); sfx.click(); renderHome();
+    toast(`${josa(FURN_BY[it.f].name, '을', '를')} 보관함에 넣었어요.`, 1600);
+  }
+  document.querySelectorAll('[data-htab]').forEach(t => t.addEventListener('click', () => { homeTab = t.dataset.htab; sfx.click(); renderHome(); }));
   $('homePanel').addEventListener('click', e => {
     const inv = e.target.closest('[data-inv]'), sw = e.target.closest('[data-sw]'), go = e.target.closest('[data-go]');
     if (go) { sfx.click(); renderStore(go.dataset.go); showView('store'); return; }
-    if (inv) { homeSel = homeSel === inv.dataset.inv ? null : inv.dataset.inv; sfx.click(); renderHome(); return; }
+    if (inv && !inv.disabled) { addItem(inv.dataset.inv); return; }
     if (sw) { const L = layout(S.home); if (homeTab === 'wall') L.wall = sw.dataset.sw; else L.floor = sw.dataset.sw; sfx.click(); persist(); renderHome(); }
+  });
+  $('flipBtn').addEventListener('click', () => { const it = selItem(); if (!it) return; it.flip = !it.flip; persist(); sfx.click(); refreshRoom(); });
+  $('putAwayBtn').addEventListener('click', putAway);
+  document.querySelectorAll('[data-light]').forEach(b => b.addEventListener('click', () => { homeLight = b.dataset.light; sfx.click(); renderHome(); }));
+
+  // Dragging furniture: the pointer moves the piece's base point; floor depth sets its size and drawing order.
+  const roomPt = e => { const r = $('room').querySelector('svg').getBoundingClientRect(); return { x: ((e.clientX - r.left) / r.width) * 400, y: ((e.clientY - r.top) / r.height) * 300 }; };
+  const basePt = it => (FURN_BY[it.f].at === 'wall' ? wallPt(it.u, it.v) : floorPt(it.u, it.v));
+  function moveItem(it, x, y) {
+    const f = FURN_BY[it.f];
+    if (f.at === 'wall') { it.u = clamp((x - 70) / 260, 0.04, 0.96); it.v = clamp((y - 34) / 104, 0.08, 0.92); return; }
+    it.v = clamp((y - 150) / 148, f.at === 'rug' ? 0.12 : 0.02, f.at === 'rug' ? 0.88 : 1);
+    const k = kAt(150 + it.v * 148);
+    it.u = clamp(((x - 200) / (200 * k * 0.92) + 1) / 2, 0.04, 0.96);
+  }
+  $('room').addEventListener('pointerdown', e => {
+    if (view !== 'home' || (e.button !== undefined && e.button > 0)) return;
+    const svg = $('room').querySelector('svg');
+    const g = e.target.closest('.it');
+    if (!g) { if (selKey) { selKey = null; refreshRoom(); renderRoomBits(); } return; }
+    const it = layout(S.home).items.find(i => i.k === g.dataset.k);
+    if (!it) return;
+    e.preventDefault();
+    selKey = it.k;
+    const p = roomPt(e), [bx, by] = basePt(it);
+    roomDrag = { it, dx: p.x - bx, dy: p.y - by, moved: false };
+    try { svg.setPointerCapture(e.pointerId); } catch (err) { /* pointer already gone */ }
+    refreshRoom(); renderRoomBits(); sfx.click();
+  });
+  $('room').addEventListener('pointermove', e => {
+    if (!roomDrag) return;
+    const p = roomPt(e);
+    moveItem(roomDrag.it, p.x - roomDrag.dx, p.y - roomDrag.dy);
+    roomDrag.moved = true;
+    refreshRoom();
+  });
+  const endRoomDrag = () => { if (!roomDrag) return; if (roomDrag.moved) { persist(); sfx.pop(); renderRoomBits(); } roomDrag = null; };
+  $('room').addEventListener('pointerup', endRoomDrag);
+  $('room').addEventListener('pointercancel', endRoomDrag);
+  $('room').addEventListener('keydown', e => {
+    if (view !== 'home') return;
+    const L = layout(S.home);
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      if (!L.items.length) return;
+      const i = L.items.findIndex(x => x.k === selKey);
+      selKey = L.items[(i + 1) % L.items.length].k;
+      refreshRoom(); renderRoomBits(); return;
+    }
+    const it = selItem();
+    if (!it) return;
+    const step = { ArrowLeft: [-0.03, 0], ArrowRight: [0.03, 0], ArrowUp: [0, -0.04], ArrowDown: [0, 0.04] }[e.key];
+    if (step) {
+      e.preventDefault();
+      const [bx, by] = basePt(it), wallItem = FURN_BY[it.f].at === 'wall';
+      moveItem(it, bx + step[0] * (wallItem ? 260 : 300), by + step[1] * (wallItem ? 104 : 148));
+      persist(); refreshRoom();
+    } else if (e.key === 'Delete' || e.key === 'Backspace') { e.preventDefault(); putAway(); }
   });
 
   // ---------- main loop: patience + oven ----------
@@ -2010,7 +2951,7 @@ button.mate:disabled { cursor: default; }
   function loop(t) {
     const dt = Math.min(0.1, (t - (lastT || t)) / 1000);
     lastT = t;
-    if (view === 'shop' && (phase === 'make' || phase === 'bake')) {
+    if (view === 'shop' && (phase === 'make' || phase === 'bake' || phase === 'cut')) {
       patience = Math.max(0, patience - dt / patienceSec);
       el.patienceBar.style.width = (patience * 100).toFixed(1) + '%';
       const lvl = patience > 0.5 ? 'high' : patience > 0.2 ? 'mid' : 'low';
@@ -2027,8 +2968,8 @@ button.mate:disabled { cursor: default; }
       el.needle.style.left = bake.toFixed(1) + '%';
       el.gauge.setAttribute('aria-valuenow', Math.round(bake));
       const z = zoneOf(bake);
-      el.bakeStatus.textContent = z.pts === 30 ? '지금이에요!' : bake < zones[1].to ? '굽는 중… ' + z.short : z.short + '!';
-      el.bakeStatus.style.color = z.pts === 30 ? 'var(--basil)' : bake >= zones[2].to ? 'var(--tomato)' : '';
+      el.bakeStatus.textContent = z.cls === 'good' ? '지금이에요!' : bake < zones[1].to ? '굽는 중… ' + z.short : z.short + '!';
+      el.bakeStatus.style.color = z.cls === 'good' ? 'var(--basil)' : bake >= zones[2].to ? 'var(--tomato)' : '';
       paintBake();
       if (bake >= 100) pull();
     }
@@ -2235,11 +3176,12 @@ button.mate:disabled { cursor: default; }
     const L = layout(S.home);
     return {
       day: S.day, money: S.money, home: S.home, houses: S.houses.length, bestDay: S.bestDay, totalEarned: S.totalEarned || 0,
-      totalPizzas: S.totalPizzas, skill: S.skill, shopName: S.shopName || '', wall: L.wall, floor: L.floor, cells: L.cells,
+      totalPizzas: S.totalPizzas, skill: S.skill, shopName: S.shopName || '', wall: L.wall, floor: L.floor,
+      items: L.items.map(i => ({ f: i.f, u: Math.round(i.u * 1000) / 1000, v: Math.round(i.v * 1000) / 1000, flip: !!i.flip })),
       staff: S.staff.map(s => ({ name: s.name, face: s.face, role: s.role })), updatedAt: Date.now(),
     };
   }
-  const profileKey = p => p ? JSON.stringify([p.day, p.money, p.home, p.houses, p.bestDay, p.totalEarned, p.totalPizzas, p.skill, p.shopName, p.wall, p.floor, p.cells, p.staff]) : '';
+  const profileKey = p => p ? JSON.stringify([p.day, p.money, p.home, p.houses, p.bestDay, p.totalEarned, p.totalPizzas, p.skill, p.shopName, p.wall, p.floor, p.items, p.staff]) : '';
   let remoteTimer = 0, remoteBusy = false, remoteAgain = false, remoteOff = false;
   function queueRemote() {
     if (!social.db || !social.uid || remoteOff) return;
@@ -2359,7 +3301,7 @@ button.mate:disabled { cursor: default; }
       `<button class="btn ghost small" type="button" data-gm="${a}" ${S.money < a ? 'disabled' : ''}>${won(a)}원</button>`).join('');
     const own = FURN.filter(f => available(f.id) > 0);
     $('giftFurn').innerHTML = own.length
-      ? own.map(f => `<button class="inv" type="button" data-gf="${f.id}"><span class="inv-e" aria-hidden="true">${f.e}</span><span>${f.name}</span><em>${available(f.id)}개</em></button>`).join('')
+      ? own.map(f => `<button class="inv" type="button" data-gf="${f.id}">${furnIcon(f)}<span>${f.name}</span><em>${available(f.id)}개</em></button>`).join('')
       : '<p class="note">집에 놓지 않은 가구가 없어요.</p>';
     openOv('giftOv');
   }
@@ -2567,14 +3509,16 @@ button.mate:disabled { cursor: default; }
   $('people').addEventListener('click', socialClick);
   $('eveFriendList').addEventListener('click', socialClick);
 
-  function cleanLayout(pl) {
-    const cells = {};
-    const src = pl && pl.cells && typeof pl.cells === 'object' ? pl.cells : {};
-    for (const [k, v] of Object.entries(src)) if (/^[wf]\d{1,2}$/.test(k) && FURN_BY[v]) cells[k] = v;
+  function cleanLayout(pl, h) {
+    let items = [];
+    if (Array.isArray(pl.items)) {
+      items = pl.items.slice(0, 40).filter(x => x && FURN_BY[x.f] && Number.isFinite(x.u) && Number.isFinite(x.v))
+        .map((x, i) => ({ k: 'v' + i, f: x.f, u: clamp(x.u, 0, 1), v: clamp(x.v, 0, 1), flip: !!x.flip }));
+    } else if (pl.cells && typeof pl.cells === 'object') items = cellsToItems(pl.cells, h);
     return {
       wall: WALLS.some(w => w[0] === pl.wall) ? pl.wall : 'cream',
       floor: FLOORS.some(f => f[0] === pl.floor) ? pl.floor : 'wood',
-      cells,
+      items,
     };
   }
   function openVisit(uid) {
@@ -2590,12 +3534,10 @@ button.mate:disabled { cursor: default; }
   }
   function renderVisit() {
     const uid = social.visit, pl = social.players[uid] || {};
-    const h = HOUSE_BY[pl.home] || HOUSES[0], L = cleanLayout(pl);
+    const h = HOUSE_BY[pl.home] || HOUSES[0], L = cleanLayout(pl, h);
     $('visitTitle').textContent = `${nameOf(uid)}님의 ${h.name}`;
-    const room = $('visitRoom');
-    room.style.setProperty('--cols', h.cols);
-    room.innerHTML = roomHTML(h, L, { readOnly: true });
-    const cozy = h.base + Object.values(L.cells).reduce((s, f) => s + FURN_BY[f].cozy, 0);
+    $('visitRoom').innerHTML = roomSVG(h, L, { pfx: 'v', night: nightFor(), label: `${nameOf(uid)}님의 ${h.name}` });
+    const cozy = cozyOf(h, L);
     const crew = Array.isArray(pl.staff) ? pl.staff.length : 0;
     $('visitCozy').innerHTML = `아늑함 <b>${cozy}</b>` + (crew ? ` · 알바생 ${crew}명` : '');
     const ro = remoteOff;
