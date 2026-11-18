@@ -32,8 +32,13 @@ self.addEventListener('fetch', event => {
   const url = new URL(req.url);
 
   if (url.origin === self.location.origin) {
+    // 이 앱의 파일만 맡아요. 같은 주소 아래 다른 앱(예: photobooth/)은 건드리지 않음
+    const root = new URL(self.registration.scope).pathname;
+    const rel = url.pathname.startsWith(root) ? url.pathname.slice(root.length) : null;
+    const mine = rel !== null && (rel === '' || rel === 'index.html' || rel === 'manifest.webmanifest' || rel.startsWith('icons/'));
+    if (!mine) return;
     // 페이지는 인터넷이 되면 최신 버전, 안 되면 저장된 버전
-    if (req.mode === 'navigate' || url.pathname.endsWith('/') || url.pathname.endsWith('.html')) {
+    if (req.mode === 'navigate' || rel === '' || rel === 'index.html') {
       event.respondWith(networkFirst(req));
     } else {
       event.respondWith(staleWhileRevalidate(req, CACHE));
