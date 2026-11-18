@@ -148,6 +148,9 @@
     .done-box { text-align: center; padding: 34px 20px; display: flex; flex-direction: column; gap: 12px; align-items: center; }
     .done-box .emoji { font-size: 50px; }
     .done-box h3 { font-size: 20px; }
+    .card-sub { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--muted); font-weight: 700; }
+    .speak:disabled { opacity: .35; }
+    .wrong-list div[data-say] { cursor: pointer; }
 
     /* Quiz */
     .q-head { display: flex; justify-content: space-between; font-size: 13px; color: var(--muted); font-weight: 700; }
@@ -391,6 +394,10 @@
       <div class="seg" id="cardFilterSeg">
         <button data-v="all">전체</button>
         <button data-v="todo">못 외운 것만</button>
+      </div>
+      <div class="seg" id="cardOrderSeg">
+        <button data-v="shuffle">🔀 섞기</button>
+        <button data-v="order">🔢 순서대로</button>
       </div>
     </div>
     <div id="cardArea"></div>
@@ -1183,7 +1190,7 @@ const lessonName = w => GROUP[w.l] ? GROUP[w.l][0] : w.l + '과';
    2. 저장 상태 (localStorage)
 ============================================================ */
 const KEY = 'jpvocab34_v1';
-const DEF = { box: {}, star: {}, wrong: {}, sound: true, scope: 'all', cardFront: 'jp', cardFilter: 'all', quizMode: 'jp2kr', story: '3', hideKr: false, hideJp: false };
+const DEF = { box: {}, star: {}, wrong: {}, sound: true, scope: 'all', cardFront: 'jp', cardFilter: 'all', cardOrder: 'shuffle', quizMode: 'jp2kr', story: '3', hideKr: false, hideJp: false };
 let S = { ...DEF };
 try { S = { ...DEF, ...JSON.parse(localStorage.getItem(KEY) || '{}') }; } catch (e) {}
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
@@ -1261,24 +1268,26 @@ function emptyMsg() {
    4. 플래시카드
 ============================================================ */
 let deck = [], cur = 0, flipped = false;
+let unknown = [], knownCount = 0, history = [], retryRound = false;
+
+// 한 바퀴: 처음부터 끝까지 한 번씩만 보고, 다 끝나면 모르는 단어를 모아서 보여 줘요
+function startRound(ids, retry) {
+  deck = ids; cur = 0; flipped = false;
+  unknown = []; knownCount = 0; history = []; retryRound = !!retry;
+  renderCard();
+}
 
 function buildDeck() {
   let ws = scopeWords();
   if (S.cardFilter === 'todo') ws = ws.filter(w => !isKnown(w.id));
-  // 덜 외운 단어 먼저, 같은 단계 안에서는 섞기
-  deck = shuffle(ws).sort((a, b) => box(a.id) - box(b.id)).map(w => w.id);
-  cur = 0; flipped = false; renderCard();
+  // 순서대로: 교과서 단어장 순서 (3과 1번부터) / 섞기: 무작위
+  startRound((S.cardOrder === 'order' ? ws : shuffle(ws)).map(w => w.id));
 }
 
 function renderCard() {
   const area = $('#cardArea');
   if (!deck.length) { area.innerHTML = `<div class="panel empty">${S.cardFilter === 'todo' && scopeWords().length ? '이 범위의 단어를 모두 외웠어요! 🎉' : emptyMsg()}</div>`; return; }
-  if (cur >= deck.length) {
-    area.innerHTML = `<div class="panel done-box"><div class="emoji">🎉</div><h3>한 바퀴 완료!</h3>
-      <div class="small-note">이 범위에서 ${scopeWords().filter(w => isKnown(w.id)).length}개를 외웠어요.</div>
-      <button class="btn primary" id="againBtn" style="width:100%">다시 섞어서 시작</button></div>`;
-    $('#againBtn').onclick = buildDeck; return;
-  }
+  if (cur >= deck.length) return renderRoundEnd();
   const w = byId[deck[cur]];
   const jpFace = `<div class="big-word jp">${esc(w.w)}</div>${w.k ? `<div class="kanji-sub jp">${esc(w.k)}</div>` : ''}`;
   const krFace = `<div class="meaning">${esc(w.m)}</div><span class="pos ${posClass(w.pos)}">${w.pos}</span>`;
@@ -1287,7 +1296,8 @@ function renderCard() {
   const front = S.cardFront === 'jp' ? jpFace : krFace;
   const back = S.cardFront === 'jp' ? `${krFace}${info}` : `${jpFace}<span class="pos ${posClass(w.pos)}">${w.pos}</span>${info}`;
   area.innerHTML = `
-    <div class="q-head"><span>${lessonName(w)} · ${w.no}번</span><span>${cur + 1} / ${deck.length}</span></div>
+    <div class="q-head"><span>${retryRound ? '🔁 모르는 단어 다시 · ' : ''}${lessonName(w)} · ${w.no}번</span><span>${cur + 1} / ${deck.length}</span></div>
+    <div class="bar"><div style="width:${cur / deck.length * 100}%"></div></div>
     <div class="flash-wrap"><div class="flash ${flipped ? 'flipped' : ''}" id="flash">
       <div class="face"><span class="tag">${S.star[w.id] ? '★ ' : ''}${S.cardFront === 'jp' ? '뜻은?' : '일본어로?'}</span><span class="boxdots">${dots(w.id)}</span>${front}<span class="hint">탭해서 뒤집기</span></div>
       <div class="face back">${back}</div>
@@ -1295,11 +1305,34 @@ function renderCard() {
     <div class="btn-row">
       <button class="btn bad" id="noBtn">😵 몰라요</button>
       <button class="btn good" id="yesBtn">😎 알아요</button>
+    </div>
+    <div class="card-sub">
+      <span>😎 ${knownCount} · 😵 ${unknown.length}</span>
+      <button class="speak" id="undoBtn" ${history.length ? '' : 'disabled'}>↩ 되돌리기</button>
     </div>`;
   $('#flash').onclick = e => { if (e.target.closest('.speak')) return; flipCard(); };
   $('#noBtn').onclick = () => answerCard(false);
   $('#yesBtn').onclick = () => answerCard(true);
+  $('#undoBtn').onclick = undoCard;
   if (S.cardFront === 'jp' && !flipped) speak(w.tts);
+}
+
+function renderRoundEnd() {
+  const area = $('#cardArea');
+  const list = unknown.map(id => byId[id]);
+  area.innerHTML = `<div class="panel done-box">
+    <div class="emoji">${list.length ? '📝' : '🎉'}</div>
+    <h3>${retryRound ? '다시 보기 끝!' : '한 바퀴 끝!'}</h3>
+    <div class="small-note">😎 알아요 ${knownCount}개 · 😵 몰라요 ${list.length}개</div>
+    ${list.length ? `<div class="small-note">모르는 단어 (누르면 발음을 들려줘요)</div>
+      <div class="wrong-list">${list.map(w => `<div data-say="${esc(w.tts)}"><b class="jp">${esc(w.w)}${w.k ? ` · ${esc(w.k)}` : ''}</b><span>${esc(w.m)}</span></div>`).join('')}</div>
+      <button class="btn primary" id="retryBtn" style="width:100%">🔁 모르는 것만 다시 (${list.length}개)</button>`
+      : '<div class="small-note">모르는 단어가 없어요!</div>'}
+    <button class="btn ${list.length ? '' : 'primary'}" id="againBtn" style="width:100%">처음부터 다시</button>
+    ${history.length ? '<button class="speak" id="undoBtn">↩ 마지막 카드 되돌리기</button>' : ''}</div>`;
+  if (list.length) $('#retryBtn').onclick = () => startRound(S.cardOrder === 'order' ? [...unknown] : shuffle(unknown), true);
+  $('#againBtn').onclick = buildDeck;
+  if (history.length) $('#undoBtn').onclick = undoCard;
 }
 
 function flipCard() {
@@ -1308,10 +1341,22 @@ function flipCard() {
 }
 
 function answerCard(ok) {
+  if (cur >= deck.length) return;
   const id = deck[cur];
+  history.push({ id, ok, box: S.box[id], wrong: S.wrong[id] });
   mark(id, ok);
-  if (!ok) deck.splice(Math.min(cur + 4, deck.length), 0, id); // 몇 장 뒤에 다시 나오게
+  if (ok) knownCount++; else unknown.push(id);
   cur++; flipped = false; renderCard();
+}
+
+// 잘못 누른 카드 되돌리기
+function undoCard() {
+  const h = history.pop(); if (!h) return;
+  if (h.box === undefined) delete S.box[h.id]; else S.box[h.id] = h.box;
+  if (h.wrong === undefined) delete S.wrong[h.id]; else S.wrong[h.id] = h.wrong;
+  save(); renderProgress(); renderScope();
+  if (h.ok) knownCount--; else unknown.pop();
+  cur--; flipped = false; renderCard();
 }
 
 /* ============================================================
@@ -2098,6 +2143,7 @@ function bindSeg(sel, key, onChange) {
 }
 bindSeg('#cardFrontSeg', 'cardFront', buildDeck);
 bindSeg('#cardFilterSeg', 'cardFilter', buildDeck);
+bindSeg('#cardOrderSeg', 'cardOrder', buildDeck);
 bindSeg('#quizModeSeg', 'quizMode', startQuiz);
 bindSeg('#storySeg', 'story', renderStory);
 
@@ -2115,6 +2161,7 @@ document.addEventListener('keydown', e => {
   if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); flipCard(); }
   else if (e.key === 'ArrowLeft') answerCard(false);
   else if (e.key === 'ArrowRight') answerCard(true);
+  else if (e.key === 'Backspace') undoCard();
 });
 
 if ('speechSynthesis' in window) speechSynthesis.getVoices();
