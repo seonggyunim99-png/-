@@ -1,0 +1,33 @@
+    /* 모의고사 */
+    .exam-head { display: flex; flex-direction: column; gap: 8px; }
+    .exam-title { font-size: 18px; font-weight: 900; }
+    .exam-title small { font-size: 12px; color: var(--muted); font-weight: 600; margin-left: 6px; }
+    .exam-score { font-size: 15px; font-weight: 800; color: var(--muted); }
+    .exam-score b { font-size: 34px; color: var(--accent); }
+    .exam-secs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+    .exam-secs div { background: var(--inner); border-radius: var(--r-sm); padding: 7px 10px; display: flex; justify-content: space-between; gap: 6px; font-size: 12px; color: var(--muted); }
+    .exam-secs div b { color: var(--success); }
+    .exam-secs div.weak b { color: var(--danger); }
+    .exam-tools { display: flex; gap: 6px; flex-wrap: wrap; }
+    .exam-list { display: flex; flex-direction: column; gap: 10px; }
+    .exam-sec { font-size: 12px; font-weight: 800; color: var(--secondary); letter-spacing: .04em; margin: 6px 4px -2px; }
+    .exam-q { background: var(--card); border: 1px solid var(--border); border-radius: var(--r-md); padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+    .exam-q.ok { border-color: rgba(52,211,153,.45); }
+    .exam-q.ng { border-color: rgba(248,113,113,.6); }
+    .eq-head { display: flex; gap: 8px; align-items: flex-start; font-weight: 700; font-size: 15px; line-height: 1.55; font-family: var(--jp); }
+    .eq-no { flex: none; min-width: 30px; height: 24px; border-radius: 8px; background: var(--inner); color: var(--muted); font-size: 12px; display: flex; align-items: center; justify-content: center; }
+    .eq-text { flex: 1; min-width: 0; word-break: keep-all; overflow-wrap: anywhere; }
+    .eq-mark { flex: none; font-size: 17px; }
+    .eq-box { background: var(--inner); border-radius: var(--r-sm); padding: 10px 12px; white-space: pre-wrap; font-family: var(--jp); font-size: 15px; line-height: 1.75; color: var(--text); word-break: keep-all; overflow-wrap: anywhere; }
+    .eq-opts { display: flex; flex-direction: column; gap: 6px; }
+    .eq-opts button { display: flex; gap: 8px; text-align: left; background: var(--inner); border: 2px solid transparent; color: var(--text); border-radius: var(--r-sm); padding: 9px 11px; font-family: var(--jp); font-size: 15px; line-height: 1.5; word-break: keep-all; overflow-wrap: anywhere; }
+    .eq-opts button span:last-child { min-width: 0; }
+    .eq-opts button .n { flex: none; color: var(--muted); font-weight: 800; }
+    .eq-opts button.sel { border-color: var(--secondary); background: rgba(56,189,248,.13); }
+    .eq-opts button.sel .n { color: var(--secondary); }
+    .eq-opts button.right { border-color: var(--success); background: rgba(52,211,153,.14); }
+    .eq-opts button.wrong { border-color: var(--danger); background: rgba(248,113,113,.14); }
+    .eq-opts button:disabled { cursor: default; }
+    .eq-exp { font-size: 13px; color: var(--muted); line-height: 1.6; word-break: keep-all; overflow-wrap: anywhere; }
+    .eq-exp b { color: var(--success); }
+    .exam-bar { position: sticky; bottom: 10px; z-index: 5; display: flex; gap: 8px; align-items: center; justify-content: space-between; background: rgba(20,28,46,.97); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 10px 12px; box-shadow: 0 8px 24px rgba(0,0,0,.45); font-size: 13px; font-weight: 700; color: var(--muted); }
