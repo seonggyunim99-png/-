@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>일본어 단어 PRO - 3·4과 단어 암기</title>
+  <title>일본어 단어 PRO - 3~6과 단어 암기</title>
   <meta name="theme-color" content="#0b0f19">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" type="image/png" href="icons/favicon-64.png">
@@ -293,6 +293,8 @@
     .spk.s2 { color: var(--primary); background: rgba(255,77,128,.14); }
     .spk.s3 { color: var(--accent); background: rgba(251,191,36,.14); }
     .spk.s4 { color: var(--success); background: rgba(52,211,153,.14); }
+    .spk.s5 { color: #c4b5fd; background: rgba(167,139,250,.16); }
+    .spk.s6 { color: var(--text); background: rgba(148,163,184,.18); }
     .line .lt { min-width: 0; }
     .line .ja { font-size: 18px; font-weight: 700; line-height: 1.5; word-break: keep-all; overflow-wrap: anywhere; }
     .line .ko { font-size: 13px; color: var(--muted); margin-top: 3px; line-height: 1.5; word-break: keep-all; }
@@ -351,7 +353,7 @@
 <body>
 <div class="app">
   <header>
-    <div class="logo">🌸 일본어 단어 <span class="badge">3·4과</span></div>
+    <div class="logo">🌸 일본어 단어 <span class="badge">3~6과</span></div>
     <div class="head-actions">
       <span class="offline-badge" id="offlineBadge">✓ 오프라인</span>
       <button class="icon-btn" id="installBtn" title="앱으로 설치 · 오프라인 사용" aria-label="앱으로 설치하는 방법">📲</button>
@@ -412,6 +414,10 @@
         <button data-v="kanji">한자 → 읽기</button>
         <button data-v="conj">형용사 활용</button>
         <button data-v="price">가격 읽기</button>
+        <button data-v="aru">있다·위치</button>
+        <button data-v="time">시간·요일</button>
+        <button data-v="vgroup">동사 그룹</button>
+        <button data-v="masu">ます형</button>
       </div>
     </div>
     <div id="quizArea"></div>
@@ -444,6 +450,8 @@
       <div class="seg" id="storySeg">
         <button data-v="3">3과 おじゃまします</button>
         <button data-v="4">4과 ありがとう</button>
+        <button data-v="5">5과 いただきます</button>
+        <button data-v="6">6과 何時ですか</button>
       </div>
     </div>
     <div class="toolbar">
@@ -471,6 +479,21 @@
         <li><b>숫자 발음 변화</b>: <span class="jp">300 さんびゃく・600 ろっぴゃく・800 はっぴゃく・3000 さんぜん・8000 はっせん</span>, 10000은 <span class="jp">いちまん</span>. 값은 <span class="jp">～は いくらですか</span>.</li>
         <li><b>비교</b>: <span class="jp">Aと Bと どちらが いいですか</span> → <span class="jp">Bの ほうが いいです</span>.</li>
         <li><b>축하·감사</b>: <span class="jp">たんじょうび おめでとう / ありがとう</span>, 정중하게는 <span class="jp">～ございます</span>. 편지는 받는 사람 <span class="jp">～へ</span>(발음 [e]), 보내는 사람 <span class="jp">～より</span>.</li>
+      </ol>
+    </div>
+
+    <div class="key">
+      <h3>⭐ 5과·6과 핵심 9가지</h3>
+      <ol>
+        <li><b>위치</b>: <span class="jp">うえ・した・なか・となり・ひだり・みぎ・まえ・うしろ</span> + <span class="jp">に</span></li>
+        <li><b>있다</b>: 사물·식물은 <span class="jp">あります</span>, 사람·동물은 <span class="jp">います</span>. 꽃(はな)은 あります!</li>
+        <li><b>장소</b>: <span class="jp">トイレは どこですか</span> → <span class="jp">コンビニの となりに あります</span></li>
+        <li><b>선택</b>: <span class="jp">何に しますか</span> → <span class="jp">そばに します</span></li>
+        <li><b>연결형</b>: い → <span class="jp">くて</span>, だ → <span class="jp">で</span> (いい → よくて). 6과에서는 "~해서" 이유로도 써요</li>
+        <li><b>부정</b>: <span class="jp">くないです(=く ありません) / じゃないです(=じゃ ありません)</span>. <span class="jp">あまり·ぜんぜん</span> 뒤엔 부정. <span class="jp">とくいだ</span>는 な형용사</li>
+        <li><b>시간·요일</b>: <span class="jp">よじ・しちじ・くじ</span>, <span class="jp">げつ・か・すい・もく・きん・ど・にち + ようび</span></li>
+        <li><b>동사 그룹</b>: 1그룹(る가 아님 / る 앞 あ·う·お단), 2그룹(る 앞 い·え단), 3그룹(<span class="jp">する・来る</span>)</li>
+        <li><b>ます형</b>: 1그룹 う단 → い단 + ます, 2그룹 る → ます, <span class="jp">来る → きます, する → します</span>, 과거 <span class="jp">ました</span>. 거절은 <span class="jp">～は ちょっと……</span></li>
       </ol>
     </div>
 
@@ -523,7 +546,7 @@
         <p>명사 뒤에 <span class="jp">だ</span>를 붙이면 "~이다"가 돼요. (서술격 조사) 활용 방법은 な형용사와 똑같아요.</p>
         <div class="tbl-wrap"><table class="ctbl tight">
           <tr><th>형태</th><th>명사 (がくせい 학생)</th><th>な형용사 (ひまだ)</th></tr>
-          <tr data-say="がくせいだ"><td>기본형</td><td class="j">がくせいだ</td><td class="j">ひまだ</td></tr>
+          <tr data-say="がくせいだ"><td style="white-space:nowrap">기본형</td><td class="j">がくせいだ</td><td class="j">ひまだ</td></tr>
           <tr data-say="がくせいです"><td>정중형</td><td class="j">がくせい<em>です</em></td><td class="j">ひま<em>です</em></td></tr>
           <tr data-say="がくせいじゃないです"><td>부정형</td><td class="j">がくせい<em>じゃないです</em></td><td class="j">ひま<em>じゃないです</em></td></tr>
           <tr data-say="がくせいでした"><td>과거형</td><td class="j">がくせい<em>でした</em></td><td class="j">ひま<em>でした</em></td></tr>
@@ -868,6 +891,202 @@
       </div>
     </details>
 
+    <div class="group-label">5과 · 6과</div>
+
+    <details>
+      <summary>㉑ 위치 말 · あります / います <small>5과</small></summary>
+      <div class="body">
+        <div class="tbl-wrap"><table class="ctbl tight">
+          <tr><td class="j" data-say="うえ">上 うえ</td><td>위</td><td class="j" data-say="した">下 した</td><td>아래</td></tr>
+          <tr><td class="j" data-say="なか">中 なか</td><td>안, 가운데</td><td class="j" data-say="となり">となり</td><td>옆</td></tr>
+          <tr><td class="j" data-say="ひだり">左 ひだり</td><td>왼쪽</td><td class="j" data-say="みぎ">右 みぎ</td><td>오른쪽</td></tr>
+          <tr><td class="j" data-say="まえ">前 まえ</td><td>앞</td><td class="j" data-say="うしろ">後ろ うしろ</td><td>뒤</td></tr>
+        </table></div>
+        <div class="rule">스스로 움직일 수 있으면 <span class="jp">います</span> (사람·동물), 못 움직이면 <span class="jp">あります</span> (사물·식물)</div>
+        <div class="ox">
+          <div>○ ねこが います / せんせいが います</div>
+          <div>○ ケーキが あります / はな(꽃)が あります ← 꽃은 살아 있어도 あります!</div>
+          <div class="x">✕ いぬが あります</div>
+        </div>
+        <p><b>문장 모양</b>: 위치 말 뒤에는 조사 <span class="jp">に</span>를 써요.</p>
+        <div class="ex">
+          <div data-say="いすの うえに ほんが あります。"><div class="j">いすの うえに ほんが あります。</div><div class="k">의자 위에 책이 있습니다. ([장소]の [위치]に [사물]が あります)</div></div>
+          <div data-say="やまださんは こうえんの まえに います。"><div class="j">山田さんは こうえんの 前に います。</div><div class="k">야마다 씨는 공원 앞에 있습니다. ([사람]は [장소]に います)</div></div>
+          <div data-say="としょかんは どこですか。がっこうの となりに あります。"><div class="j">としょかんは どこですか。 ― 学校の となりに あります。</div><div class="k">도서관은 어디입니까? ― 학교 옆에 있습니다.</div></div>
+          <div data-say="トイレは コンビニの となりに あります。"><div class="j">トイレは コンビニの となりに あります。</div><div class="k">화장실은 편의점 옆에 있습니다. (5과 의사소통 기본 표현)</div></div>
+          <div data-say="こたつの うえに みかんが あります。テレビの まえに ねこが います。"><div class="j">こたつの 上に みかんが あります。 / テレビの 前に ねこが います。</div><div class="k">고타쓰 위에 귤이 있습니다. / 텔레비전 앞에 고양이가 있습니다.</div></div>
+        </div>
+        <p>장소 묻기: <span class="jp">～は どこですか</span> 또는 <span class="jp">～は どこに ありますか(いますか)</span>. 친구끼리는 <span class="jp">どこ？</span></p>
+        <p><b>となり · よこ · そば</b> (지도서 보충, 모두 "옆")</p>
+        <div class="tbl-wrap"><table class="ctbl">
+          <tr><td class="j">となり</td><td>같은 종류가 나란히 있을 때 (사람 옆 사람, 건물 옆 건물)</td></tr>
+          <tr><td class="j">よこ</td><td>기준의 양옆, 수평으로 놓인 위치</td></tr>
+          <tr><td class="j">そば</td><td>방향 상관없이 가까이 (가장 넓게 쓰임)</td></tr>
+        </table></div>
+      </div>
+    </details>
+
+    <details>
+      <summary>㉒ 선택 표현 ～に します <small>5과</small></summary>
+      <div class="body">
+        <div class="rule">무엇으로 할지 물을 때 <span class="jp">何(なに)に しますか</span> → <span class="jp">～に します</span></div>
+        <div class="ex">
+          <div data-say="なにに しますか。わたしは そばに します。"><div class="j">何に しますか。 ― わたしは そばに します。</div><div class="k">무엇으로 하겠습니까? ― 저는 메밀국수로 하겠습니다.</div></div>
+          <div data-say="ぼくは これに します。"><div class="j">ぼくは これに します。</div><div class="k">나는 이걸로 할게요. (5과 본문)</div></div>
+          <div data-say="なにに する？コーラに する。"><div class="j">何に する？ ― コーラに する。</div><div class="k">뭐로 할래? ― 콜라로 할래. (반말)</div></div>
+        </div>
+        <p><b>何 읽기</b>: <span class="jp">何に</span>는 <b>なに</b>, <span class="jp">何時・何ですか・何ようび</span>는 <b>なん</b>. 한자 쓰기 문제에 "何 = なん·なに"로 나와요.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>㉓ 형용사 연결형 · 부정형 <small>5과·6과</small></summary>
+      <div class="body">
+        <div class="tbl-wrap"><table class="ctbl tight">
+          <tr><th></th><th>연결형 (~하고)</th><th>부정 정중형 (~지 않습니다)</th></tr>
+          <tr data-say="からくて"><td>い형용사<br><small class="jp f">い → くて / く ないです</small></td><td class="j">から<em>くて</em></td><td class="j">から<em>く ないです</em><br>= から<em>く ありません</em></td></tr>
+          <tr data-say="しずかで"><td>な형용사<br><small class="jp f">だ → で / じゃ ないです</small></td><td class="j">しずか<em>で</em></td><td class="j">しずか<em>じゃ ないです</em><br>= しずか<em>じゃ ありません</em></td></tr>
+          <tr data-say="よくて"><td>いい (예외)</td><td class="j"><em>よ</em>くて</td><td class="j"><em>よ</em>く ないです</td></tr>
+        </table></div>
+        <p><span class="jp">ありません</span>은 <span class="jp">ないです</span>보다 더 정중한 말이에요. <span class="jp">いくて・いく ないです</span>는 ✕.</p>
+        <div class="ex">
+          <div data-say="やすくて おいしいです。"><div class="j">安くて おいしいです。</div><div class="k">싸고 맛있습니다.</div></div>
+          <div data-say="おもくて おおきいです。"><div class="j">おもくて 大きいです。</div><div class="k">무겁고 큽니다.</div></div>
+          <div data-say="しずかで きれいです。"><div class="j">しずかで きれいです。</div><div class="k">조용하고 깨끗합니다.</div></div>
+          <div data-say="この ラーメンは からいですか。いいえ、からく ないです。"><div class="j">この ラーメンは からいですか。 ― いいえ、からく ないです。</div><div class="k">이 라멘은 맵습니까? ― 아니요, 맵지 않습니다.</div></div>
+        </div>
+        <p><b>あまり / ぜんぜん + 부정</b>: <span class="jp">あまり 高く ないです</span> (그다지 비싸지 않습니다), <span class="jp">ぜんぜん からく ないです</span> (전혀 맵지 않습니다). 뒤에 꼭 부정이 와요.</p>
+        <p><b>함정</b>: <span class="jp">とくいだ</span>(잘하다)는 い로 끝나 보이지만 な형용사 → <span class="jp">とくいで / とくいじゃ ないです</span>. <span class="jp">好きだ</span> → <span class="jp">あまり 好きじゃ ないです</span>.</p>
+        <p><b>6과: ～くて는 "~해서"(이유)도 돼요</b></p>
+        <div class="ex">
+          <div data-say="たかい ところが こわくて。"><div class="j">高い ところが こわくて……。</div><div class="k">높은 곳이 무서워서……. (6과 상황 설명)</div></div>
+          <div data-say="あたまが いたくて。"><div class="j">あたまが いたくて……。 / へやが さむくて……。</div><div class="k">머리가 아파서……. / 방이 추워서…….</div></div>
+        </div>
+        <p><b>같은 뜻으로 바꾸기</b> (5과 확인하기): <span class="jp">大きくて おもいです = おもくて 大きいです</span>, <span class="jp">しんせつで えいごが とくいです = えいごが とくいで しんせつです</span></p>
+      </div>
+    </details>
+
+    <details>
+      <summary>㉔ 시간 · 요일 <small>6과</small></summary>
+      <div class="body">
+        <div class="rule">4시 <span class="jp">よじ</span> · 7시 <span class="jp">しちじ</span> · 9시 <span class="jp">くじ</span>는 특별하게 읽어요!</div>
+        <div id="hourTable"></div>
+        <p><b>분</b> (지도서 보충): 빨간 것은 ぷん으로 읽어요.</p>
+        <div class="tbl-wrap"><table class="ctbl tight">
+          <tr><td data-say="いっぷん">1分 <span class="jp"><em>いっぷん</em></span></td><td data-say="にふん">2分 <span class="jp">にふん</span></td><td data-say="さんぷん">3分 <span class="jp"><em>さんぷん</em></span></td></tr>
+          <tr><td data-say="よんぷん">4分 <span class="jp"><em>よんぷん</em></span></td><td data-say="ごふん">5分 <span class="jp">ごふん</span></td><td data-say="ろっぷん">6分 <span class="jp"><em>ろっぷん</em></span></td></tr>
+          <tr><td data-say="ななふん">7分 <span class="jp">ななふん</span></td><td data-say="はっぷん">8分 <span class="jp"><em>はっぷん</em>·はちふん</span></td><td data-say="きゅうふん">9分 <span class="jp">きゅうふん</span></td></tr>
+          <tr><td data-say="じゅっぷん">10分 <span class="jp"><em>じゅっぷん</em></span></td><td data-say="はん">30分 <span class="jp"><em>はん</em></span></td><td></td></tr>
+        </table></div>
+        <div class="tbl-wrap"><table class="ctbl tight">
+          <tr><th>월</th><th>화</th><th>수</th><th>목</th><th>금</th><th>토</th><th>일</th></tr>
+          <tr><td class="j" data-say="げつようび">月<br>げつ</td><td class="j" data-say="かようび">火<br>か</td><td class="j" data-say="すいようび">水<br>すい</td><td class="j" data-say="もくようび">木<br>もく</td><td class="j" data-say="きんようび">金<br>きん</td><td class="j" data-say="どようび">土<br>ど</td><td class="j" data-say="にちようび">日<br>にち</td></tr>
+        </table></div>
+        <p>뒤에 <span class="jp">ようび</span>를 붙여요: <span class="jp">げつようび</span>(월요일). 묻기: <span class="jp">いま 何時ですか</span> / <span class="jp">きょうは 何ようびですか</span>.</p>
+        <p>반말로 대답할 때는 명사만: <span class="jp">7時。</span> (<span class="jp">7時だ</span>라고 하지 않아요)</p>
+      </div>
+    </details>
+
+    <details id="verbDetails">
+      <summary>㉕ 동사 그룹 · ます형 <small>6과 핵심</small></summary>
+      <div class="body">
+        <div class="tbl-wrap"><table class="ctbl tight">
+          <tr><th>그룹</th><th>모양</th><th>예</th></tr>
+          <tr><td><b>1그룹</b></td><td>① る로 끝나지 않는 동사<br>② る로 끝나도 る 앞이 あ·う·お단</td><td class="j">会う・あそぶ・行く・はなす・よむ<br>すわる</td></tr>
+          <tr><td><b>2그룹</b></td><td>る로 끝나고 る 앞이 い단·え단</td><td class="j">見る(み)・食べる(べ)</td></tr>
+          <tr><td><b>3그룹</b></td><td>불규칙 (딱 2개)</td><td class="j">来る・する</td></tr>
+        </table></div>
+        <div class="rule">ます형: 1그룹은 끝의 う단 → い단 + ます, 2그룹은 る → ます, 来る → <span class="jp">きます</span>, する → <span class="jp">します</span>. 과거는 ます → <span class="jp">ました</span></div>
+        <div class="tbl-wrap"><table class="ctbl tight">
+          <tr><th></th><th>기본형</th><th>~ます (현재·미래)</th><th>~ました (과거)</th></tr>
+          <tr data-say="あいます"><td>1그룹</td><td class="j">会う</td><td class="j">会<em>い</em>ます</td><td class="j">会<em>い</em>ました</td></tr>
+          <tr data-say="よみます"><td>1그룹</td><td class="j">よむ</td><td class="j">よ<em>み</em>ます</td><td class="j">よ<em>み</em>ました</td></tr>
+          <tr data-say="すわります"><td>1그룹</td><td class="j">すわる</td><td class="j">すわ<em>り</em>ます</td><td class="j">すわ<em>り</em>ました</td></tr>
+          <tr data-say="みます"><td>2그룹</td><td class="j">見る</td><td class="j">見ます</td><td class="j">見ました</td></tr>
+          <tr data-say="たべます"><td>2그룹</td><td class="j">食べる</td><td class="j">食べます</td><td class="j">食べました</td></tr>
+          <tr data-say="きます"><td>3그룹</td><td class="j">来る(くる)</td><td class="j"><em>き</em>ます</td><td class="j"><em>き</em>ました</td></tr>
+          <tr data-say="します"><td>3그룹</td><td class="j">する</td><td class="j"><em>し</em>ます</td><td class="j"><em>し</em>ました</td></tr>
+        </table></div>
+        <p><b>동사 판별기</b>: 동사를 고르면 그룹과 이유, ます형이 나와요.</p>
+        <select class="search" id="verbSelect" aria-label="동사 선택"></select>
+        <div id="verbOut"></div>
+        <p><b>꼭 알아둘 것</b></p>
+        <ul class="dots-list">
+          <li><span class="jp">です</span>는 명사·형용사 뒤, <span class="jp">ます</span>는 동사 뒤 (<span class="jp">本です / 会います</span>)</li>
+          <li><span class="jp">行きます</span>는 "갑니다"와 "가겠습니다(가까운 미래)" 둘 다 돼요</li>
+          <li>"~을/를 만나다"는 <span class="jp">～に 会う</span> (<span class="jp">山田さんに 会います</span>, を ✕)</li>
+          <li>반말 질문은 기본형 + ？ 끝을 올려요: <span class="jp">あした 行く？ ― うん、行く。</span></li>
+          <li>1·2·3그룹은 5단·1단·불규칙 동사라고도 불러요</li>
+        </ul>
+        <p><b>심화 (교과서 밖)</b>: 2그룹처럼 생겼지만 <b>1그룹인 예외 동사</b>가 있어요. <span class="jp">帰る(かえる) → かえります</span>, <span class="jp">入る(はいる) → はいります</span>, <span class="jp">走る・知る・切る</span>. (<span class="jp">着る</span> 입다는 2그룹 → きます) 부정 <span class="jp">～ません</span>, 과거 부정 <span class="jp">～ませんでした</span>도 함께 알아 두면 좋아요.</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>㉖ 5과·6과 표현</summary>
+      <div class="body">
+        <div class="tbl-wrap"><table class="ctbl tight">
+          <tr data-say="にほんえ ようこそ"><td class="j">ようこそ</td><td>환영합니다. <span class="jp">日本へ ようこそ！</span> 어원은 よく(来た). 정중하게는 ようこそ いらっしゃいました</td></tr>
+          <tr data-say="おまたせしました"><td class="j">おまたせしました</td><td>오래 기다리셨습니다. 나 때문에 기다리게 했다는 겸손한 말 (점원·약속 장소에서). 친구끼리는 おまたせ</td></tr>
+          <tr data-say="いただきます"><td class="j">いただきます</td><td>잘 먹겠습니다 (식사 전, 두 손 모으고. 혼자 먹을 때도)</td></tr>
+          <tr data-say="ごちそうさまでした"><td class="j">ごちそうさまでした</td><td>잘 먹었습니다 (식사 후). 줄여서 ごちそうさま</td></tr>
+          <tr data-say="おなかが いっぱい"><td class="j">おなかが いっぱい</td><td>배부르다 ↔ <span class="jp">おなかが ぺこぺこ / すいた</span> 배고프다</td></tr>
+          <tr data-say="やきそばは ちょっと"><td class="j">～は ちょっと……</td><td>~은 좀……. 말끝을 흐리는 거절. 정중하게는 <span class="jp">いいえ、だいじょうぶです。ありがとうございます。</span></td></tr>
+          <tr data-say="やきそばは どうですか"><td class="j">どうですか</td><td>어떻습니까? (권유) 반말은 <span class="jp">どう？</span></td></tr>
+          <tr data-say="どうしたの"><td class="j">どうしたの？</td><td>무슨 일이야? 정중하게는 <span class="jp">どうしましたか</span></td></tr>
+          <tr data-say="じゃ、そろそろ"><td class="j">じゃ、そろそろ……</td><td>그럼, 슬슬……. (시간이 다 되어 갈 때)</td></tr>
+          <tr data-say="みなさんは ぜひ"><td class="j">ぜひ</td><td>꼭. 강한 희망은 ぜひ～たい</td></tr>
+        </table></div>
+        <p><b>의성어 · 의태어</b> (6과)</p>
+        <div class="tbl-wrap"><table class="ctbl tight">
+          <tr><td class="j" data-say="ワンワン">ワンワン</td><td>멍멍</td><td class="j" data-say="ニャーニャー">ニャー</td><td>야옹</td></tr>
+          <tr><td class="j" data-say="ピンポン">ピンポン</td><td>딩동</td><td class="j" data-say="にこにこ">にこにこ</td><td>생긋생긋</td></tr>
+          <tr><td class="j" data-say="きらきら">きらきら</td><td>반짝반짝</td><td class="j" data-say="ぺこぺこ">ぺこぺこ</td><td>꼬르륵</td></tr>
+          <tr><td class="j" data-say="わくわく">わくわく</td><td>설렘</td><td class="j" data-say="どきどき">どきどき</td><td>두근두근</td></tr>
+          <tr><td class="j" data-say="ケロケロ">ケロケロ</td><td>개굴개굴</td><td class="j" data-say="モーモー">モーモー</td><td>음메</td></tr>
+          <tr><td class="j" data-say="ピヨピヨ">ピヨピヨ</td><td>삐악삐악</td><td class="j" data-say="ブーブー">ブーブー</td><td>꿀꿀</td></tr>
+          <tr><td class="j" data-say="ぺらぺら">ぺらぺら</td><td>술술 (말)</td><td class="j" data-say="ふわふわ">ふわふわ</td><td>푹신푹신</td></tr>
+        </table></div>
+      </div>
+    </details>
+
+    <details>
+      <summary>㉗ 5과 문화: 식사 예절 · 음식</summary>
+      <div class="body">
+        <p><b>식사 예절</b>: 식사 전후에 두 손을 모으고 인사해요 (만든 사람과 자연에 대한 감사). 젓가락은 끝이 상대를 향하지 않게 <b>가로로</b> 놓아요. 밥과 국도 젓가락으로 먹고, 밥그릇·국그릇은 <b>손으로 들고</b> 먹어요. 국은 그릇에 입을 대고 마셔요.</p>
+        <p><b>삼가야 할 젓가락질</b></p>
+        <div class="tbl-wrap"><table class="ctbl">
+          <tr><td>拾い箸</td><td>젓가락끼리 음식 주고받기 (화장 후 유골을 옮기는 방식)</td></tr>
+          <tr><td>刺し箸</td><td>음식을 찔러 먹기</td></tr>
+          <tr><td>寄せ箸</td><td>젓가락으로 그릇 당기기</td></tr>
+          <tr><td>渡し箸</td><td>식사 중 젓가락을 그릇 위에 걸쳐 놓기 (식사를 끝냈다는 뜻)</td></tr>
+          <tr><td>立て箸</td><td>밥에 젓가락을 꽂기 (죽은 사람에게 공양할 때)</td></tr>
+          <tr><td>迷い箸·なめ箸·指し箸</td><td>무엇을 먹을지 젓가락을 휘젓기 · 핥기 · 사람 가리키기</td></tr>
+        </table></div>
+        <p><b>상차림</b>: 밥 + 국 + 반찬 3가지 = <b>1즙 3채(一汁三菜)</b>, 여기에 절임 채소.</p>
+        <p><b>음식</b>: 덮밥(돈부리)은 비비지 않고 젓가락으로 먹어요. <span class="jp">ぎゅうどん</span>(소고기), <span class="jp">カツどん</span>(勝つ "이기다"와 발음이 같아 시험 전에 먹음), <span class="jp">てんどん</span>(튀김), <span class="jp">おやこどん</span>(오야 = 부모 = 닭, 코 = 자식 = 달걀). 면은 <span class="jp">ラーメン・うどん・そば</span>, 전골은 <span class="jp">しゃぶしゃぶ・すきやき</span>(날달걀에 찍어 먹음), <span class="jp">おでん</span>은 어묵탕. 초밥은 니기리·<span class="jp">ちらしずし</span>·<span class="jp">てまきずし</span>. 도시락은 <span class="jp">まくのうちべんとう</span>(대표 도시락), <span class="jp">キャラべん</span>(캐릭터 도시락), <span class="jp">えきべん</span>(역 도시락).</p>
+        <p><b>더 알아보기 O / X</b></p>
+        <div class="ex-list" data-ex="oxFood"></div>
+        <p class="small-note">생각잇기: 빅맥 지수는 빅맥 가격으로 나라별 물가를 비교하는 지수예요 (2024년 미국 5.69달러, 한국 5,500원, 일본 480엔).</p>
+      </div>
+    </details>
+
+    <details>
+      <summary>㉘ 6과 문화: 교통 · 거절</summary>
+      <div class="body">
+        <p><b>좌측통행</b>: 일본은 차가 왼쪽으로 다니고 운전석이 오른쪽이에요. 메이지 시대에 영국의 영향으로 정해졌어요.</p>
+        <div class="tbl-wrap"><table class="ctbl">
+          <tr><td>자전거</td><td>많이 타요. 살 때 방범 등록이 의무. 2024년 11월부터 음주·"나가라(스마트폰 보면서)" 운전 처벌 강화</td></tr>
+          <tr><td>버스</td><td>뒷문으로 타고 앞문으로 내리는 경우가 있어요. 번호표와 전광판으로 구간 요금 확인 (도쿄는 균일 210엔, 2024)</td></tr>
+          <tr><td>택시</td><td>뒷문은 기사가 여닫는 자동문, 손님은 주로 뒷좌석 (도쿄 기본요금 500엔)</td></tr>
+          <tr><td>철도</td><td>지상은 <span class="jp">でんしゃ</span>, 지하는 <span class="jp">ちかてつ</span>. 신칸센은 1964년 개통, 시속 260~320km</td></tr>
+        </table></div>
+        <p><b>거절 문화</b>: <span class="jp">～は ちょっと……</span>처럼 뒷말을 생략하고 말끝을 흐려 돌려 말해요. 공적인 자리에서는 분명하게 거절하기도 해요.</p>
+        <p><b>더 알아보기 O / X</b></p>
+        <div class="ex-list" data-ex="oxTraffic"></div>
+      </div>
+    </details>
+
     <div class="group-label">문제</div>
 
     <details>
@@ -899,6 +1118,23 @@
         <div class="ex-list" data-ex="w4"></div>
         <p><b>4과 읽기</b></p>
         <div class="ex-list" data-ex="r4"></div>
+      </div>
+    </details>
+    <details>
+      <summary>㉙ 5과·6과 확인하기 · 쓰고 확인하기</summary>
+      <div class="body">
+        <p><b>5과 듣기</b></p>
+        <div class="ex-list" data-ex="l5"></div>
+        <p><b>5과 빈칸 채우기 · 같은 뜻 만들기</b></p>
+        <div class="ex-list" data-ex="f5"></div>
+        <p><b>5과 읽기</b> (위치 찾기)</p>
+        <div class="ex-list" data-ex="r5"></div>
+        <p><b>6과 듣기</b></p>
+        <div class="ex-list" data-ex="l6"></div>
+        <p><b>6과 동사 · 쓰고 확인하기</b></p>
+        <div class="ex-list" data-ex="f6"></div>
+        <p><b>6과 읽기</b></p>
+        <div class="ex-list" data-ex="r6"></div>
       </div>
     </details>
     <button class="btn" id="exReset">🔄 문제 모두 다시 풀기</button>
@@ -1031,6 +1267,131 @@ const RAW = [
   [4,'ケーキ','','케-키','명사','케이크',''],
   [4,'てんいん','店員','텐인','명사','점원',''],
   [4,'おみやげ','お土産','오미야게','명사','오미야게 (여행 기념 선물)','여행지에서 사 온 과자나 특산품. プレゼント는 생일 같은 특별한 날의 선물'],
+
+  // 5과 いただきます (공식 단어장)
+  [5,'うえ','上','우에','명사','위',''],
+  [5,'した','下','시타','명사','아래',''],
+  [5,'なか','中','나카','명사','안, 가운데',''],
+  [5,'となり','','토나리','명사','옆','같은 종류가 나란히 있을 때 (よこ·そば와 구별)'],
+  [5,'ひだり','左','히다리','명사','왼쪽',''],
+  [5,'みぎ','右','미기','명사','오른쪽',''],
+  [5,'まえ','前','마에','명사','앞',''],
+  [5,'うしろ','後ろ','우시로','명사','뒤',''],
+  [5,'あります','','아리마스','동사','있습니다 (사물 등)','스스로 움직일 수 없는 것: 사물·식물 (はなが あります)'],
+  [5,'います','','이마스','동사','있습니다 (사람·동물)','스스로 움직일 수 있는 것: 사람·동물 (ねこが います)'],
+  [5,'としょかん','図書館','토쇼칸','명사','도서관',''],
+  [5,'がっこう','学校','각코-','명사','학교',''],
+  [5,'どこ','','도코','대명사','어디','～は どこですか / ～は どこに ありますか'],
+  [5,'～に','','~니','조사','~에, ~(으)로','위치 뒤에 に (いすの うえに), 선택 ～に します','に'],
+  [5,'こうえん','公園','코-엔','명사','공원',''],
+  [5,'いぬ','犬','이누','명사','개',''],
+  [5,'～に します','','~니 시마스','관용 표현','~(으)로 하겠습니다','何に しますか → そばに します (반말: ～に する)','にします'],
+  [5,'そば','','소바','명사','소바 (메밀국수)',''],
+  [5,'メニュー','','메뉴-','명사','메뉴',''],
+  [5,'ぎゅうどん','牛丼','규-동','명사','규동 (소고기덮밥)',''],
+  [5,'コーラ','','코-라','명사','콜라',''],
+  [5,'やすい','安い','야스이','い형용사','싸다','반대말은 たかい'],
+  [5,'おもい','重い','오모이','い형용사','무겁다','おもくて (무겁고)'],
+  [5,'おおきい','大きい','오-키-','い형용사','크다','おおきくて (크고)'],
+  [5,'しろい','白い','시로이','い형용사','하얗다','명사 しろ(흰색)와 구별하세요'],
+  [5,'からい','辛い','카라이','い형용사','맵다','からく ないです (맵지 않습니다)'],
+  [5,'いいえ','','이-에','감탄사','아니요',''],
+  [5,'ひろい','広い','히로이','い형용사','넓다',''],
+  [5,'たかい','高い','타카이','い형용사','비싸다, 높다','あまり たかく ないです (그다지 비싸지 않습니다)'],
+  [5,'あまり','','아마리','부사','그다지','뒤에 부정이 와요 (あまり しずかじゃ ないです)'],
+  [5,'しずかだ','静かだ','시즈카다','な형용사','조용하다','しずかで (조용하고)'],
+  [5,'しんせつだ','親切だ','신세츠다','な형용사','친절하다','しんせつで すてきです'],
+  [5,'かんたんだ','簡単だ','칸탄다','な형용사','간단하다','과거형은 かんたんでした (かんたんかった ✕)'],
+  [5,'あの','','아노','연체사','저 ~','뒤에 반드시 명사가 와요 (あの みせ)'],
+  [5,'みせ','店','미세','명사','가게',''],
+  [5,'えいご','英語','에-고','명사','영어',''],
+  [5,'とくいだ','得意だ','토쿠이다','な형용사','(자신 있게) 잘하다','い로 끝나 보이지만 な형용사! → とくいで, とくいじゃ ないです'],
+  [5,'なつ','夏','나츠','명사','여름',''],
+  [5,'ようこそ','','요-코소','인사말','환영합니다','日本へ ようこそ！ 어원은 よく(来た)'],
+  [5,'いろいろ','','이로이로','부사','여러 가지','いろいろ ありますね (여러 가지 있네요)'],
+  [5,'おまたせしました','お待たせしました','오마타세시마시타','인사말','오래 기다리셨습니다','기다리게 해서 미안하다는 겸손한 말. 친구끼리는 おまたせ'],
+  [5,'いただきます','','이타다키마스','인사말','잘 먹겠습니다','식사 전, 두 손을 모으고'],
+  [5,'うんうん','','운운','감탄사','응응',''],
+  [5,'ぜんぜん','全然','젠젠','부사','전혀','뒤에 부정이 와요 (ぜんぜん からく ないです)'],
+  [5,'だいじょうぶだ','大丈夫だ','다이죠-부다','な형용사','괜찮다',''],
+  [5,'ああ','','아-','감탄사','아 (감탄·한숨)','ああ、おなかが いっぱい'],
+  [5,'おなかが いっぱい','','오나카가 입파이','관용 표현','배가 부르다','정중하게는 おなかが いっぱいです. 배고프다는 おなかが ぺこぺこ'],
+  [5,'コンビニ','','콤비니','명사','편의점',''],
+  [5,'テレビ','','테레비','명사','텔레비전',''],
+  [5,'カフェ','','카훼','명사','카페',''],
+  [5,'ねだん','値段','네단','명사','가격',''],
+  [5,'ごちそうさまでした','','고치소-사마데시타','인사말','잘 먹었습니다','식사 후 인사. 줄여서 ごちそうさま'],
+  [5,'カツどん','カツ丼','카츠동','명사','가쓰돈 (돈가스 덮밥)','勝つ(이기다)와 발음이 같아 시험 전에 먹기도 해요'],
+  [5,'てんどん','天丼','텐동','명사','덴돈 (튀김 덮밥)',''],
+  [5,'おやこどん','親子丼','오야코동','명사','오야코돈 (닭고기 달걀 덮밥)','오야(부모) = 닭, 코(자식) = 달걀'],
+  [5,'しゃぶしゃぶ','','샤부샤부','명사','샤부샤부',''],
+  [5,'すきやき','すき焼き','스키야키','명사','스키야키 (간장 전골)','날달걀에 찍어 먹어요'],
+  [5,'おでん','','오뎅','명사','오뎅 (어묵탕)','어묵 꼬치가 아니라 어묵탕'],
+  [5,'ちらしずし','ちらし寿司','치라시즈시','명사','지라시즈시 (재료를 흩뿌린 초밥)',''],
+  [5,'てまきずし','手巻き寿司','테마키즈시','명사','데마키즈시 (김으로 만 초밥)',''],
+  [5,'まくのうちべんとう','幕の内弁当','마쿠노우치벤토-','명사','마쿠노우치벤토 (대표 도시락)','흰밥 + 달걀말이·어묵·생선구이'],
+  [5,'キャラべん','','캬라벤','명사','갸라벤 (캐릭터 도시락의 줄임말)',''],
+  [5,'キャラクターべんとう','','캬라쿠타-벤토-','명사','캐릭터 도시락',''],
+  [5,'えきべん','駅弁','에키벤','명사','에키벤 (역에서 파는 도시락)','지역 특산물로 만들어요'],
+  [5,'おにぎり','','오니기리','명사','오니기리 (주먹밥)',''],
+  [5,'パンや','パン屋','팡야','명사','빵집',''],
+
+  // 6과 いま、何時ですか (공식 단어장)
+  [6,'～じ','～時','~지','조수사','~시','4시 よじ, 7시 しちじ, 9시 くじ 주의!','じ'],
+  [6,'いま','今','이마','명사','지금','いま 何時ですか'],
+  [6,'～ようび','～曜日','~요-비','명사','~요일','きょうは 何ようびですか','ようび'],
+  [6,'げつようび','月ようび','게츠요-비','명사','월요일',''],
+  [6,'かようび','火ようび','카요-비','명사','화요일',''],
+  [6,'すいようび','水ようび','스이요-비','명사','수요일',''],
+  [6,'もくようび','木ようび','모쿠요-비','명사','목요일',''],
+  [6,'きんようび','金ようび','킹요-비','명사','금요일',''],
+  [6,'どようび','土ようび','도요-비','명사','토요일',''],
+  [6,'にちようび','日ようび','니치요-비','명사','일요일',''],
+  [6,'きょう','今日','쿄-','명사','오늘',''],
+  [6,'やきそば','焼きそば','야키소바','명사','야키소바 (볶음국수)',''],
+  [6,'どうですか','','도-데스카','관용 표현','어떻습니까?','권하거나 사정을 물을 때. 반말은 どう？'],
+  [6,'じてんしゃ','自転車','지텐샤','명사','자전거',''],
+  [6,'どうしたの','','도-시타노','관용 표현','무슨 일이야?, 왜 그래?','정중하게는 どうしましたか'],
+  [6,'ところ','','토코로','명사','곳, 장소','たかい ところ (높은 곳)'],
+  [6,'あたま','頭','아타마','명사','머리',''],
+  [6,'いたい','痛い','이타이','い형용사','아프다','あたまが いたくて…… (머리가 아파서……)'],
+  [6,'さむい','寒い','사무이','い형용사','춥다','へやが さむくて…… (방이 추워서……)'],
+  [6,'あう','会う','아우','동사','만나다','1그룹 → あいます. ～に 会う (を ✕)'],
+  [6,'あそぶ','遊ぶ','아소부','동사','놀다','1그룹 → あそびます'],
+  [6,'いく','行く','이쿠','동사','가다','1그룹 → いきます'],
+  [6,'すわる','座る','스와루','동사','앉다','る 앞 わ가 あ단 → 1그룹 → すわります'],
+  [6,'はなす','話す','하나스','동사','이야기하다','1그룹 → はなします'],
+  [6,'よむ','読む','요무','동사','읽다','1그룹 → よみます'],
+  [6,'みる','見る','미루','동사','보다','る 앞 み가 い단 → 2그룹 → みます'],
+  [6,'たべる','食べる','타베루','동사','먹다','る 앞 べ가 え단 → 2그룹 → たべます'],
+  [6,'くる','来る','쿠루','동사','오다','3그룹(불규칙) → きます!'],
+  [6,'する','','스루','동사','하다','3그룹(불규칙) → します'],
+  [6,'あした','明日','아시타','명사','내일',''],
+  [6,'うん','','웅','감탄사','응',''],
+  [6,'まつり','祭り','마츠리','명사','마쓰리 (축제)',''],
+  [6,'きのう','昨日','키노-','명사','어제',''],
+  [6,'しんぶん','新聞','심붕','명사','신문','しんぶんを よみます'],
+  [6,'ともだち','友だち','토모다치','명사','친구',''],
+  [6,'えいが','映画','에-가','명사','영화','えいがを みます'],
+  [6,'べんきょう','勉強','벵쿄-','명사','공부','べんきょうを します'],
+  [6,'じゃ','','쟈','접속사','그럼','じゃ、そろそろ……'],
+  [6,'そろそろ','','소로소로','부사','슬슬','시간이 다 되어 갈 때'],
+  [6,'あれ','','아레','대명사','저것','나와 상대방 모두에게 멀리 있는 것'],
+  [6,'スカイツリー','','스카이츠리-','명사','스카이트리 (도쿄의 전파탑)',''],
+  [6,'わくわくする','','와쿠와쿠스루','동사','설레다','する가 붙어 3그룹 → わくわくします'],
+  [6,'ごめんなさい','','고멘나사이','인사말','미안합니다 (사과)',''],
+  [6,'ぜひ','','제히','부사','꼭','みなさんは ぜひ！'],
+  [6,'たのしい','楽しい','타노시-','い형용사','즐겁다','과거형은 たのしかったです'],
+  [6,'まいにち','毎日','마이니치','명사','매일',''],
+  [6,'たこやき','たこ焼き','타코야키','명사','다코야키',''],
+  [6,'ワンワン','','왕왕','의성어','멍멍',''],
+  [6,'ニャーニャー','','냐-냐-','의성어','야옹',''],
+  [6,'ピンポン','','핌퐁','의성어','딩동 (초인종)',''],
+  [6,'にこにこ','','니코니코','의태어','생긋생긋',''],
+  [6,'きらきら','','키라키라','의태어','반짝반짝',''],
+  [6,'ぺこぺこ','','페코페코','의태어','꼬르륵 (배고픈 모양)','おなかが ぺこぺこ = 배가 고프다'],
+  [6,'そして','','소시테','접속사','그리고',''],
+  [6,'いっしょに','一緒に','잇쇼니','부사','함께, 같이',''],
 
   // 3과 활동지 (형용사 활동지 + 필기 노트)
   ['A','あつい','暑い','아츠이','い형용사','덥다',''],
@@ -1172,18 +1533,38 @@ const RAW = [
   ['N','はっこ','八個','학코','조수사','여덟 개 (～こ로 세기)','발음 변화! はち → はっ'],
   ['N','きゅうこ','九個','큐-코','조수사','아홉 개 (～こ로 세기)',''],
   ['N','じゅっこ','十個','쥭코','조수사','열 개 (～こ로 세기)','발음 변화! じゅう → じゅっ'],
+
+  // 심화 동사 (교과서 밖, 동사 그룹 연습용)
+  ['V','はいる','入る','하이루','동사','들어가다','예외 1그룹! 2그룹처럼 보이지만 → はいります'],
+  ['V','はしる','走る','하시루','동사','달리다','예외 1그룹! → はしります'],
+  ['V','しる','知る','시루','동사','알다','예외 1그룹! → しります'],
+  ['V','きる','切る','키루','동사','자르다','예외 1그룹! → きります (着る 입다는 2그룹 → きます)'],
+  ['V','おきる','起きる','오키루','동사','일어나다','る 앞 き가 い단 → 2그룹 → おきます'],
+  ['V','ねる','寝る','네루','동사','자다','る 앞 ね가 え단 → 2그룹 → ねます'],
+  ['V','でる','出る','데루','동사','나가다, 나오다','る 앞 で가 え단 → 2그룹 → でます'],
+  ['V','わかる','分かる','와카루','동사','알다, 이해하다','る 앞 か가 あ단 → 1그룹 → わかります'],
+  ['V','つくる','作る','츠쿠루','동사','만들다','る 앞 く가 う단 → 1그룹 → つくります'],
+  ['V','かく','書く','카쿠','동사','쓰다','1그룹 → かきます'],
+  ['V','のむ','飲む','노무','동사','마시다','1그룹 → のみます'],
+  ['V','かう','買う','카우','동사','사다','1그룹 → かいます'],
+  ['V','まつ','待つ','마츠','동사','기다리다','1그룹 → まちます'],
+  ['V','きく','聞く','키쿠','동사','듣다, 묻다','1그룹 → ききます'],
 ];
 
 const WORDS = [];
-{ const cnt = {3: 0, 4: 0, A: 0, B: 0, C: 0, N: 0};
+{ const cnt = {3: 0, 4: 0, 5: 0, 6: 0, A: 0, B: 0, C: 0, N: 0, V: 0};
+  // 공식 단어장(3~6과)에 있는 단어는 다른 묶음에서 빼기 (번호는 그대로 둬서 기록이 안 섞이게)
+  const key = r => r[1].replace(/[～\-]/g, '') + '|' + r[4];
+  const official = new Set(RAW.filter(r => typeof r[0] === 'number').map(key));
   RAW.forEach(([l, w, k, p, pos, m, n, tts]) => {
     cnt[l]++;
+    if (typeof l !== 'number' && official.has(key([l, w, k, p, pos]))) return;
     WORDS.push({ id: `${l}-${cnt[l]}`, l, no: cnt[l], w, k, p, pos, m, n,
       tts: tts || w.replace(/[～\-]/g, ''), bare: w.replace(/[～\-]/g, '') });
   });
 }
 const byId = Object.fromEntries(WORDS.map(x => [x.id, x]));
-const GROUP = { A: ['3과 활동지', '활'], B: ['교과서 추가', '교'], C: ['보충 형용사', '보'], N: ['숫자·개수', '수'] };
+const GROUP = { A: ['3과 활동지', '활'], B: ['교과서 추가', '교'], C: ['보충 형용사', '보'], N: ['숫자·개수', '수'], V: ['심화 동사', '동'] };
 const lessonName = w => GROUP[w.l] ? GROUP[w.l][0] : w.l + '과';
 
 /* ============================================================
@@ -1233,10 +1614,13 @@ const SCOPES = [
   ['all', '전체', () => true],
   ['3', '3과', w => w.l === 3],
   ['4', '4과', w => w.l === 4],
+  ['5', '5과', w => w.l === 5],
+  ['6', '6과', w => w.l === 6],
   ['A', '3과 활동지', w => w.l === 'A'],
   ['B', '교과서 추가', w => w.l === 'B'],
   ['C', '보충 형용사', w => w.l === 'C'],
   ['N', '숫자·개수', w => w.l === 'N'],
+  ['V', '심화 동사', w => w.l === 'V'],
   ['star', '★ 즐겨찾기', w => S.star[w.id]],
   ['wrong', '✗ 오답노트', w => S.wrong[w.id]],
 ];
@@ -1368,34 +1752,37 @@ const FORMS = [
   ['plain', '기본형', '~다'],
   ['polite', '정중형', '~습니다'],
   ['mod', '수식형', '~한 + 명사'],
+  ['te', '연결형', '~하고, ~해서'],
   ['neg', '부정형', '~지 않습니다'],
+  ['negA', '부정형 (더 정중)', '~지 않습니다'],
   ['past', '과거형', '~했습니다'],
   ['pastneg', '과거 부정형', '~지 않았습니다'],
   ['cneg', '반말 부정', '~지 않아'],
   ['cpast', '반말 과거', '~했어'],
 ];
-const QUIZ_FORMS = ['polite', 'mod', 'neg', 'past', 'pastneg'];
+const QUIZ_FORMS = ['polite', 'mod', 'te', 'neg', 'past', 'pastneg'];
 
 function conj(w, f, noun = 'へや') {
   const b = w.bare;
   if (adjType(w) === 'i') {
     const s = b === 'いい' ? 'よ' : b.slice(0, -1);
-    return { plain: b, polite: b + 'です', mod: b + ' ' + noun, neg: s + 'くないです', past: s + 'かったです',
+    return { plain: b, polite: b + 'です', mod: b + ' ' + noun, te: s + 'くて', negA: s + 'く ありません', neg: s + 'くないです', past: s + 'かったです',
       pastneg: s + 'くなかったです', cneg: s + 'くない', cpast: s + 'かった' }[f];
   }
   const s = b.slice(0, -1);
-  return { plain: b, polite: s + 'です', mod: s + 'な ' + noun, neg: s + 'じゃないです', past: s + 'でした',
+  return { plain: b, polite: s + 'です', mod: s + 'な ' + noun, te: s + 'で', negA: s + 'じゃ ありません', neg: s + 'じゃないです', past: s + 'でした',
     pastneg: s + 'じゃなかったです', cneg: s + 'じゃない', cpast: s + 'だった' }[f];
 }
 
 function formula(w, f) {
   if (adjType(w) === 'i') {
+    if (w.bare === 'いい' && f === 'te') return 'いい → よくて';
     if (w.bare === 'いい' && /neg|past/.test(f))
-      return { neg: 'いい → よくないです', past: 'いい → よかったです', pastneg: 'いい → よくなかったです', cneg: 'いい → よくない', cpast: 'いい → よかった' }[f];
-    return { plain: '~い', polite: '기본형 + です', mod: '기본형 + 명사', neg: 'い → くないです', past: 'い → かったです',
+      return { neg: 'いい → よくないです', negA: 'いい → よく ありません', past: 'いい → よかったです', pastneg: 'いい → よくなかったです', cneg: 'いい → よくない', cpast: 'いい → よかった' }[f];
+    return { plain: '~い', polite: '기본형 + です', mod: '기본형 + 명사', te: 'い → くて', negA: 'い → く ありません', neg: 'い → くないです', past: 'い → かったです',
       pastneg: 'い → くなかったです', cneg: 'い → くない', cpast: 'い → かった' }[f];
   }
-  return { plain: '~だ', polite: 'だ → です', mod: 'だ → な + 명사', neg: 'だ → じゃないです', past: 'だ → でした',
+  return { plain: '~だ', polite: 'だ → です', mod: 'だ → な + 명사', te: 'だ → で', negA: 'だ → じゃ ありません', neg: 'だ → じゃないです', past: 'だ → でした',
     pastneg: 'だ → じゃなかったです', cneg: 'だ → じゃない', cpast: 'だ → だった' }[f];
 }
 
@@ -1404,14 +1791,198 @@ function conjWrong(w, f, noun) {
   const b = w.bare;
   if (adjType(w) === 'i') {
     const r = b.slice(0, -1);
-    const out = { polite: [r + 'です', b + 'だです'], mod: [b + 'な ' + noun], neg: [b + 'じゃないです', b + 'くないです'],
+    const out = { polite: [r + 'です', b + 'だです'], mod: [b + 'な ' + noun], te: [b + 'て', r + 'で', b + 'で'], neg: [b + 'じゃないです', b + 'くないです'],
       past: [b + 'でした', b + 'かったです'], pastneg: [b + 'じゃなかったです', b + 'くないでした'] }[f];
-    if (b === 'いい') out.push({ neg: 'いくないです', past: 'いかったです', pastneg: 'いくなかったです' }[f] || r + 'です');
+    if (b === 'いい') out.push({ te: 'いくて', neg: 'いくないです', past: 'いかったです', pastneg: 'いくなかったです' }[f] || r + 'です');
     return out;
   }
   const s = b.slice(0, -1), cut = s.endsWith('い') ? s.slice(0, -1) : s;
-  return { polite: [b + 'です'], mod: [s + ' ' + noun, b + ' ' + noun], neg: [cut + 'くないです', s + 'くないです'],
+  return { polite: [b + 'です'], te: [cut + 'くて', s + 'くて', b + 'で'], mod: [s + ' ' + noun, b + ' ' + noun], neg: [cut + 'くないです', s + 'くないです'],
     past: [cut + 'かったです', b + 'でした'], pastneg: [cut + 'くなかったです', s + 'じゃないでした'] }[f];
+}
+
+/* ============================================================
+   4-2. 동사 그룹 · ます형 엔진 (6과)
+============================================================ */
+const ROW = { a: 'あかさたなはまやらわがざだばぱ', i: 'いきしちにひみりぎじぢびぴ', u: 'うくすつぬふむゆるぐずづぶぷ', e: 'えけせてねへめれげぜでべぺ', o: 'おこそとのほもよろをごぞどぼぽ' };
+const ROWNAME = { a: 'あ단', i: 'い단', u: 'う단', e: 'え단', o: 'お단' };
+const rowOf = c => Object.keys(ROW).find(r => ROW[r].includes(c));
+const U2 = { // う단 → 다른 단
+  i: { う: 'い', く: 'き', ぐ: 'ぎ', す: 'し', つ: 'ち', ぬ: 'に', ぶ: 'び', む: 'み', る: 'り' },
+  a: { う: 'わ', く: 'か', ぐ: 'が', す: 'さ', つ: 'た', ぬ: 'な', ぶ: 'ば', む: 'ま', る: 'ら' },
+  e: { う: 'え', く: 'け', ぐ: 'げ', す: 'せ', つ: 'て', ぬ: 'ね', ぶ: 'べ', む: 'め', る: 'れ' },
+};
+const I2U = Object.fromEntries(Object.entries(U2.i).map(([u, i]) => [i, u]));
+// 2그룹처럼 생겼지만 1그룹인 예외 동사 (교과서 밖 심화)
+const EXC1 = new Set(['帰る', '入る', '走る', '知る', '切る', '要る']);
+const isVerb = w => w.pos === '동사' && !w.bare.endsWith('ます') && /[うくぐすつぬぶむる]$/.test(w.bare);
+const isExc = w => EXC1.has(w.k) || (!w.k && ['かえる', 'はいる', 'はしる'].includes(w.bare));
+
+function vGroup(w) {
+  const b = w.bare;
+  if (b === 'する' || b === 'くる' || b.endsWith('する')) return 3;
+  if (isExc(w)) return 1;
+  if (b.endsWith('る') && ['i', 'e'].includes(rowOf(b.slice(-2, -1)))) return 2;
+  return 1;
+}
+
+function vReason(w) {
+  const b = w.bare, g = vGroup(w), last = b.slice(-1), prev = b.slice(-2, -1);
+  if (g === 3) return b.endsWith('する') && b !== 'する' ? 'する가 붙은 동사 → 3그룹 (불규칙)' : 'する·くる는 불규칙 → 3그룹';
+  if (isExc(w)) return `る 앞 ${prev}가 ${ROWNAME[rowOf(prev)]}이라 2그룹처럼 보이지만 예외 1그룹 (교과서 밖 심화)`;
+  if (g === 2) return `る로 끝나고 る 앞 ${prev}가 ${ROWNAME[rowOf(prev)]} → 2그룹`;
+  if (last === 'る') return `る로 끝나지만 る 앞 ${prev}가 ${ROWNAME[rowOf(prev)]} → 1그룹`;
+  return `어미가 る가 아닌 ${last} → 1그룹`;
+}
+
+// tail: ます / ました / ません
+function masu(w, tail = 'ます') {
+  const b = w.bare, g = vGroup(w);
+  if (g === 3) return b === 'くる' ? 'き' + tail : b.slice(0, -2) + 'し' + tail;
+  if (g === 2) return b.slice(0, -1) + tail;
+  return b.slice(0, -1) + U2.i[b.slice(-1)] + tail;
+}
+function masuRule(w) {
+  const g = vGroup(w), b = w.bare;
+  if (g === 3) return b === 'くる' ? 'くる → きます (불규칙)' : 'する → します (불규칙)';
+  if (g === 2) return 'る를 떼고 + ます';
+  return `끝의 う단(${b.slice(-1)})을 い단(${U2.i[b.slice(-1)]})으로 + ます`;
+}
+// 그룹을 잘못 판단했을 때 나오는 틀린 답
+function masuWrong(w, tail) {
+  const b = w.bare, last = b.slice(-1), stem = b.slice(0, -1), out = [];
+  if (vGroup(w) === 3) {
+    const head = b === 'くる' ? '' : b.slice(0, -2);
+    if (b === 'くる') out.push('くり' + tail, 'く' + tail, 'こ' + tail);
+    else out.push(head + 'すり' + tail, head + 'す' + tail, head + 'さ' + tail);
+  } else {
+    if (last === 'る') out.push(stem + tail, stem + 'り' + tail);
+    out.push(b + tail, stem + U2.a[last] + tail, stem + U2.e[last] + tail);
+  }
+  return out;
+}
+// ます형 → 기본형 거꾸로 할 때 나오는 틀린 답
+const E2U = Object.fromEntries(Object.entries(U2.e).map(([u, e]) => [e, u]));
+function baseWrong(w) {
+  if (w.bare === 'くる') return ['きる', 'こる', 'きう'];
+  if (w.bare.endsWith('する')) { const h = w.bare.slice(0, -2); return [h + 'しる', h + 'すう', h + 'さる']; }
+  const st = masu(w, '');
+  const last = st.slice(-1);
+  return [st + 'る', I2U[last] ? st.slice(0, -1) + I2U[last] : st + 'う', E2U[last] ? st.slice(0, -1) + E2U[last] : st + 'う', st + 'う', st.slice(0, -1) + 'る'];
+}
+
+function makeVerbGroupQ(w) {
+  const g = vGroup(w);
+  return {
+    w,
+    prompt: `<div class="label">이 동사는 몇 그룹?</div><div class="big-word jp">${esc(w.w)}</div>${w.k ? `<div class="kanji-sub jp">${esc(w.k)}</div>` : ''}<div class="small-note">${esc(w.m)}</div>`,
+    opts: [1, 2, 3].map(n => ({ text: n + '그룹', ok: n === g })),
+    explain: `${vReason(w)}<br>ます형: <b class="jp">${masu(w)}</b>`,
+    say: w.tts, review: [w.w, g + '그룹'],
+  };
+}
+
+function makeMasuQ(w) {
+  const kind = Math.random();
+  const head = `<div class="big-word jp">${esc(w.w)}</div>${w.k ? `<div class="kanji-sub jp">${esc(w.k)}</div>` : ''}<div class="small-note">${esc(w.m)}</div>`;
+  if (kind < 0.25) { // ます형 → 기본형
+    const ans = w.bare, m = masu(w);
+    const wrongs = [...new Set(baseWrong(w))].filter(x => x !== ans && x !== m).slice(0, 3);
+    return {
+      w, prompt: `<div class="label">이 말의 기본형(사전형)은?</div><div class="big-word jp">${m}</div><div class="small-note">${esc(w.m)}</div>`,
+      opts: shuffle([{ text: ans, ok: true, jp: true }, ...wrongs.map(x => ({ text: x, jp: true }))]),
+      explain: `<b class="jp">${m}</b> ← <b class="jp">${ans}</b> (${vGroup(w)}그룹: ${vReason(w)})`, say: ans, review: [m + ' → ' + ans, w.m],
+    };
+  }
+  const tail = kind < 0.65 ? 'ます' : 'ました';
+  const ans = masu(w, tail), other = masu(w, tail === 'ます' ? 'ました' : 'ます');
+  const wrongs = [...new Set([...shuffle(masuWrong(w, tail)), other])].filter(x => x !== ans).slice(0, 3);
+  return {
+    w, prompt: `<div class="label">${tail === 'ます' ? 'ます형 (~ㅂ니다)' : '과거 ました형 (~했습니다)'}으로 바꾸면?</div>${head}`,
+    opts: shuffle([{ text: ans, ok: true, jp: true }, ...wrongs.map(x => ({ text: x, jp: true }))]),
+    explain: `${vGroup(w)}그룹: ${masuRule(w)}${tail === 'ました' ? ' (과거는 ました)' : ''} → <b class="jp">${ans}</b>`,
+    say: ans, review: [ans, `${w.w} ${tail}`],
+  };
+}
+
+/* ---------- 있다(あります/います) + 위치 ---------- */
+const LIVING = [['ねこ', '고양이'], ['いぬ', '개'], ['とり', '새'], ['せんせい', '선생님'], ['ともだち', '친구'], ['おとうと', '남동생'], ['やまださん', '야마다 씨'], ['こども', '아이']];
+const THINGS = [['ほん', '책'], ['ケーキ', '케이크'], ['かばん', '가방'], ['はな', '꽃'], ['みかん', '귤'], ['ペン', '펜'], ['テレビ', '텔레비전'], ['じてんしゃ', '자전거'], ['トイレ', '화장실']];
+const PLACES = [['テレビ', '텔레비전'], ['こたつ', '고타쓰'], ['がっこう', '학교'], ['としょかん', '도서관'], ['こうえん', '공원'], ['コンビニ', '편의점'], ['いす', '의자'], ['パンや', '빵집'], ['みせ', '가게'], ['へや', '방']];
+const POSITIONS = [['うえ', '위'], ['した', '아래'], ['なか', '안'], ['となり', '옆'], ['ひだり', '왼쪽'], ['みぎ', '오른쪽'], ['まえ', '앞'], ['うしろ', '뒤']];
+const pickOne = a => a[Math.random() * a.length | 0];
+const josa = (word, a, b) => (word.charCodeAt(word.length - 1) - 0xAC00) % 28 ? a : b;
+
+function makeAruQ() {
+  const alive = Math.random() < 0.5;
+  const [obj, objKr] = pickOne(alive ? LIVING : THINGS);
+  let [place, placeKr] = pickOne(PLACES);
+  while (place === obj) [place, placeKr] = pickOne(PLACES);
+  const [pos, posKr] = pickOne(POSITIONS);
+  const verb = alive ? 'います' : 'あります', wrongVerb = alive ? 'あります' : 'います';
+  const kr = `${placeKr} ${posKr}에 ${objKr}${josa(objKr, '이', '가')} 있습니다.`;
+  const why = alive ? `${objKr}${josa(objKr, '은', '는')} 스스로 움직일 수 있어서 います` : `${objKr}${josa(objKr, '은', '는')} 스스로 움직일 수 없어서 あります${obj === 'はな' ? ' (꽃은 살아 있어도 あります!)' : ''}`;
+  const right = `${place}の ${pos}に ${obj}が ${verb}。`;
+  if (Math.random() < 0.45) {
+    return {
+      w: null,
+      prompt: `<div class="label">（　）에 알맞은 말은?</div><div class="meaning jp" style="font-size:22px">${place}の ${pos}に ${obj}が（　）。</div><div class="small-note">${kr}</div>`,
+      opts: [{ text: 'あります', jp: true, ok: verb === 'あります' }, { text: 'います', jp: true, ok: verb === 'います' }],
+      explain: `${why}<br><b class="jp">${right}</b>`, say: right, review: [right, kr],
+    };
+  }
+  let [p2] = pickOne(POSITIONS.filter(p => p[0] !== pos));
+  const wrongs = [
+    `${place}の ${pos}に ${obj}が ${wrongVerb}。`,
+    `${place}の ${p2}に ${obj}が ${verb}。`,
+    pickOne([`${place} ${pos}に ${obj}が ${verb}。`, `${place}の ${pos}を ${obj}が ${verb}。`]),
+  ];
+  return {
+    w: null,
+    prompt: `<div class="label">일본어로 바르게 옮긴 것은?</div><div class="meaning">${kr}</div>`,
+    opts: shuffle([{ text: right, ok: true, jp: true }, ...wrongs.map(x => ({ text: x, jp: true }))]),
+    explain: `[장소]の [위치]に [대상]が あります/います. ${why}, ${posKr} = ${pos}`, say: right, review: [right, kr],
+  };
+}
+
+/* ---------- 시간 · 요일 (6과) ---------- */
+const HOURS = ['', 'いちじ', 'にじ', 'さんじ', 'よじ', 'ごじ', 'ろくじ', 'しちじ', 'はちじ', 'くじ', 'じゅうじ', 'じゅういちじ', 'じゅうにじ'];
+const HOUR_WRONG = { 4: ['よんじ', 'しじ', 'よっじ'], 7: ['ななじ', 'なのじ', 'しっじ'], 9: ['きゅうじ', 'くうじ', 'きゅじ'], 1: ['いっじ', 'ひとじ'], 6: ['ろっじ'], 8: ['はっじ'] };
+const DAYS = [['げつようび', '月ようび', '월요일'], ['かようび', '火ようび', '화요일'], ['すいようび', '水ようび', '수요일'], ['もくようび', '木ようび', '목요일'], ['きんようび', '金ようび', '금요일'], ['どようび', '土ようび', '토요일'], ['にちようび', '日ようび', '일요일']];
+const MINUTES = [[1, 'いっぷん', ['いちふん', 'いっふん']], [3, 'さんぷん', ['さんふん', 'さんぶん']], [6, 'ろっぷん', ['ろくふん', 'ろくぷん']], [8, 'はっぷん', ['はちぷん', 'はっふん']], [10, 'じゅっぷん', ['じゅうふん', 'じゅっふん']], [30, 'はん', ['さんじゅうふん', 'さんじゅっふん']], [5, 'ごふん', ['ごぷん', 'ごっぷん']], [4, 'よんぷん', ['よんふん', 'よふん']]];
+
+function makeTimeQ() {
+  const r = Math.random();
+  if (r < 0.5) {
+    const h = pickOne([4, 4, 7, 7, 9, 9, 1, 2, 3, 5, 6, 8, 10, 11, 12]);
+    const ans = HOURS[h];
+    const wrongs = [...new Set([...(HOUR_WRONG[h] || []), ...shuffle(HOURS.filter(x => x && x !== ans)).slice(0, 2)])].filter(x => x !== ans).slice(0, 3);
+    return {
+      w: null,
+      prompt: `<div class="label">いま 何時ですか。— 읽는 법은?</div><div class="big-word">${h}時</div>`,
+      opts: shuffle([{ text: ans, ok: true, jp: true }, ...wrongs.map(x => ({ text: x, jp: true }))]),
+      explain: `<b class="jp">${h}時 = ${ans}</b>${[4, 7, 9].includes(h) ? '<br>4시 よじ · 7시 しちじ · 9시 くじ는 특별하게 읽어요!' : ''}`,
+      say: `いま ${ans}です。`, review: [ans, h + '시'],
+    };
+  }
+  if (r < 0.85) {
+    const [ans, kanji, kr] = pickOne(DAYS);
+    const byKanji = Math.random() < 0.5;
+    const wrongs = shuffle(DAYS.filter(d => d[0] !== ans)).slice(0, 3).map(d => d[0]);
+    return {
+      w: null,
+      prompt: byKanji ? `<div class="label">읽는 법은?</div><div class="big-word jp">${kanji}</div>` : `<div class="label">일본어로 하면?</div><div class="meaning">${kr}</div>`,
+      opts: shuffle([{ text: ans, ok: true, jp: true }, ...wrongs.map(x => ({ text: x, jp: true }))]),
+      explain: `<b class="jp">${kanji} = ${ans}</b> (${kr})`, say: ans, review: [ans, kr],
+    };
+  }
+  const [m, ans, wr] = pickOne(MINUTES);
+  return {
+    w: null,
+    prompt: `<div class="label">읽는 법은? <small>(지도서 보충: 분)</small></div><div class="big-word">${m}分</div>`,
+    opts: shuffle([{ text: ans, ok: true, jp: true }, ...wr.map(x => ({ text: x, jp: true })), { text: pickOne(MINUTES.filter(x => x[1] !== ans))[1], jp: true }].filter((o, i, a) => a.findIndex(x => x.text === o.text) === i)).slice(0, 4),
+    explain: `<b class="jp">${m}分 = ${ans}</b>${m === 30 ? ' (さんじゅっぷん이라고도 해요)' : ''}`, say: ans, review: [ans, m + '분'],
+  };
 }
 
 /* ============================================================
@@ -1424,6 +1995,7 @@ function quizPool() {
   let ws = scopeWords();
   if (S.quizMode === 'kanji') ws = ws.filter(w => w.k && !/^-/.test(w.k));
   if (S.quizMode === 'conj') { ws = ws.filter(adjType); if (!ws.length) ws = WORDS.filter(adjType); }
+  if (S.quizMode === 'vgroup' || S.quizMode === 'masu') { ws = ws.filter(isVerb); if (!ws.length) ws = WORDS.filter(isVerb); }
   return ws;
 }
 
@@ -1460,8 +2032,9 @@ function makePriceQ() {
 }
 
 function startQuiz() {
-  if (S.quizMode === 'price') {
-    quiz = { qs: Array.from({ length: QN }, makePriceQ), i: 0, score: 0, wrong: [] };
+  const gen = { price: makePriceQ, aru: makeAruQ, time: makeTimeQ }[S.quizMode];
+  if (gen) {
+    quiz = { qs: Array.from({ length: QN }, gen), i: 0, score: 0, wrong: [] };
     return renderQuestion();
   }
   const pool = quizPool();
@@ -1476,7 +2049,9 @@ function startQuiz() {
 // 같은 개수를 뜻하는 말(ひとつ·いっこ)은 서로 오답 보기로 쓰지 않기
 const COUNTS = { ひとつ: 1, ふたつ: 2, みっつ: 3, よっつ: 4, いつつ: 5, むっつ: 6, ななつ: 7, やっつ: 8, ここのつ: 9, とお: 10,
   いっこ: 1, にこ: 2, さんこ: 3, よんこ: 4, ごこ: 5, ろっこ: 6, ななこ: 7, はっこ: 8, きゅうこ: 9, じゅっこ: 10 };
-const clash = (a, b) => COUNTS[a.bare] && COUNTS[a.bare] === COUNTS[b.bare];
+const SYNONYMS = [['キャラべん', 'キャラクターべんとう'], ['ごめんなさい', 'すみません'], ['うん', 'うんうん', 'はい'], ['ああ', 'あ', 'わあ'],
+  ['とくいだ', 'じょうずだ'], ['いらっしゃい', 'いらっしゃいませ', 'ようこそ'], ['あの', 'あのう'], ['ともだち', 'ゆうじん']];
+const clash = (a, b) => (COUNTS[a.bare] && COUNTS[a.bare] === COUNTS[b.bare]) || SYNONYMS.some(g => g.includes(a.bare) && g.includes(b.bare));
 function distractors(w, key) {
   const ok = x => x.id !== w.id && x[key] !== w[key] && !clash(w, x);
   const same = shuffle(WORDS.filter(x => ok(x) && x.pos === w.pos));
@@ -1489,6 +2064,8 @@ function distractors(w, key) {
 function makeQ(w) {
   const mode = S.quizMode;
   if (mode === 'conj') return makeConjQ(w);
+  if (mode === 'vgroup') return makeVerbGroupQ(w);
+  if (mode === 'masu') return makeMasuQ(w);
   const key = mode === 'jp2kr' ? 'm' : 'w';
   const prompt = mode === 'jp2kr'
     ? `<div class="label">이 단어의 뜻은?</div><div class="big-word jp">${esc(w.w)}</div>${w.k ? `<div class="kanji-sub jp">${esc(w.k)}</div>` : ''}`
@@ -1574,15 +2151,16 @@ function renderQuizEnd() {
 ============================================================ */
 let spell = null;
 const isKata = s => /[ァ-ヶ]/.test(s);
-const CHARS_H = [...new Set(WORDS.filter(w => !isKata(w.bare)).flatMap(w => [...w.bare]))];
-const CHARS_K = [...new Set(WORDS.filter(w => isKata(w.bare)).flatMap(w => [...w.bare]))];
+const spellChars = w => [...w.bare.replace(/\s/g, '')];
+const CHARS_H = [...new Set(WORDS.filter(w => !isKata(w.bare)).flatMap(spellChars))];
+const CHARS_K = [...new Set(WORDS.filter(w => isKata(w.bare)).flatMap(spellChars))];
 
 function startSpell() {
-  const pool = scopeWords().filter(w => [...w.bare].length >= 2);
+  const pool = scopeWords().filter(w => spellChars(w).length >= 2);
   const area = $('#spellArea');
   if (!pool.length) { area.innerHTML = `<div class="panel empty">${emptyMsg()}</div>`; return; }
   const w = shuffle(pool).sort((a, b) => box(a.id) - box(b.id))[Math.random() * Math.min(5, pool.length) | 0];
-  const chars = [...w.bare];
+  const chars = spellChars(w);
   const src = (isKata(w.bare) ? CHARS_K : CHARS_H).filter(c => !chars.includes(c));
   const extra = shuffle(src).slice(0, Math.min(3, Math.max(2, 7 - chars.length)));
   spell = { w, chars, tiles: shuffle([...chars, ...extra]).map((c, i) => ({ c, i, used: false })), picked: [], done: false, hinted: false };
@@ -1746,9 +2324,9 @@ function conjTable(w, noun, krList) {
 const ADJS = WORDS.filter(adjType);
 const findW = bare => WORDS.find(w => w.bare === bare);
 $('#iTable').innerHTML = conjTable(findW('かわいい'), 'いぬ',
-  ['귀엽다', '귀엽습니다', '귀여운 개', '귀엽지 않습니다', '귀여웠습니다', '귀엽지 않았습니다', '안 귀여워', '귀여웠어']);
+  ['귀엽다', '귀엽습니다', '귀여운 개', '귀엽고, 귀여워서', '귀엽지 않습니다', '귀엽지 않습니다 (더 정중)', '귀여웠습니다', '귀엽지 않았습니다', '안 귀여워', '귀여웠어']);
 $('#naTable').innerHTML = conjTable(findW('きれいだ'), 'へや',
-  ['예쁘다', '예쁩니다', '깨끗한 방', '예쁘지 않습니다', '예뻤습니다', '예쁘지 않았습니다', '안 예뻐', '예뻤어']);
+  ['예쁘다', '예쁩니다', '깨끗한 방', '예쁘고, 예뻐서', '예쁘지 않습니다', '예쁘지 않습니다 (더 정중)', '예뻤습니다', '예쁘지 않았습니다', '안 예뻐', '예뻤어']);
 
 const chip = w => `<button data-adj="${w.id}">${esc(w.w)}<small>${esc(w.m)}</small></button>`;
 $('#adjIChips').innerHTML = ADJS.filter(w => adjType(w) === 'i').map(chip).join('');
@@ -1848,6 +2426,62 @@ const EXERCISES = {
       opts: ['다나카는 케이크를 두 개 샀다.', '야마다는 말차 케이크를 골랐다.', '다나카는 딸기 케이크를 골랐다.', '말차 케이크는 한 개에 300엔이다.', '다나카가 지불해야 하는 금액은 600엔이다.'], a: 2,
       why: '다나카는 딸기 케이크를 세 개(みっつ) 사서 900엔을 내요. 야마다도 딸기를 골랐고, 300엔은 딸기 케이크 한 개 값이에요.' },
   ] },
+  l5: { type: 'mc', items: [
+    { say: 'なにに しますか。ラーメンに します。', q: '무엇으로 하기로 했나요?', opts: ['라멘', '소바', '규동'], a: 0, why: 'ラーメンに します = 라멘으로 하겠습니다.' },
+    { say: 'おまたせしました。いただきます。', q: '어떤 장면일까요?', opts: ['음식이 나오고 먹기 시작하는 장면', '다 먹고 나가는 장면', '가게에 들어가는 장면'], a: 0, why: 'おまたせしました(오래 기다리셨습니다) → いただきます(잘 먹겠습니다).' },
+  ] },
+  f5: { type: 'fix', items: [
+    ['고타쓰 위에 귤이 있습니다.', 'こたつの ＿＿に みかんが ＿＿＿。', 'こたつの [うえ]に みかんが [あります]。', '귤은 사물 → あります'],
+    ['텔레비전 앞에 고양이가 있습니다.', 'テレビの ＿＿に ねこが ＿＿＿。', 'テレビの [まえ]に ねこが [います]。', '고양이는 동물 → います'],
+    ['조용하고 넓습니다. (しずかだ)', '＿＿＿ ひろいです。', '[しずかで] ひろいです。', 'な형용사 연결형: だ → で'],
+    ['가격도 비싸지 않습니다. (たかい)', 'ねだんも ＿＿＿。', 'ねだんも [たかく ないです]。', 'い형용사 부정: い → く + ないです'],
+    ['이 가방은 크고 무겁습니다 = 이 가방은 무겁고 큽니다.', 'この かばんは ＿＿＿ おおきいです。', 'この かばんは [おもくて] おおきいです。', 'おもい는 い형용사 → おもくて'],
+    ['다나카 씨는 친절하고 영어를 잘합니다 = 영어를 잘하고 친절합니다.', 'たなかさんは えいごが ＿＿＿ しんせつです。', 'たなかさんは えいごが [とくいで] しんせつです。', 'とくいだ는 な형용사 → とくいで'],
+    ['何 의 읽기 두 가지는?', '何', '[なん · なに]', '何時(なんじ), 何に しますか(なにに)'],
+    ['やすい를 한자로 쓰면?', 'やすい', '[安い]', '싸다'],
+  ] },
+  r5: { type: 'mc', items: [
+    { text: '佐藤：みなさん、どこですか。\n田中：わたしは 学校の 後ろです。高橋さんは？\n高橋：わたしは としょかんの 前に います。松田さんは？\n松田：ここは どこかな。となりに いぬが いますね。\n佐藤：そうですか。わたしは パンやの 中です。',
+      tts: 'みなさん、どこですか。わたしは がっこうの うしろです。たかはしさんは？ わたしは としょかんの まえに います。まつださんは？ ここは どこかな。となりに いぬが いますね。そうですか。わたしは パンやの なかです。',
+      kr: '사토: 여러분, 어디예요?\n다나카: 저는 학교 뒤예요. 다카하시 씨는?\n다카하시: 저는 도서관 앞에 있어요. 마쓰다 씨는?\n마쓰다: 여기가 어디지. 옆에 개가 있네요.\n사토: 그래요? 저는 빵집 안이에요.',
+      q: '다카하시는 어디에 있나요?', opts: ['도서관 앞', '도서관 뒤', '학교 뒤', '빵집 안'], a: 0, why: 'としょかんの 前に います = 도서관 앞에 있습니다.' },
+    { q: '(위 대화) 마쓰다는 어디에 있나요?', opts: ['개 옆', '학교 뒤', '빵집 안', '도서관 앞'], a: 0, why: 'となりに いぬが いますね = 옆에 개가 있네요.' },
+    { q: '(위 대화) 사토는 어디에 있나요?', opts: ['빵집 안', '빵집 앞', '학교 뒤', '편의점 옆'], a: 0, why: 'パンやの 中です = 빵집 안입니다.' },
+  ] },
+  l6: { type: 'mc', items: [
+    { say: 'いま、なんじですか。よじです。', q: '지금 몇 시인가요?', opts: ['4시', '7시', '9시'], a: 0, why: 'よじ = 4시. 7시는 しちじ, 9시는 くじ.' },
+    { say: 'どうしたの？あたまが いたくて。', q: '무슨 일이에요?', opts: ['머리가 아파서', '방이 추워서', '가방이 무거워서'], a: 0, why: 'あたまが いたくて = 머리가 아파서.' },
+    { say: 'すしは どうですか。すしは ちょっと。', q: '초밥을 권하자 어떻게 했나요?', opts: ['거절했다', '좋다고 했다', '두 개 주문했다'], a: 0, why: '～は ちょっと…… = 돌려서 거절하는 말.' },
+  ] },
+  f6: { type: 'fix', items: [
+    ['갔습니다', '行きます → ＿＿＿', '行きます → [行きました]', 'ます → ました'],
+    ['먹습니다', '食べる → ＿＿＿', '食べる → [食べます]', '2그룹: る를 떼고 ます'],
+    ['します의 기본형은?', '＿＿＿ ← します', '[する] ← します', '3그룹 する'],
+    ['왔습니다', '来る → ＿＿＿', '来る → [来(き)ました]', '3그룹 くる → きます → きました'],
+    ['앉습니다', 'すわる → ＿＿＿', 'すわる → [すわります]', 'る 앞 わ가 あ단 → 1그룹 → る를 り로'],
+    ['배열: 매일 친구와 공부를 합니다. (します / べんきょうを / 友だちと / まいにち)', '＿＿ ＿＿ ＿＿ ＿＿。', '[まいにち 友だちと べんきょうを します]。', '때 → 누구와 → 무엇을 → 동사'],
+    ['배열: 어제 다코야키를 먹었습니다. (食べました / たこやきを / きのう)', '＿＿ ＿＿ ＿＿。', '[きのう たこやきを 食べました]。', ''],
+    ['카페 영업: 火ようび ～ 日ようび. 쉬는 날을 히라가나로?', '＿＿＿＿＿', '[げつようび]', '화~일 영업 → 월요일 휴무'],
+    ['いく · みる · くる를 한자로 쓰면?', 'いく / みる / くる', '[行く / 見る / 来る]', ''],
+  ] },
+  r6: { type: 'mc', items: [
+    { text: '田中：きのう 何を しましたか。\nロイ：松田さんと 会いました。そして いっしょに ケーキを 食べました。\n田中：いいですね。\nロイ：あした 松田さんと えいがを 見ます。いっしょに どうですか。\n田中：あしたは ちょっと……。',
+      tts: 'きのう なにを しましたか。まつださんと あいました。そして いっしょに ケーキを たべました。いいですね。あした まつださんと えいがを みます。いっしょに どうですか。あしたは ちょっと。',
+      kr: '다나카: 어제 무엇을 했어요?\n로이: 마쓰다 씨와 만났어요. 그리고 함께 케이크를 먹었어요.\n다나카: 좋네요.\n로이: 내일 마쓰다 씨와 영화를 봐요. 함께 어때요?\n다나카: 내일은 좀…….',
+      q: '대화의 내용으로 알맞은 것은?',
+      opts: ['다나카는 어제 마쓰다를 만났다.', '로이는 내일 다나카와 만나기로 했다.', '로이는 어제 마쓰다와 함께 영화를 봤다.', '로이는 어제 마쓰다와 함께 케이크를 먹었다.', '다나카는 내일 로이와 함께 영화를 볼 예정이다.'], a: 3,
+      why: '어제 마쓰다를 만나 케이크를 먹은 사람은 로이. 내일 로이는 마쓰다와 영화를 보고, 다나카는 거절했어요(あしたは ちょっと).' },
+  ] },
+  oxFood: { type: 'ox', items: [
+    ['일본의 식당에서는 추가 반찬이 무료로 나온다.', false, '추가 반찬은 무료가 아니에요.'],
+    ['세계 최초의 인스턴트 라면은 일본에서 만들어졌다.', true, '1958년 안도 모모후쿠의 치킨라멘. 1971년에는 최초의 컵라면도 나왔어요.'],
+    ['일본에서 면 요리를 가위로 잘라 먹는 것은 식사 예절에 어긋난다.', true, '면은 자르지 않고 먹어요.'],
+  ] },
+  oxTraffic: { type: 'ox', items: [
+    ['일본 버스에는 비상문이 있다.', true, '문을 못 쓸 때를 대비해 뒤쪽에 비상문이 있어요.'],
+    ['일본에서는 자전거에도 주차 위반 과태료를 부과한다.', true, '도쿄에서는 3,000엔 정도의 보관료를 내야 돌려받아요.'],
+    ['일본에서는 운전면허를 따면 2년간 초보 운전 표지를 붙여야 한다.', false, '2년이 아니라 1년이에요.'],
+  ] },
   oxHome: { type: 'ox', items: [
     ['일본은 220V의 전압을 사용한다.', false, '일본은 100V를 사용해요.'],
     ['일본의 모든 주택에는 와시쓰가 있다.', false, '최근 새로 지은 집에는 와시쓰가 없는 경우가 늘고 있어요.'],
@@ -1920,6 +2554,29 @@ document.querySelectorAll('[data-ex]').forEach(el => el.addEventListener('click'
     speak(item.querySelector('.answer [data-say]').dataset.say);
   }
 }));
+// 동사 판별기 (6과)
+{
+  const verbs = WORDS.filter(isVerb);
+  const label = w => `${w.w}${w.k ? ' (' + w.k + ')' : ''} ${w.m}${w.l === 'V' ? ' · 심화' : ''}`;
+  $('#verbSelect').innerHTML = [1, 2, 3].map(g => `<optgroup label="${g}그룹">${verbs.filter(w => vGroup(w) === g)
+    .map(w => `<option value="${w.id}">${esc(label(w))}</option>`).join('')}</optgroup>`).join('');
+  const render = () => {
+    const w = byId[$('#verbSelect').value];
+    $('#verbOut').innerHTML = `<div class="rule"><span class="jp">${esc(w.w)}</span> → <b>${vGroup(w)}그룹</b><br><small>${vReason(w)}</small></div>
+      <div class="tbl-wrap"><table class="ctbl tight">
+        <tr data-say="${w.tts}"><td style="white-space:nowrap">기본형</td><td class="j">${esc(w.w)}</td><td>${esc(w.m)}</td></tr>
+        <tr data-say="${masu(w)}"><td style="white-space:nowrap">~ます</td><td class="j">${masu(w)}</td><td>${esc(masuRule(w))}</td></tr>
+        <tr data-say="${masu(w, 'ました')}"><td style="white-space:nowrap">~ました</td><td class="j">${masu(w, 'ました')}</td><td>과거</td></tr>
+        <tr data-say="${masu(w, 'ません')}"><td style="white-space:nowrap">~ません</td><td class="j">${masu(w, 'ません')}</td><td>부정 (교과서 밖 심화)</td></tr>
+      </table></div>`;
+  };
+  $('#verbSelect').value = verbs.find(w => w.bare === 'すわる').id;
+  $('#verbSelect').onchange = render; render();
+  const hot = new Set([4, 7, 9]);
+  let rows = '';
+  for (let h = 1; h <= 6; h++) rows += `<tr>${[h, h + 6].map(x => `<td data-say="${HOURS[x]}" class="${hot.has(x) ? 'hot' : ''}">${x}時<br><span class="jp">${HOURS[x]}</span></td>`).join('')}</tr>`;
+  $('#hourTable').innerHTML = `<div class="tbl-wrap"><table class="ctbl num">${rows}</table></div>`;
+}
 $('#exReset').onclick = () => { renderExercises(); toast('문제를 다시 섞었어요'); };
 
 // 숫자표
@@ -2014,8 +2671,85 @@ const STORIES = {
       ['うれしかったです', 'うれしい의 과거 정중형 (い → かったです)'],
     ],
   },
+  5: {
+    goals: [['선택', '何に しますか。'], ['식사', 'いただきます。'], ['존재·장소', 'コンビニの となりに あります。']],
+    scene: '일본에서 만난 친구들이 식당에서 음식을 먹습니다. (교과서 88~89쪽)',
+    lines: [
+      ['환영 피켓', '日本へ ようこそ！\n♥김소미 이지호♥', '일본에 오신 것을 환영합니다!', 'にほんえ ようこそ！'],
+      ['리코', 'ソミちゃん、ジホくん！', '소미야, 지호 군!'],
+      ['소미', 'いろいろ ありますね。', '여러 가지 있네요.'],
+      ['리코', '何に しますか。', '무엇으로 할래요?', 'なにに しますか。'],
+      ['지호', 'ぼくは これに します。', '나는 이걸로 할게요.'],
+      ['점원', 'おまたせしました。', '오래 기다리셨습니다.'],
+      ['모두', 'いただきます。', '잘 먹겠습니다.'],
+      ['소미', 'この 店、安くて おいしいですね。', '이 가게, 싸고 맛있네요.', 'この みせ、やすくて おいしいですね。'],
+      ['하루토', 'うんうん。', '응응.'],
+      ['리코', 'ジホくん、からいですか。', '지호 군, 매워요?'],
+      ['지호', 'いいえ、ぜんぜん からく ないです。だいじょうぶです。', '아니요, 전혀 맵지 않아요. 괜찮아요.'],
+      ['소미', 'ああ、おなかが いっぱい。', '아, 배부르다.'],
+      ['지호', 'あのう、トイレは どこですか。', '저기, 화장실은 어디입니까?'],
+      ['점원', 'トイレは コンビニの となりに あります。', '화장실은 편의점 옆에 있습니다.'],
+    ],
+    questions: [
+      ['식사하기 전에 하는 인사말을 찾아봅시다.', 'いただきます。(잘 먹겠습니다)'],
+      ['화장실은 어디에 있습니까?', 'トイレは コンビニの となりに あります。(편의점 옆)'],
+    ],
+    notes: [
+      ['日本へ ようこそ！', '일본에 오신 것을 환영합니다!'],
+      ['ぼくは これに します。', '나는 이걸로 할게요.'],
+      ['この 店、安くて おいしいですね。', '이 가게, 싸고 맛있네요.'],
+      ['トイレは コンビニの となりに あります。', '화장실은 편의점 옆에 있습니다.'],
+    ],
+    points: [
+      ['日本へ ようこそ', '(장소)へ ようこそ = ~에 오신 것을 환영합니다'],
+      ['何に しますか / これに します', '무엇으로 할지 묻고 답하는 선택 표현'],
+      ['おまたせしました', '점원이 음식을 내며 "오래 기다리셨습니다"'],
+      ['安くて おいしい', 'い형용사 연결형 くて (~하고)'],
+      ['ぜんぜん からく ないです', 'ぜんぜん + 부정 = 전혀 ~지 않다'],
+      ['おなかが いっぱい', '배부르다 (배고프다는 おなかが ぺこぺこ)'],
+      ['コンビニの となりに あります', '[장소]の [위치]に あります (화장실은 사물 → あります)'],
+    ],
+  },
+  6: {
+    goals: [['시간·때', 'いま、何時ですか。'], ['거절·사양', 'わたしは ちょっと……。'], ['상황 설명', '高い ところが こわくて……。']],
+    scene: '지호가 친구들과 함께 스카이트리를 구경하고 블로그에 글을 올렸습니다. (교과서 104~105쪽)',
+    lines: [
+      ['소미', 'いま 何時ですか。', '지금 몇 시예요?', 'いま なんじですか。'],
+      ['하루토', '７時。', '7시.', 'しちじ。'],
+      ['리코', 'じゃ、そろそろ……。', '그럼, 슬슬…….'],
+      ['지호', 'あ、あれ 何ですか。', '아, 저거 뭐예요?', 'あ、あれ なんですか。'],
+      ['하루토', 'スカイツリー。', '스카이트리.'],
+      ['하루토', 'いまから 行く？', '지금 갈래?', 'いまから いく？'],
+      ['지호·리코', '行きます！', '갈래요!', 'いきます！'],
+      ['지호', 'わくわくします！', '설렙니다!'],
+      ['소미', 'わたしは ちょっと……。', '저는 좀…….'],
+      ['하루토', 'どうしたの？', '무슨 일이야?'],
+      ['소미', '高い ところが こわくて……。\nごめんなさい。みなさんは ぜひ！', '높은 곳이 무서워서……. / 미안해요. 여러분은 꼭!', 'たかい ところが こわくて。ごめんなさい。みなさんは ぜひ！'],
+      ['지호의 블로그', 'きのう 日本の 友だちに 会いました。\nスカイツリーに 行きました。\n夜の 東京を 見ました。\nけしきが きれいでした。\nとても たのしかったです。', '어제 일본 친구를 만났습니다. / 스카이트리에 갔습니다. / 밤의 도쿄를 봤습니다. / 경치가 예뻤습니다. / 아주 즐거웠습니다.', 'きのう にほんの ともだちに あいました。スカイツリーに いきました。よるの とうきょうを みました。けしきが きれいでした。とても たのしかったです。'],
+    ],
+    questions: [
+      ['거절 표현을 찾아봅시다.', 'わたしは ちょっと……。(저는 좀……)'],
+      ['지금은 몇 시인지 히라가나로 써 봅시다.', 'しちじ (7時)'],
+    ],
+    notes: [
+      ['高い ところが こわくて……。', '높은 곳이 무서워서…….'],
+      ['きのう 日本の 友だちに 会いました。', '어제 일본 친구를 만났습니다.'],
+      ['夜の 東京を 見ました。', '밤의 도쿄를 봤습니다.'],
+      ['とても たのしかったです。', '아주 즐거웠습니다.'],
+    ],
+    points: [
+      ['７時。/ スカイツリー。', '반말 대답은 명사만 (７時だ ✕)'],
+      ['いまから 行く？', '동사 기본형 + ？ 끝을 올리면 반말 질문'],
+      ['行きます！', '여기서는 "갈래요(가겠습니다)" 가까운 미래'],
+      ['わたしは ちょっと……', '말끝을 흐려 돌려서 거절'],
+      ['こわくて……', 'い형용사 くて = ~해서 (이유)'],
+      ['友だちに 会いました', '~을/를 만나다는 ～に 会う (を ✕)'],
+      ['行きました・見ました', '동사 과거 정중형 ました'],
+      ['きれいでした・たのしかったです', '형용사 과거: な형용사 でした, い형용사 かったです'],
+    ],
+  },
 };
-const SPEAKER_CLASS = { 하루토: 's1', 리코: 's2', 지호: 's3', 엄마: 's4', 점원: 's4' };
+const SPEAKER_CLASS = { 하루토: 's1', 리코: 's2', 지호: 's3', 엄마: 's4', 점원: 's4', 소미: 's5', 모두: 's6', '지호·리코': 's3' };
 const NUMS = '❶❷❸❹❺❻❼❽❾❿⓫⓬⓭⓮';
 let storyPlaying = false;
 
