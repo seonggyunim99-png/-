@@ -68,6 +68,14 @@
       width: 38px; height: 38px; border-radius: 50%; font-size: 17px;
     }
     .icon-btn.on { color: var(--accent); border-color: var(--accent); }
+    .logo, .badge { white-space: nowrap; }
+    @media (max-width: 400px) {
+      header { padding: 10px 12px; gap: 8px; }
+      .logo { font-size: 17px; gap: 5px; }
+      .head-actions { gap: 5px; }
+      .icon-btn { width: 34px; height: 34px; font-size: 15px; flex: 0 0 auto; }
+    }
+    @media (max-width: 340px) { .logo .badge { display: none; } }
 
     /* Scope & progress */
     .panel { background: var(--card); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 14px; }
@@ -354,6 +362,11 @@
     .install-panel { display: none; flex-direction: column; gap: 8px; font-size: 13px; color: var(--muted); line-height: 1.6; }
     .install-panel.show { display: flex; }
     .install-panel b { color: var(--text); }
+    .vrow { display: flex; align-items: center; gap: 10px; }
+    .vrow > span { flex: 0 0 82px; white-space: nowrap; }
+    .vrow select, .vrow input { flex: 1; min-width: 0; }
+    .vrow select { background: var(--inner); color: var(--text); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 8px; font: inherit; }
+    .vrow input[type=range] { accent-color: var(--primary); }
 
     /* EXAM-CSS-START */
     /* 모의고사 */
@@ -412,9 +425,19 @@
     <div class="head-actions">
       <span class="offline-badge" id="offlineBadge">✓ 오프라인</span>
       <button class="icon-btn" id="installBtn" title="앱으로 설치 · 오프라인 사용" aria-label="앱으로 설치하는 방법">📲</button>
+      <button class="icon-btn" id="voiceBtn" title="목소리 바꾸기" aria-label="목소리 설정">🗣️</button>
       <button class="icon-btn" id="soundBtn" title="자동 발음">🔊</button>
     </div>
   </header>
+
+  <div class="panel install-panel" id="voicePanel">
+    <div><b>🗣️ 목소리 설정</b></div>
+    <label class="vrow"><span>목소리</span><select id="voiceSelect"></select></label>
+    <label class="vrow"><span>빠르기 <b id="rateVal"></b></span><input type="range" id="rateRange" min="0.5" max="1.3" step="0.05"></label>
+    <label class="vrow"><span>높낮이 <b id="pitchVal"></b></span><input type="range" id="pitchRange" min="0.5" max="1.6" step="0.1"></label>
+    <div class="btn-row"><button class="btn slim" id="voiceTest">▶ 들어 보기</button><button class="btn slim" id="voiceReset">처음 설정으로</button></div>
+    <div id="voiceHelp"></div>
+  </div>
 
   <div class="panel install-panel" id="installPanel">
     <div><b>📲 앱으로 설치하면 인터넷 없이도 열려요</b></div>
@@ -1665,11 +1688,14 @@ function speak(text, force) {
   if (!('speechSynthesis' in window)) return;
   speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
-  u.lang = 'ja-JP'; u.rate = 0.85;
-  const v = speechSynthesis.getVoices().find(v => v.lang && v.lang.startsWith('ja'));
+  u.lang = 'ja-JP'; u.rate = S.rate || 0.85; u.pitch = S.pitch || 1;
+  const v = pickVoice();
   if (v) u.voice = v;
   speechSynthesis.speak(u);
 }
+// 이 기기에 있는 일본어 목소리 (기기마다 달라요)
+const jaVoices = () => { try { return speechSynthesis.getVoices().filter(v => v.lang && /^ja/i.test(v.lang.replace('_', '-'))); } catch (e) { return []; } };
+const pickVoice = () => { const vs = jaVoices(); return vs.find(v => v.voiceURI === S.voice) || vs.find(v => v.default) || vs[0]; };
 
 /* ============================================================
    3. 범위 선택 & 진도
@@ -2779,6 +2805,27 @@ bindSeg('#cardOrderSeg', 'cardOrder', buildDeck);
 bindSeg('#quizModeSeg', 'quizMode', startQuiz);
 bindSeg('#examSeg', 'examSet', renderExam);
 
+// 목소리 설정
+function paintVoice() {
+  const vs = jaVoices(), cur = pickVoice();
+  $('#voiceSelect').innerHTML = vs.length
+    ? vs.map((v, i) => `<option value="${esc(v.voiceURI)}" ${v === cur ? 'selected' : ''}>${esc(v.name.replace(/^(Microsoft|Google)\s*/, ''))}${v.localService === false ? ' (인터넷)' : ''}</option>`).join('')
+    : '<option>일본어 목소리가 없어요</option>';
+  $('#voiceSelect').disabled = vs.length < 2;
+  $('#rateRange').value = S.rate || 0.85; $('#rateVal').textContent = '×' + (+(S.rate || 0.85)).toFixed(2);
+  $('#pitchRange').value = S.pitch || 1; $('#pitchVal').textContent = (+(S.pitch || 1)).toFixed(1);
+  $('#voiceHelp').innerHTML = (vs.length < 2 ? `이 기기에는 일본어 목소리가 ${vs.length ? '하나뿐' : '없어'}이에요. 높낮이·빠르기로 느낌을 바꿀 수 있어요.<br>` : `이 기기의 일본어 목소리 ${vs.length}개 중에서 고를 수 있어요.<br>`)
+    + '<b>목소리 더 받기</b> · 아이폰: 설정 → 손쉬운 사용 → 읽기 및 말하기 → 음성 → 일본어 (Kyoko·Otoya 등 내려받기)<br>· 안드로이드: 설정 → 텍스트 음성 변환(TTS) → Google 음성 엔진 ⚙ → 음성 데이터 설치 → 일본어 → 목소리 고르기';
+}
+if ('speechSynthesis' in window) { try { speechSynthesis.addEventListener('voiceschanged', paintVoice); } catch (e) { speechSynthesis.onvoiceschanged = paintVoice; } }
+$('#voiceBtn').onclick = () => { paintVoice(); $('#voicePanel').classList.toggle('show'); };
+$('#voiceSelect').onchange = e => { S.voice = e.target.value; save(); speak('こんにちは。わたしの なまえは さくらです。', true); };
+$('#rateRange').oninput = e => { S.rate = +e.target.value; $('#rateVal').textContent = '×' + S.rate.toFixed(2); };
+$('#pitchRange').oninput = e => { S.pitch = +e.target.value; $('#pitchVal').textContent = S.pitch.toFixed(1); };
+$('#rateRange').onchange = $('#pitchRange').onchange = () => { save(); speak('ありがとう ございます', true); };
+$('#voiceTest').onclick = () => speak('こんにちは。いっしょに にほんごを べんきょうしましょう。', true);
+$('#voiceReset').onclick = () => { delete S.voice; S.rate = 0.85; S.pitch = 1; save(); paintVoice(); speak('こんにちは', true); };
+paintVoice();
 const paintSound = () => { $('#soundBtn').classList.toggle('on', S.sound); $('#soundBtn').textContent = S.sound ? '🔊' : '🔇'; };
 $('#soundBtn').onclick = () => { S.sound = !S.sound; save(); paintSound(); toast(S.sound ? '자동 발음 켜짐' : '자동 발음 꺼짐 (🔊 버튼은 계속 동작)'); };
 paintSound();
