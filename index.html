@@ -212,6 +212,7 @@
       padding: 11px 12px; display: grid; grid-template-columns: 34px 1fr auto; gap: 10px; align-items: center;
     }
     .row .num { font-size: 11px; color: var(--muted); text-align: center; font-weight: 700; }
+    .row .num .src { display: block; font-size: 9px; font-weight: 600; opacity: .8; white-space: nowrap; }
     .row .w { font-family: var(--jp); font-size: 19px; font-weight: 800; cursor: pointer; }
     .row .w small { font-size: 13px; color: var(--secondary); margin-left: 6px; }
     .row .m { font-size: 13px; color: var(--muted); margin-top: 2px; word-break: keep-all; }
@@ -1377,8 +1378,8 @@ const RAW = [
   ['A','かえる','帰る','카에루','동사','돌아오다, 돌아가다','おかえり의 かえり가 여기서 나와요'],
 
   // 교과서·지도서에서 추가 (본문, 듣고 말하기, 확인하기, 보충 설명)
-  ['B','おとうさん','お父さん','오토-상','명사','(남의) 아버지, 아버님','남의 가족을 말할 때, 내 아버지를 직접 부를 때. 남에게 내 아버지는 ちち'],
-  ['B','おかあさん','お母さん','오카-상','명사','(남의) 어머니, 어머님','남에게 내 어머니는 はは'],
+  ['B','おとうさん','お父さん','오토-상','명사','(남의) 아버지 / (직접 부를 때) 아빠','남의 가족을 말할 때, 내 아버지를 직접 부를 때. 남에게 내 아버지는 ちち'],
+  ['B','おかあさん','お母さん','오카-상','명사','(남의) 어머니 / (직접 부를 때) 엄마','남의 가족을 말할 때, 내 어머니를 직접 부를 때. 남에게 내 어머니는 はは'],
   ['B','おにいさん','お兄さん','오니-상','명사','(남의) 형, 오빠','남에게 내 형·오빠는 あに'],
   ['B','おねえさん','お姉さん','오네-상','명사','(남의) 누나, 언니','남에게 내 누나·언니는 あね'],
   ['B','おとうとさん','弟さん','오토-토상','명사','(남의) 남동생','남에게 내 남동생은 おとうと'],
@@ -1512,21 +1513,78 @@ const RAW = [
   ['M','てみやげ','手土産','테미야게','명사','(방문할 때 들고 가는) 선물, 먹거리','가정 방문 때 들고 가요. おみやげ는 여행 기념 선물'],
 ];
 
+/* 교과서 단어장 밖의 단어를 각 과의 알맞은 자리에 끼워 넣기
+   [과, 이 단어 바로 뒤에, '묶음:단어 …'] (교과서·지도서에 나오는 순서대로)
+   묶음: A 3과 활동지 · B 교과서·지도서 · C 지도서 보충 형용사 · N 숫자·개수 · V 심화 동사 · M 수업 필기 */
+const PLACE = [
+  // 3과: 가족 → 인사 → 형용사 → 호칭 → 지시어 → 확인하기
+  [3, 'いもうと', 'B:おとうさん B:おかあさん B:おにいさん B:おねえさん B:おとうとさん B:いもうとさん B:おにいちゃん B:おねえちゃん B:おじいさん B:おばあさん B:わたし B:ぼく B:～の'],
+  [3, 'おかえり', 'A:かえる'],
+  [3, 'おじゃまします', 'B:こんにちは B:どうぞ B:しつれいします M:てみやげ'],
+  [3, 'ゆうめいだ', 'A:あつい A:ひまだ A:ちいさい A:たのしい A:べんりだ A:さむい A:まじめだ A:あたたかい A:たいせつだ A:せまい A:きらいだ'
+    + ' C:あかい C:くろい C:おそい C:はやい C:きたない C:すずしい C:とおい C:ちかい C:ひくい C:あまい C:かるい'
+    + ' C:しあわせだ C:ていねいだ C:ふくざつだ C:ふべんだ C:へただ C:へんだ C:りっぱだ'
+    + ' A:かしゅ A:ひと A:かばん A:がくせい A:トマト A:テスト'],
+  [3, '-くん', 'B:-さん B:-さま B:せんせい'],
+  [3, 'それ', 'B:あれ B:どれ'],
+  [3, 'まんが', 'B:にほん'],
+  [3, 'この', 'B:どの'],
+  [3, 'おいしい', 'B:りょうり'],
+  [3, 'おふろ', 'B:めがね B:ゲーム B:こうこう B:いちねんせい'],
+  // 4과: 개수 → 공예품 → 과일 → 숫자·가격 → 사과 표현 → 축하 → 비교 → 가게
+  [4, 'いつつ', 'N:むっつ N:ななつ N:やっつ N:ここのつ N:とお B:まねきねこ B:おまもり B:だるま B:てまり B:こけし'],
+  [4, 'もも', 'B:すいか'],
+  [4, 'みかん', 'B:かき B:かさ N:いち N:に N:さん N:よん N:ご N:ろく N:なな N:はち N:きゅう N:じゅう'],
+  [4, 'ひゃく', 'N:にひゃく N:さんびゃく N:よんひゃく N:ごひゃく N:ろっぴゃく N:ななひゃく N:はっぴゃく N:きゅうひゃく'],
+  [4, 'せん', 'N:にせん N:さんぜん N:よんせん N:ごせん N:ろくせん N:ななせん N:はっせん N:きゅうせん'],
+  [4, 'いちまん', 'N:いっこ N:にこ N:さんこ N:よんこ N:ごこ N:ろっこ N:ななこ N:はっこ N:きゅうこ N:じゅっこ'],
+  [4, 'すみません', 'M:すむ M:ごめん M:ごめんなさい M:もうしわけございません'],
+  [4, 'ありがとう', 'B:～ございます B:おはよう'],
+  [4, 'そつぎょう', 'B:せんぱい'],
+  [4, 'ほう', 'B:やま B:くだもの B:いちばん B:なに'],
+  [4, 'いらっしゃいませ', 'B:てるてるぼうず'],
+  [4, 'まち', 'B:とうきょう'],
+  // 6과: 교과서 동사 뒤에 그룹 연습용 심화 동사
+  [6, 'する', 'V:はいる V:はしる V:しる V:きる V:おきる V:ねる V:でる V:わかる V:つくる V:かく V:のむ V:かう V:まつ V:きく'],
+];
+const SRC = { A: '활동지', B: '교과서', C: '보충', N: '보충', V: '심화', M: '필기' };
+
 const WORDS = [];
 { const cnt = {3: 0, 4: 0, 5: 0, 6: 0, A: 0, B: 0, C: 0, N: 0, V: 0, M: 0};
-  // 공식 단어장(3~6과)에 있는 단어는 다른 묶음에서 빼기 (번호는 그대로 둬서 기록이 안 섞이게)
+  // 공식 단어장(3~6과)에 있는 단어는 다른 묶음에서 빼기. id는 예전 그대로 둬서 외운 기록이 안 섞이게
   const key = r => r[1].replace(/[～\-]/g, '') + '|' + r[4];
   const official = new Set(RAW.filter(r => typeof r[0] === 'number').map(key));
+  const all = [];
   RAW.forEach(([l, w, k, p, pos, m, n, tts]) => {
     cnt[l]++;
-    if (typeof l !== 'number' && official.has(key([l, w, k, p, pos]))) return;
-    WORDS.push({ id: `${l}-${cnt[l]}`, l, no: cnt[l], w, k, p, pos, m, n,
+    const extra = typeof l !== 'number';
+    if (extra && official.has(key([l, w, k, p, pos]))) return;
+    all.push({ id: `${l}-${cnt[l]}`, l: extra ? 0 : l, src: extra ? l : '', no: 0, w, k, p, pos, m, n,
       tts: tts || w.replace(/[～\-]/g, ''), bare: w.replace(/[～\-]/g, '') });
   });
+  const extras = new Map(all.filter(x => x.src).map(x => [x.src + ':' + x.w, x]));
+  const after = {};
+  PLACE.forEach(([l, a, list]) => {
+    after[l + '|' + a] = list.split(' ').map(t => {
+      const x = extras.get(t);
+      if (!x) { console.error('PLACE: 없거나 두 번 넣은 단어', t); return null; }
+      extras.delete(t); x.l = l; return x;
+    }).filter(Boolean);
+  });
+  if (extras.size) console.error('PLACE: 자리가 없는 단어', [...extras.keys()]);
+  const used = new Set();
+  [3, 4, 5, 6].forEach(l => {
+    let no = 0;
+    all.filter(x => x.l === l && !x.src).forEach(x => {
+      x.no = ++no; WORDS.push(x);
+      const k = l + '|' + x.w;
+      if (after[k]) { used.add(k); after[k].forEach(y => { y.no = ++no; WORDS.push(y); }); }
+    });
+  });
+  Object.keys(after).forEach(k => { if (!used.has(k)) console.error('PLACE: 기준 단어가 없음', k); });
 }
 const byId = Object.fromEntries(WORDS.map(x => [x.id, x]));
-const GROUP = { A: ['3과 활동지', '활'], B: ['교과서 추가', '교'], C: ['보충 형용사', '보'], N: ['숫자·개수', '수'], V: ['심화 동사', '동'], M: ['수업 필기', '필'] };
-const lessonName = w => GROUP[w.l] ? GROUP[w.l][0] : w.l + '과';
+const lessonName = w => w.l + '과';
 
 /* ============================================================
    2. 저장 상태 (localStorage)
@@ -1571,21 +1629,25 @@ function speak(text, force) {
 /* ============================================================
    3. 범위 선택 & 진도
 ============================================================ */
+const isAdjPos = w => w.pos === 'い형용사' || w.pos === 'な형용사';
+const isNumWord = w => w.pos.includes('수사') || w.w === 'いくつ' || w.w === 'いくら';
 const SCOPES = [
   ['all', '전체', () => true],
   ['3', '3과', w => w.l === 3],
   ['4', '4과', w => w.l === 4],
   ['5', '5과', w => w.l === 5],
   ['6', '6과', w => w.l === 6],
-  ['A', '3과 활동지', w => w.l === 'A'],
-  ['B', '교과서 추가', w => w.l === 'B'],
-  ['C', '보충 형용사', w => w.l === 'C'],
-  ['N', '숫자·개수', w => w.l === 'N'],
-  ['V', '심화 동사', w => w.l === 'V'],
-  ['M', '수업 필기', w => w.l === 'M'],
+  ['adj', '형용사', isAdjPos],
+  ['verb', '동사', w => w.pos === '동사'],
+  ['num', '숫자·개수', isNumWord],
+  ['M', '수업 필기', w => w.src === 'M'],
   ['star', '★ 즐겨찾기', w => S.star[w.id]],
   ['wrong', '✗ 오답노트', w => S.wrong[w.id]],
 ];
+// 예전 범위(묶음별)를 고른 채 저장돼 있으면 새 범위로 바꾸기
+{ const OLD = { A: '3', B: 'all', C: 'adj', N: 'num', V: 'verb' };
+  if (OLD[S.scope]) S.scope = OLD[S.scope];
+  if (!SCOPES.some(x => x[0] === S.scope)) S.scope = 'all'; }
 const scopeWords = () => WORDS.filter(SCOPES.find(s => s[0] === S.scope)[2]);
 
 function renderScope() {
@@ -1642,7 +1704,7 @@ function renderCard() {
   const front = S.cardFront === 'jp' ? jpFace : krFace;
   const back = S.cardFront === 'jp' ? `${krFace}${info}` : `${jpFace}<span class="pos ${posClass(w.pos)}">${w.pos}</span>${info}`;
   area.innerHTML = `
-    <div class="q-head"><span>${retryRound ? '🔁 모르는 단어 다시 · ' : ''}${lessonName(w)} · ${w.no}번</span><span>${cur + 1} / ${deck.length}</span></div>
+    <div class="q-head"><span>${retryRound ? '🔁 모르는 단어 다시 · ' : ''}${lessonName(w)} · ${w.no}번${w.src ? ' · ' + SRC[w.src] : ''}</span><span>${cur + 1} / ${deck.length}</span></div>
     <div class="bar"><div style="width:${cur / deck.length * 100}%"></div></div>
     <div class="flash-wrap"><div class="flash ${flipped ? 'flipped' : ''}" id="flash">
       <div class="face"><span class="tag">${S.star[w.id] ? '★ ' : ''}${S.cardFront === 'jp' ? '뜻은?' : '일본어로?'}</span><span class="boxdots">${dots(w.id)}</span>${front}<span class="hint">탭해서 뒤집기</span></div>
@@ -2241,7 +2303,7 @@ function renderList() {
   $('#listCount').textContent = `${ws.length}개`;
   $('#wordList').innerHTML = ws.length ? ws.map(w => `
     <div class="row" data-id="${w.id}">
-      <div class="num">${GROUP[w.l] ? GROUP[w.l][1] : w.l}-${w.no}</div>
+      <div class="num">${w.l}-${w.no}${w.src ? `<small class="src">${SRC[w.src]}</small>` : ''}</div>
       <div>
         <div class="w" data-say="${esc(w.tts)}">${esc(w.w)}${w.k ? `<small>${esc(w.k)}</small>` : ''}</div>
         <div class="m"><b>${esc(w.m)}</b> · ${esc(w.p)}</div>
@@ -2519,7 +2581,7 @@ document.querySelectorAll('[data-ex]').forEach(el => el.addEventListener('click'
 // 동사 판별기 (6과)
 {
   const verbs = WORDS.filter(isVerb);
-  const label = w => `${w.w}${w.k ? ' (' + w.k + ')' : ''} ${w.m}${w.l === 'V' ? ' · 심화' : ''}`;
+  const label = w => `${w.w}${w.k ? ' (' + w.k + ')' : ''} ${w.m}${w.src === 'V' ? ' · 심화' : ''}`;
   $('#verbSelect').innerHTML = [1, 2, 3].map(g => `<optgroup label="${g}그룹">${verbs.filter(w => vGroup(w) === g)
     .map(w => `<option value="${w.id}">${esc(label(w))}</option>`).join('')}</optgroup>`).join('');
   const render = () => {
