@@ -1,6 +1,6 @@
 // 일본어 단어 3·4과 — 오프라인용 서비스 워커
 // 내용을 바꿔 배포할 때는 VERSION을 올리면 새 파일로 다시 저장돼요.
-const VERSION = '2026-11-26-13';
+const VERSION = '2026-11-26-14';
 const CACHE = 'jpvocab-' + VERSION;
 const FONT_CACHE = 'jpvocab-fonts';
 const PRECACHE = [
