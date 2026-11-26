@@ -1550,6 +1550,11 @@ const PLACE = [
   // 6과: 교과서 동사 뒤에 그룹 연습용 심화 동사
   [6, 'する', 'V:はいる V:はしる V:しる V:きる V:おきる V:ねる V:でる V:わかる V:つくる V:かく V:のむ V:かう V:まつ V:きく'],
 ];
+// 단어 밑에 한자를 보여 줄 단어: 교과서 단어장에 한자로 적혀 있는 것 + 본문에 한자로 나오는 何·日本만
+// (나머지 한자는 화면에 안 보이고, 동사 그룹 판별 같은 계산에만 써요)
+const KANJI_KEEP = new Set(['4|えん', '4|ほん', '4|げんきだ', '4|てんいん',
+  '5|うえ', '5|した', '5|なか', '5|ひだり', '5|みぎ', '5|まえ', '5|うしろ', '5|がっこう', '5|やすい', '5|おおきい', '5|しろい', '5|ひろい', '5|たかい', '5|みせ',
+  '6|あう', '6|いく', '6|みる', '6|たべる', '6|くる', '6|ともだち', 'B|なに', 'B|にほん']);
 const SRC = { A: '활동지', B: '교과서', C: '보충', N: '보충', V: '심화', M: '필기' };
 
 const WORDS = [];
@@ -1562,7 +1567,7 @@ const WORDS = [];
     cnt[l]++;
     const extra = typeof l !== 'number';
     if (extra && official.has(key([l, w, k, p, pos]))) return;
-    all.push({ id: `${l}-${cnt[l]}`, l: extra ? 0 : l, src: extra ? l : '', no: 0, w, k, p, pos, m, n,
+    all.push({ id: `${l}-${cnt[l]}`, l: extra ? 0 : l, src: extra ? l : '', no: 0, w, k: KANJI_KEEP.has(l + '|' + w) ? k : '', kanji: k, p, pos, m, n,
       tts: tts || w.replace(/[～\-]/g, ''), bare: w.replace(/[～\-]/g, '') });
   });
   const extras = new Map(all.filter(x => x.src).map(x => [x.src + ':' + x.w, x]));
@@ -1843,7 +1848,7 @@ const I2U = Object.fromEntries(Object.entries(U2.i).map(([u, i]) => [i, u]));
 // 2그룹처럼 생겼지만 1그룹인 예외 동사 (교과서 밖 심화)
 const EXC1 = new Set(['帰る', '入る', '走る', '知る', '切る', '要る']);
 const isVerb = w => w.pos === '동사' && !w.bare.endsWith('ます') && /[うくぐすつぬぶむる]$/.test(w.bare);
-const isExc = w => EXC1.has(w.k) || (!w.k && ['かえる', 'はいる', 'はしる'].includes(w.bare));
+const isExc = w => EXC1.has(w.kanji) || (!w.kanji && ['かえる', 'はいる', 'はしる'].includes(w.bare));
 
 function vGroup(w) {
   const b = w.bare;
@@ -2020,7 +2025,7 @@ let quiz = null;
 
 function quizPool() {
   let ws = scopeWords();
-  if (S.quizMode === 'kanji') ws = ws.filter(w => w.k && !/^-/.test(w.k));
+  if (S.quizMode === 'kanji') { const hasK = w => w.k && !/^-/.test(w.k); ws = ws.filter(hasK); if (!ws.length) ws = WORDS.filter(hasK); }
   if (S.quizMode === 'conj') { ws = ws.filter(adjType); if (!ws.length) ws = WORDS.filter(adjType); }
   if (S.quizMode === 'vgroup' || S.quizMode === 'masu') { ws = ws.filter(isVerb); if (!ws.length) ws = WORDS.filter(isVerb); }
   return ws;
@@ -2302,7 +2307,7 @@ function renderList() {
   const q = $('#searchInput').value.trim().toLowerCase();
   const pf = $('#posFilter').value;
   const ws = scopeWords().filter(w => (!pf || w.pos === pf) &&
-    (!q || [w.w, w.k, w.p, w.m, w.n, w.bare].join(' ').toLowerCase().includes(q)));
+    (!q || [w.w, w.kanji, w.p, w.m, w.n, w.bare].join(' ').toLowerCase().includes(q)));
   $('#listCount').textContent = `${ws.length}개`;
   $('#wordList').innerHTML = ws.length ? ws.map(w => `
     <div class="row" data-id="${w.id}">
