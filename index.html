@@ -366,6 +366,8 @@
     .vrow > span { flex: 0 0 82px; white-space: nowrap; }
     .vrow select, .vrow input { flex: 1; min-width: 0; }
     .vrow[hidden] { display: none; }
+    .vcheck { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+    .vfound { font-size: 12px; overflow-wrap: anywhere; }
     .vpresets { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
     .vpresets button { background: var(--inner); color: var(--text); border: 1px solid var(--border); border-radius: var(--r-sm); padding: 9px 4px; font-size: 13px; font-weight: 700; }
     .vpresets button.active { border-color: var(--primary); background: rgba(255,77,128,.18); }
@@ -445,6 +447,8 @@
       <button data-p="fast">🐇 빠르게</button>
     </div>
     <label class="vrow" id="voiceRow"><span>폰 목소리</span><select id="voiceSelect"></select></label>
+    <label class="vcheck"><input type="checkbox" id="voiceAll"> 일본어가 아닌 목소리까지 모두 보기</label>
+    <div class="vfound" id="voiceFound"></div>
     <label class="vrow"><span>빠르기 <b id="rateVal"></b></span><input type="range" id="rateRange" min="0.5" max="1.3" step="0.05"></label>
     <label class="vrow"><span>높낮이 <b id="pitchVal"></b></span><input type="range" id="pitchRange" min="0.5" max="1.8" step="0.1"></label>
     <button class="btn primary slim" id="voiceTest">▶ 들어 보기</button>
@@ -1708,8 +1712,13 @@ function speak(text, force) {
   else { speechSynthesis.cancel(); speechSynthesis.speak(u); }
 }
 // 이 기기에 있는 일본어 목소리 (기기마다 달라요)
-const jaVoices = () => { try { return speechSynthesis.getVoices().filter(v => v.lang && /^ja/i.test(v.lang.replace('_', '-'))); } catch (e) { return []; } };
-const pickVoice = () => { const vs = jaVoices(); return vs.find(v => v.voiceURI === S.voice) || vs.find(v => v.default) || vs[0]; };
+const allVoices = () => { try { return speechSynthesis.getVoices() || []; } catch (e) { return []; } };
+const isJa = v => /^ja/i.test(String(v.lang || '').replace('_', '-')) || /日本|japan|kyoko|otoya|hattori|o-ren|ichiro|ayumi|haruka|sayaka|nanami|keita/i.test(v.name || '');
+const isHQ = v => /premium|enhanced|neural|natural|고품질|향상|프리미엄/i.test((v.name || '') + ' ' + (v.voiceURI || ''));
+// 고품질(설정에서 내려받은) 목소리를 위로
+const jaVoices = () => allVoices().filter(isJa).sort((a, b) => isHQ(b) - isHQ(a));
+// 따로 안 골랐으면 목소리를 지정하지 않아요 → 폰 설정에서 고른 일본어 목소리(내려받은 것)가 그대로 나와요
+const pickVoice = () => S.voice ? allVoices().find(v => v.voiceURI === S.voice) || null : null;
 
 /* ============================================================
    3. 범위 선택 & 진도
@@ -2824,27 +2833,40 @@ bindSeg('#examSeg', 'examSet', renderExam);
 const VPRESET = { base: [1, 0.85], high: [1.4, 0.9], low: [0.6, 0.85], kid: [1.8, 0.95], slow: [1, 0.6], fast: [1, 1.15] };
 const SAMPLE = 'こんにちは。いっしょに にほんごを べんきょうしましょう。';
 function paintVoice() {
-  const vs = jaVoices(), cur = pickVoice();
+  const all = allVoices(), ja = jaVoices(), cur = pickVoice();
+  const list = $('#voiceAll').checked ? [...ja, ...all.filter(v => !isJa(v))] : ja;
   const r = S.rate || 0.85, pt = S.pitch || 1;
   $('#voicePresets').querySelectorAll('button').forEach(b => { const [pp, rr] = VPRESET[b.dataset.p]; b.classList.toggle('active', Math.abs(pp - pt) < .05 && Math.abs(rr - r) < .03); });
-  $('#voiceRow').hidden = vs.length < 2;
-  $('#voiceSelect').innerHTML = vs.map(v => `<option value="${esc(v.voiceURI)}" ${v === cur ? 'selected' : ''}>${esc(v.name.replace(/^(Microsoft|Google)\s*/, ''))}${v.localService === false ? ' (인터넷)' : ''}</option>`).join('');
+  const label = v => `${isHQ(v) ? '⭐ ' : ''}${v.name.replace(/^(Microsoft|Google)\s*/, '')}${isJa(v) ? '' : ' · ' + v.lang}${v.localService === false ? ' (인터넷)' : ''}`;
+  $('#voiceSelect').innerHTML = `<option value="">📱 폰 설정에서 고른 일본어 목소리 (추천)</option>`
+    + list.map(v => `<option value="${esc(v.voiceURI)}" ${v === cur ? 'selected' : ''}>${esc(label(v))}</option>`).join('')
+    + (S.voice && !cur ? `<option value="${esc(S.voice)}" selected>(고른 목소리를 지금 못 찾음)</option>` : '');
+  $('#voiceFound').textContent = all.length ? `이 화면에서 찾은 일본어 목소리 ${ja.length}개${ja.length ? ': ' + ja.map(v => v.name).join(', ') : ''}` : '목소리 목록을 불러오는 중이거나, 이 화면에서는 목록을 볼 수 없어요. 그래도 "폰 설정 목소리"로는 소리가 나요.';
   $('#rateRange').value = r; $('#rateVal').textContent = '×' + (+r).toFixed(2);
   $('#pitchRange').value = pt; $('#pitchVal').textContent = (+pt).toFixed(1);
   const can = 'speechSynthesis' in window;
+  $('#voiceRow').hidden = !can;
   $('#voiceHelp').innerHTML = !can ? '⚠️ 이 화면에서는 소리 내기를 지원하지 않아요. 사파리·크롬 같은 브라우저나 홈 화면 앱으로 열어 주세요.'
-    : (vs.length >= 2 ? `이 폰의 일본어 목소리 ${vs.length}개 중에서도 고를 수 있어요.<br>`
-                      : `이 폰에는 일본어 목소리가 ${vs.length ? '1개' : '따로 없어서'} 위의 느낌 버튼으로 바꿔요.<br>`)
-      + '<b>목소리 더 받기</b> · 아이폰: 설정 → 손쉬운 사용 → 읽기 및 말하기 → 음성 → 일본어 (Kyoko·Otoya 등 내려받기)<br>· 안드로이드: 설정 → 텍스트 음성 변환(TTS) → Google 음성 엔진 ⚙ → 음성 데이터 설치 → 일본어 → 목소리 고르기<br>받은 다음 앱을 껐다 켜면 "폰 목소리" 칸이 생겨요.';
+    : '<b>설정에서 내려받은 목소리 쓰기</b><br>'
+      + '· <b>아이폰</b>: 설정 → 손쉬운 사용 → 읽기 및 말하기 → 음성 → <b>일본어</b> → 쓰고 싶은 목소리를 <b>눌러서 체크(✓)</b>. 그다음 이 앱을 완전히 껐다 켜고 위 칸을 <b>📱 폰 설정 목소리</b>로 두면 그 목소리로 나와요. 목록에 ⭐ 붙은 것이 고품질 목소리예요. (Siri 목소리는 애플이 웹 앱에 열어 주지 않아서 못 써요)<br>'
+      + '· <b>안드로이드</b>: 설정 → 텍스트 음성 변환(TTS) → Google 음성 엔진 ⚙ → 음성 데이터 설치 → 일본어 → 목소리(1~4) 고르기. 그다음 이 앱을 껐다 켜고 위 칸을 <b>📱 폰 설정 목소리</b>로 두면 돼요.<br>'
+      + '· 목소리를 바꿨으면 느낌 버튼은 <b>🙂 기본</b>으로 두는 게 가장 자연스러워요.';
 }
 if ('speechSynthesis' in window) { try { speechSynthesis.addEventListener('voiceschanged', paintVoice); } catch (e) { speechSynthesis.onvoiceschanged = paintVoice; } }
-$('#voiceBtn').onclick = () => { paintVoice(); $('#voicePanel').classList.toggle('show'); if ($('#voicePanel').classList.contains('show')) $('#voicePanel').scrollIntoView({ block: 'nearest', behavior: 'smooth' }); };
+// 아이폰은 목소리 목록을 늦게 알려 줘서, 설정 창을 연 뒤 몇 초 동안 다시 확인
+function watchVoices() {
+  let n = allVoices().length, tries = 0;
+  clearInterval(watchVoices.t);
+  watchVoices.t = setInterval(() => { const m = allVoices().length; if (m !== n) { n = m; paintVoice(); } if (++tries > 16) clearInterval(watchVoices.t); }, 300);
+}
+$('#voiceAll').onchange = paintVoice;
+$('#voiceBtn').onclick = () => { try { allVoices(); } catch (e) {} paintVoice(); watchVoices(); $('#voicePanel').classList.toggle('show'); if ($('#voicePanel').classList.contains('show')) $('#voicePanel').scrollIntoView({ block: 'nearest', behavior: 'smooth' }); };
 $('#voicePresets').onclick = e => {
   const b = e.target.closest('button'); if (!b) return;
   [S.pitch, S.rate] = VPRESET[b.dataset.p]; save(); paintVoice();
   speak(SAMPLE, true); toast(b.textContent.trim() + ' 적용!');
 };
-$('#voiceSelect').onchange = e => { S.voice = e.target.value; save(); paintVoice(); speak(SAMPLE, true); };
+$('#voiceSelect').onchange = e => { if (e.target.value) S.voice = e.target.value; else delete S.voice; save(); paintVoice(); speak(SAMPLE, true); };
 $('#rateRange').oninput = e => { S.rate = +e.target.value; $('#rateVal').textContent = '×' + S.rate.toFixed(2); };
 $('#pitchRange').oninput = e => { S.pitch = +e.target.value; $('#pitchVal').textContent = S.pitch.toFixed(1); };
 $('#rateRange').onchange = $('#pitchRange').onchange = () => { save(); paintVoice(); speak('ありがとう ございます', true); };
