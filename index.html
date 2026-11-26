@@ -2866,8 +2866,20 @@ function setOffline(ready, msg) {
 }
 /*PWA-START*/
 if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
-  navigator.serviceWorker.register('sw.js')
-    .then(() => navigator.serviceWorker.ready)
+  // 새 버전이 올라오면 앱을 열 때 바로 새 버전으로 바꾸기 (홈 화면 앱이 옛날 화면에 머무르지 않게)
+  const hadController = !!navigator.serviceWorker.controller;
+  let reloading = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!hadController || reloading) return;
+    reloading = true; toast('새 버전으로 바꾸는 중…'); setTimeout(() => location.reload(), 400);
+  });
+  navigator.serviceWorker.register('sw.js', { updateViaCache: 'none' })
+    .then(reg => {
+      const check = () => reg.update().catch(() => {});
+      document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') check(); });
+      window.addEventListener('focus', check);
+      return navigator.serviceWorker.ready;
+    })
     .then(() => setOffline(true, '✓ 오프라인 준비 완료! 이제 인터넷 없이도 이 주소가 열려요.'))
     .catch(() => setOffline(false, '이 주소에서는 오프라인 저장을 할 수 없어요.'));
 } else {
