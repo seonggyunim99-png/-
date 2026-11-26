@@ -11,7 +11,9 @@ SETS = {
     1: ('1회 기초', '거의 모든 유형을 다루는 기본 문제', ['exam1a.txt', 'exam1b.txt']),
     2: ('2회 최상위', '모두 고르기·개수 세기·지도서 세부까지 묻는 최고 난도', ['exam2a.txt', 'exam2b.txt']),
     3: ('3회 어법', '★ 배열·밑줄 쓰임·문장 전환·오류 수정 중심', ['exam3a.txt', 'exam3b.txt']),
+    4: ('4회 문화', '교과서 문화 쪽·지도서·수업 필기에서 낸 일본 문화 문제', ['exam4a.txt', 'exam4b.txt']),
 }
+PARTS, PER = 5, 20  # 20문제씩 5부로 나눠 풀기
 
 def parse(path):
     qs, sec, cur = [], '', None
@@ -42,6 +44,36 @@ def parse(path):
 FIXED = re.compile(r'^(\d+개|[①-⑤]|\(가\)|\(나\)|\(다\)|\(라\)|[ㄱ-ㅎ](,|$))')
 def shuffle_ok(q):
     return not any(FIXED.match(o) for o in q['o'])
+
+def split_parts(qs):
+    """영역이 고르게 섞이도록 20문제씩 5부로 나누고, 부마다 정답 번호도 고르게 맞춰요."""
+    part = [j % PARTS for j in range(len(qs))]  # 영역 순서대로 돌아가며 나눠 담기
+    def cost():
+        c = 0
+        for p in range(PARTS):
+            cnt = [sum(1 for j, q in enumerate(qs) if part[j] == p and q['a'] == k) for k in range(1, 5)]
+            c += max(cnt) - min(cnt)
+        return c
+    best = cost(); improved = True
+    while improved:
+        improved = False
+        for i in range(len(qs)):
+            for j in range(i + 1, len(qs)):
+                if qs[i]['s'] != qs[j]['s'] or part[i] == part[j] or qs[i]['a'] == qs[j]['a']:
+                    continue
+                part[i], part[j] = part[j], part[i]
+                c = cost()
+                if c < best: best = c; improved = True
+                else: part[i], part[j] = part[j], part[i]
+    out = []
+    for p in range(PARTS):
+        out += [q for j, q in enumerate(qs) if part[j] == p]
+    for p in range(PARTS):
+        chunk = out[p * PER:(p + 1) * PER]
+        assert len(chunk) == PER
+        dist = {k: sum(1 for q in chunk if q['a'] == k) for k in range(1, 6) if any(q['a'] == k for q in chunk)}
+        print(f'   {p + 1}부: 정답 {dist}, 영역 {len(set(q["s"] for q in chunk))}개')
+    return out
 
 def main():
     out, problems = {}, []
@@ -74,6 +106,9 @@ def main():
             return max(c) - min(c), res
         best = min((arrange(1000 * n + s) for s in range(400)), key=lambda x: x[0])
         qs = best[1]
+        for i, q in enumerate(qs):
+            q['id'] = i  # 원고 순서 번호: 저장된 답이 이 번호를 기준으로 남아요
+        qs = split_parts(qs)
         if len(qs) != 100: problems.append(f'{n}회: {len(qs)}문항 (100문항이어야 함)')
         dist = {k: sum(1 for q in qs if q.get('a') == k) for k in range(1, 6)}
         print(f'{n}회 {title}: {len(qs)}문항, 정답 분포 {dist}, 영역 {sorted(set(q["s"] for q in qs), key=[q["s"] for q in qs].index)}')

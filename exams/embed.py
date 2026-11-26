@@ -39,6 +39,7 @@ section = '''  <!-- 모의고사 -->
         <button data-v="1">1회 기초</button>
         <button data-v="2">2회 최상위</button>
         <button data-v="3">3회 어법</button>
+        <button data-v="4">4회 문화</button>
       </div>
     </div>
     <div id="examArea"></div>
