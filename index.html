@@ -453,8 +453,8 @@
         <button data-v="todo">못 외운 것만</button>
       </div>
       <div class="seg" id="cardOrderSeg">
-        <button data-v="shuffle">🔀 섞기</button>
         <button data-v="order">🔢 순서대로</button>
+        <button data-v="shuffle">🔀 섞기</button>
       </div>
     </div>
     <div id="cardArea"></div>
@@ -1598,10 +1598,47 @@ const lessonName = w => w.l + '과';
    2. 저장 상태 (localStorage)
 ============================================================ */
 const KEY = 'jpvocab34_v1';
-const DEF = { box: {}, star: {}, wrong: {}, sound: true, scope: 'all', cardFront: 'jp', cardFilter: 'all', cardOrder: 'shuffle', quizMode: 'jp2kr', story: '3', hideKr: false, hideJp: false, examSet: '1', exam: {} };
+const DEF = { box: {}, star: {}, wrong: {}, sound: true, scope: 'all', cardFront: 'jp', cardFilter: 'all', cardOrder: 'order', quizMode: 'jp2kr', story: '3', hideKr: false, hideJp: false, examSet: '1', exam: {} };
 let S = { ...DEF };
 try { S = { ...DEF, ...JSON.parse(localStorage.getItem(KEY) || '{}') }; } catch (e) {}
-const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {} };
+S.cardOrder = 'order'; // 앱을 켤 때마다 카드는 교과서 순서로 시작 (섞기는 고를 때만)
+// 기록(외운 단어·오답노트·즐겨찾기·모의고사 답)은 이 기기에 저장하고, claude.ai 링크로 열었을 때는 계정에도 저장해요
+const save = () => {
+  S.savedAt = Date.now();
+  try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {}
+  cloudSave();
+};
+// 브라우저가 저장 공간이 부족할 때 기록을 지우지 않게 부탁하기
+try { navigator.storage && navigator.storage.persist && navigator.storage.persist().catch(() => {}); } catch (e) {}
+
+// claude.ai 계정 저장 (GitHub 주소에서는 쓰지 않음)
+const cloud = { ref: null, timer: 0, ready: false };
+function cloudSave(now) {
+  if (!cloud.ref) return;
+  clearTimeout(cloud.timer);
+  const put = () => cloud.ref.set({ state: JSON.stringify(S), at: S.savedAt || Date.now() }).catch(() => { cloud.ref = null; });
+  if (now) put(); else cloud.timer = setTimeout(put, 1200);
+}
+async function cloudInit() {
+  if (!window.claude || typeof window.claude.use !== 'function') return;
+  try {
+    const [db, user] = await Promise.all([window.claude.use('db'), window.claude.use('user')]);
+    if (!db || !user) return;
+    const uid = await user.id(); if (!uid) return;
+    const ref = db.doc('data/users/' + uid + '/progress');
+    const snap = await Promise.race([ref.get(), new Promise((_, no) => setTimeout(() => no(new Error('timeout')), 10000))]);
+    cloud.ref = ref;
+    const d = snap.exists ? snap.data() : null;
+    let saved = null; try { saved = d && JSON.parse(d.state); } catch (e) {}
+    if (saved && (saved.savedAt || 0) > (S.savedAt || 0)) {
+      // 계정에 있는 기록이 더 최근이면 그걸로 불러오기
+      S = { ...S, box: saved.box || {}, star: saved.star || {}, wrong: saved.wrong || {}, exam: saved.exam || {}, savedAt: saved.savedAt };
+      try { localStorage.setItem(KEY, JSON.stringify(S)); } catch (e) {}
+      renderScope(); renderProgress(); refreshActive(true);
+    } else if (S.savedAt && (!saved || S.savedAt > (saved.savedAt || 0))) cloudSave(true);
+  } catch (e) { cloud.ref = null; }
+}
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden' && cloud.timer) cloudSave(true); });
 const MASTER = 3; // 연속 3번 맞히면 '외움'
 
 const $ = s => document.querySelector(s);
@@ -2761,6 +2798,7 @@ document.addEventListener('keydown', e => {
 
 if ('speechSynthesis' in window) speechSynthesis.getVoices();
 renderScope(); renderProgress(); refreshActive();
+cloudInit();
 
 /* ============================================================
    11. 오프라인 사용 (앱 설치)
